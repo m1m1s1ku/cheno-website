@@ -1,0 +1,228 @@
+<!-- {{SSRFunctions}} -->
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <!-- {{SSRHead}} -->
+
+    <base href="/">
+    
+    <meta name="theme-color" content="#b47e71">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="<%= htmlWebpackPlugin.options.pathname %>/assets/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="<%= htmlWebpackPlugin.options.pathname %>/assets/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="<%= htmlWebpackPlugin.options.pathname %>/assets/icons/favicon-16x16.png">
+    <link rel="manifest" href="<%= htmlWebpackPlugin.options.pathname %>/assets/site.webmanifest">
+    <link rel="mask-icon" href="<%= htmlWebpackPlugin.options.pathname %>/assets/icons/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="<%= htmlWebpackPlugin.options.pathname %>/favicon.ico">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-config" content="<%= htmlWebpackPlugin.options.pathname %>/assets/icons/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="preconnect" href="https://base.cheno.fr" crossorigin>
+    <link rel="preconnect" href="https://sentry.io" crossorigin>
+    <link href="https://fonts.googleapis.com/css?family=Andika|Comfortaa&display=swap" rel="stylesheet">
+
+    <custom-style>
+        <style>
+          html {
+            --lumo-primary-color: hsla(88, 43%, 37%, 1);
+            --lumo-primary-color-50pct: hsla(88, 43%, 37%, .5);
+            --lumo-primary-color-10pct: hsla(88, 43%, 37%, .1);
+            --lumo-primary-text-color: var(--lumo-primary-color);
+            --lumo-primary-contrast-color: #FFF;
+            --lumo-font-size-m: 17px;
+          }
+        </style>
+      </custom-style>
+      
+    <style>
+      :root {
+        --elara-darkgray: #2f2f2f;
+        --elara-lightgray:#f2f2f2;
+        --elara-link: #2c3d00;
+        --elara-nav-background: #fff;
+        --elara-primary: #002FA7;;
+        --elara-secondary: #5E595D;
+        --elara-cta: #e8e8d4;
+        --elara-color: rgba(134, 156, 39, .8);
+        --elara-input-container: rgb(98, 110, 52);
+        --elara-input-focus: rgba(98, 110, 52, 0.7);
+        --elara-loader-background: rgba(255, 255, 255, .8);
+        --elara-light-background: rgba(255, 255, 255, 0.9);
+        --elara-highlight: #002FA7;
+        --elara-complementary: #5E595D;
+
+        --elara-background-color: #fff;
+        --elara-footer-color: #f5f5f5;
+        --elara-font-color: #2f2f2f;
+        --elara-font-hover: rgb(0, 0, 0, 0.3);
+        --elara-loader-background: rgba(255, 255, 255, 0.8);
+        --elara-light-background: rgba(255, 255, 255, 0.9);
+
+        --elara-font-primary: 'Andika', sans-serif;
+        --elara-font-display: 'Comfortaa', serif;
+        --paper-font-common-base: {
+            font-family: var(--elara-font-primary);
+        };
+      }
+
+      a {
+        text-decoration: none;
+        color: var(--elara-primary);
+        cursor: pointer;
+      }
+
+      body {
+        padding: 0;
+        margin: 0;
+        background-image: var(--unsplash-bg);
+        background-color: var(--elara-background-color);
+        font-family: var(--elara-font-primary);
+        font-size: 16px;
+        background-position: center;
+        background-repeat: repeat;
+        background-size: cover;
+        height: 100%;
+      }
+
+      body.scrolling-disabled {
+        height: 100%;
+        overflow: hidden;
+      }
+
+      .handler {
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 999;
+        opacity: .7;
+        background-color: var(--elara-loader-background);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        visibility: visible;
+        transition: opacity 1s;
+        user-select: none;
+        text-align: center;
+      }
+
+      .handler.hidden {
+        visibility: hidden;
+        opacity: 0;
+      }
+
+      .error-tree {
+        position: absolute;
+        right: 0;
+        top: 0;
+      }
+
+
+      button.continue, button.reload {
+        display: inline-block;
+        position: relative;
+        cursor: pointer;
+        height: 35px;
+        line-height: 35px;
+        padding: 0 1.5rem;
+        color: #424242;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: .8px;
+        text-align: center;
+        text-decoration: none;
+        vertical-align: middle;
+        white-space: nowrap;
+        outline: none;
+        border: none;
+        user-select: none;
+        border-radius: 2px;
+        transition: all .3s ease-out;
+        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.225);
+      }
+      button.continue {
+          background-color: var(--elara-secondary);
+          color: white;
+      }
+      button.reload {
+          background-color: var(--elara-primary);
+          color: white;
+      }
+
+      #loader {
+        margin: -45px -60px;
+        width: 120px;
+        height: 90px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+      }
+
+      #dot {
+        background: var(--elara-primary);
+        border-radius: 50%; 
+        width: 30px;
+        height: 30px;
+        position: absolute;
+        bottom: 30px;
+        left: 27px;
+        transform-origin: center bottom;
+        animation: dot .6s ease-in-out infinite;
+      }
+
+      @keyframes dot {
+        0% { transform: scale(1,.7) }
+        20% { transform: scale(.7,1.2) }
+        40% { transform: scale(1,1)} 
+        50% { bottom: 100px;} 
+        46% { transform: scale(1,1)} 
+        80% { transform: scale(.7,1.2) } 
+        90% { transform: scale(.7,1.2) } 
+        100% { transform: scale(1,.7) }
+      }
+
+      .step {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        border-top: 2px solid var(--elara-secondary);
+        top: 0;
+        right:0;
+      }
+
+      @keyframes anim { 
+        0% { 
+          opacity: 0;
+          top: 0; 
+          right: 0; 
+        }
+        50% { opacity: 1; }
+        100% { 
+          top: 90px; 
+          right: 90px;
+          opacity: 0;
+        }
+      }
+
+      #s1 { animation: anim 1.8s linear infinite; }
+      #s2 { animation: anim 1.8s linear infinite -.6s; }
+      #s3 { animation: anim 1.8s linear infinite -1.2s; }
+    </style>
+    <!-- {{SSRPayload}} -->
+    <noscript>JavaScript is needed to use this website.</noscript>
+    <script src="<%= htmlWebpackPlugin.options.pathname %>/boot.js"></script>
+    <script src="<%= htmlWebpackPlugin.options.pathname %>/vendor/webcomponents-loader.js"></script>
+    <script src="<%= htmlWebpackPlugin.options.pathname %>/vendor/web-animations-next-lite.min.js"></script>
+    <script src="<%= htmlWebpackPlugin.options.pathname %>/vendor/custom-elements-es5-adapter.js"></script>
+  </head>
+  <body>
+    <elara-app></elara-app>
+  </body>
+</html>
