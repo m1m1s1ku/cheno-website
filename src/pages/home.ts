@@ -6,6 +6,7 @@ import { repeat } from 'lit-html/directives/repeat';
 import Constants from '../constants';
 import { wrap } from '../core/errors/errors';
 import { WPCategory } from '../interfaces';
+import { fadeWith } from '../core/animations';
 
 class Home extends Page {
     public static readonly is: string = 'ui-home';
@@ -147,10 +148,9 @@ class Home extends Page {
                   }`})})
             .then(res => res.json()).catch(_ => this.dispatchEvent(wrap(_)));
 
-            const categories = requestR.data.categories.nodes;
-            this.categories = categories;
-            this.sculptureMax = this.categories[this.sculptureIndex].sculptures.nodes.length;
-            this.previewing = categories[this.selected].sculptures.nodes[this.sculptureIndex].featuredImage.sourceUrl;
+            this.categories = requestR.data.categories.nodes;
+
+            this._onCatClick(0);
             this.loaded = true;
     }
 
@@ -160,6 +160,16 @@ class Home extends Page {
         this.sculptureMax = 0;
         this.sculptureMax = this.categories[idx].sculptures.nodes.length;
         this.previewing = this.categories[idx].sculptures.nodes[this.sculptureIndex].featuredImage.sourceUrl;
+        this._fadeCurrent();
+    }
+
+    private _fadeCurrent(){
+        const animation = fadeWith(300, true);
+        this._previewed.animate(animation.effect, animation.options);
+    }
+
+    private get _previewed(){
+        return this.shadowRoot.querySelector('#previewed');
     }
 
     public render(): void | TemplateResult {
@@ -173,7 +183,7 @@ class Home extends Page {
                 </nav>
             </div>
             <div class="preview">
-                <iron-image class="previewed" src=${this.previewing} sizing="contain" fade></iron-image>
+                <iron-image id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade></iron-image>
                 <div class="unfold">
                     <iron-icon icon="unfold-more"></iron-icon>
                 </div>
@@ -182,6 +192,7 @@ class Home extends Page {
                         if(this.sculptureIndex-1 >= 0){
                             this.sculptureIndex--;
                             this.previewing = this.categories[this.selected].sculptures.nodes[this.sculptureIndex].featuredImage.sourceUrl;
+                            this._fadeCurrent();
                         }
                     }}></iron-icon> 
                     <div class="pagination"><span class="current">${this.sculptureIndex+1}</span> / <span class="total">${this.sculptureMax}</span></div> 
@@ -189,6 +200,7 @@ class Home extends Page {
                         if(this.sculptureIndex+1 <= this.sculptureMax-1){
                             this.sculptureIndex++;
                             this.previewing = this.categories[this.selected].sculptures.nodes[this.sculptureIndex].featuredImage.sourceUrl;
+                            this._fadeCurrent();
                         }
                     }}></iron-icon>
                 </div>
