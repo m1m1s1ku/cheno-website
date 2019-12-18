@@ -169,8 +169,16 @@ export class ElaraApp extends Root {
 			position: fixed;
 			bottom: 0;
 			left: 0;
-			margin: 30px;
+			pointer-events: none;
+			margin: 5px;
+			color: rgba(0,0,0,.8);
 			user-select: none;
+		}
+
+		@media (min-width: 700px){
+			footer {
+				margin: 30px;
+			}
 		}
 
 		.logo {
