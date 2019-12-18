@@ -68,6 +68,10 @@ class Home extends Page {
                 opacity: 1;
             }
 
+            .series ul li.selected {
+               cursor: default;
+            }
+
             .series ul li h1.big {
                 font-family: var(--elara-font-display);
                 font-size: 1.2em;
@@ -275,7 +279,7 @@ class Home extends Page {
         }
 
         if(this._currentAnimation){
-            this._currentAnimation.cancel();
+            await this._currentAnimation.finished;
         }
 
         await this._fadeCurrent();
@@ -283,12 +287,11 @@ class Home extends Page {
 
     private async _fadeCurrent(){
         if(this._currentAnimation){
-            this._currentAnimation.cancel();
+            await this._currentAnimation.finished;
         }
 
         const animation = pulseWith(300);
         this._currentAnimation = this._previewed.animate(animation.effect, animation.options);
-        await this._currentAnimation.finished;
         this._currentAnimation = null;
     }
 
@@ -341,7 +344,7 @@ class Home extends Page {
             <div class="series">
                 <nav>
                     <ul>
-                        ${repeat(this.categories, (category, idx) => html`<li class="serie-${idx} ${this.selected === idx ? 'selected' : ''}" @click=${() => this._onCatClick(idx)}><h1 class="big">${category.name}</h1></li>`)}
+                        ${repeat(this.categories, (category, idx) => html`<li class="serie-${idx} ${this.selected === idx ? 'selected disabled' : ''}" @click=${() => this.selected === idx ? null : this._onCatClick(idx)}><h1 class="big">${category.name}</h1></li>`)}
                     </ul>
                 </nav>
             </div>
