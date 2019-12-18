@@ -6,10 +6,11 @@ import { repeat } from 'lit-html/directives/repeat';
 import Constants from '../constants';
 import { wrap } from '../core/errors/errors';
 import { WPCategory } from '../interfaces';
-import { fadeWith } from '../core/animations';
-import { timer } from 'rxjs';
-import { exhaustMap } from 'rxjs/operators';
+import { pulseWith } from '../core/animations';
+import { timer, fromEvent, BehaviorSubject, EMPTY, merge } from 'rxjs';
+import { exhaustMap, concatMapTo, switchMap, tap, startWith, distinctUntilChanged } from 'rxjs/operators';
 import { PaperProgressElement } from '@polymer/paper-progress';
+import { Utils } from '../core/ui/ui';
 
 enum SwitchingState {
     willPrev = 'prev',
@@ -142,8 +143,8 @@ class Home extends Page {
 
             .preview .progress paper-progress {
                 width: 50vw;
-                --paper-progress-active-color: #002FA7;
-                --paper-progress-secondary-color: var(--paper-light-blue-700);
+                --paper-progress-active-color: rgb(0, 47, 167);
+                --paper-progress-secondary-color: rgba(0, 47, 167, .5);
                 --paper-progress-transition-duration: 0.08s;
                 --paper-progress-transition-timing-function: ease;
                 --paper-progress-transition-delay: 0.08s;
@@ -153,37 +154,75 @@ class Home extends Page {
     }
 
     private _setupWalk(){
-        return timer(5000, 5000).pipe(
-            exhaustMap(async () => {
-                const progress = this.shadowRoot.querySelector('#main-progress') as PaperProgressElement;
+        const pauseBS = new BehaviorSubject<boolean>(false);
+        const pause$ = pauseBS.pipe(
+            distinctUntilChanged()
+        );
 
-                const animations = progress.getAnimations();
-                progress.classList.add('transiting');
+        const items = Array.from(this.shadowRoot.querySelectorAll('[will-pause]'));
+        const objects = [];
+        for(const item of items){
+            const enter$ = fromEvent<MouseEvent>(item, 'mouseenter', (_, key) => key).pipe(
+                tap(() => {
+                    pauseBS.next(true);
+                })
+            );
+    
+            const leave$ = fromEvent<MouseEvent>(item, 'mouseout', (_, key) => key).pipe(
+                tap(() => {
+                    pauseBS.next(false);
+                })
+            );
+            objects.push(enter$, leave$);
+        };
 
-                if(this._canNext()){
-                    await this._onNextSculpture();
-                } else {
-                    let next = this.selected;
-                    
-                    if(this.selected == this._catMax()){
-                        next = 0;
-                        this._onCatClick(0);
-                    } else {
-                        this.selected++;
-                        next = this.selected;
-                    }
+        const pauseHandle = merge(...objects).pipe(
+            concatMapTo(pause$),
+            startWith(false)
+        );
 
-                    await this._onCatClick(next);
+        return pauseHandle.pipe(
+            switchMap(paused => {
+                if(paused === true){
+                    console.warn('stream pause');
+                    return EMPTY;
                 }
 
-                for(const animation of animations){
-                    await animation.finished;
-                }
+                console.warn('stream start');
+                return timer(3000, 3000).pipe(
+                    exhaustMap(async () => {
 
-                requestAnimationFrame(() => {
-                    progress.classList.remove('transiting');
-                });
-            }),
+                        const progress = this.shadowRoot.querySelector('#main-progress') as PaperProgressElement;
+        
+                        const animations = progress.getAnimations();
+                        progress.classList.add('transiting');
+        
+                        if(this._canNext()){
+                            await this._onNextSculpture();
+                        } else {
+                            let next = this.selected;
+                            
+                            if(this.selected == this._catMax){
+                                next = 0;
+                                this._onCatClick(0);
+                            } else {
+                                this.selected++;
+                                next = this.selected;
+                            }
+        
+                            await this._onCatClick(next);
+                        }
+        
+                        for(const animation of animations){
+                            await animation.finished;
+                        }
+        
+                        requestAnimationFrame(() => {
+                            progress.classList.remove('transiting');
+                        });
+                    }),
+                );
+            })
         ).toPromise();
     }
 
@@ -222,9 +261,20 @@ class Home extends Page {
     private async _onCatClick(idx: number){
         this.selected = idx;
         this.sculptureIndex = 0;
-        this.sculptureMax = 0;
-        this.sculptureMax = this.categories[idx].sculptures.nodes.length;
+        this.sculptureMax = this.categories[idx].sculptures.nodes.length - 1;
         this.previewing = this.categories[idx].sculptures.nodes[this.sculptureIndex].featuredImage.sourceUrl;
+
+        const catItem = this.shadowRoot.querySelector('.series ul li.serie-'+idx+'');
+        if(!catItem){
+            return;
+        }
+        
+        if(!Utils.isInViewport(catItem)){
+            const yOffset = -50; 
+            const y = catItem.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+            window.scrollTo({top: y, behavior: 'smooth'});
+        }
 
         if(this._currentAnimation){
             this._currentAnimation.cancel();
@@ -238,7 +288,7 @@ class Home extends Page {
             this._currentAnimation.cancel();
         }
 
-        const animation = fadeWith(300, true);
+        const animation = pulseWith(300);
         this._currentAnimation = this._previewed.animate(animation.effect, animation.options);
         await this._currentAnimation.finished;
         this._currentAnimation = null;
@@ -248,7 +298,7 @@ class Home extends Page {
         return this.shadowRoot.querySelector('#previewed');
     }
 
-    private _catMax(){
+    private get _catMax(){
         return this.categories.length - 1;
     }
 
@@ -257,7 +307,7 @@ class Home extends Page {
     }
 
     private _canNext(){
-        return this.sculptureIndex+1 <= this.sculptureMax-1;
+        return this.sculptureIndex+1 <= this.sculptureMax;
     }
 
     private async _move(state: SwitchingState){
@@ -271,6 +321,7 @@ class Home extends Page {
         }
 
         this.previewing = this.categories[this.selected].sculptures.nodes[this.sculptureIndex].featuredImage.sourceUrl;
+        await this.updateComplete;
         await this._fadeCurrent();   
     }
 
@@ -292,25 +343,26 @@ class Home extends Page {
             <div class="series">
                 <nav>
                     <ul>
-                        ${repeat(this.categories, (category, idx) => html`<li class="${this.selected === idx ? 'selected' : ''}" @click=${() => this._onCatClick(idx)}><h1 class="big">${category.name}</h1></li>`)}
+                        ${repeat(this.categories, (category, idx) => html`<li class="serie-${idx} ${this.selected === idx ? 'selected' : ''}" @click=${() => this._onCatClick(idx)}><h1 class="big">${category.name}</h1></li>`)}
                     </ul>
                 </nav>
             </div>
             <div class="preview">
-                <iron-image id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade></iron-image>
+                <iron-image will-pause id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade></iron-image>
                 <div class="unfold">
-                    <iron-icon icon="unfold-more"></iron-icon>
+                    <iron-icon will-pause icon="unfold-more"></iron-icon>
                 </div>
                 <div class="count">
-                    <iron-icon icon="chevron-left" class="${this.sculptureIndex === 0 ? 'disabled' : ''}" @click=${this._onPrevSculpture}></iron-icon> 
-                    <div class="pagination"><span class="current">${this.sculptureIndex+1}</span> / <span class="total">${this.sculptureMax}</span></div> 
-                    <iron-icon icon="chevron-right" class="${this.sculptureIndex === this.sculptureMax-1 ? 'disabled' : ''}" @click=${this._onNextSculpture}></iron-icon>
+                    <iron-icon will-pause icon="chevron-left" class="${this.sculptureIndex === 0 ? 'disabled' : ''}" @click=${this._onPrevSculpture}></iron-icon> 
+                    <div class="pagination"><span class="current">${this.sculptureIndex+1}</span> / <span class="total">${this.sculptureMax+1}</span></div> 
+                    <iron-icon will-pause icon="chevron-right" class="${this.sculptureIndex === this.sculptureMax ? 'disabled' : ''}" @click=${this._onNextSculpture}></iron-icon>
                 </div>
                 <div class="progress">
                     <paper-progress 
                         id="main-progress" 
-                        value=${(this.selected / this.categories.length-1) * 100}
-                        active secondary-progress=${(this.sculptureIndex / (this.sculptureMax-1)) * 100}
+                        active 
+                        value=${(this.sculptureIndex / this.sculptureMax) * 100}
+                        secondary-progress=${(this.selected / this._catMax) * 100}
                     ></paper-progress>
                 </div>
             </div>
