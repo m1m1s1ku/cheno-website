@@ -339,6 +339,17 @@ class Home extends Page {
     }
 
     private async _onNextSculpture(_e?: Event){
+        if(this.sculptureIndex === this.sculptureMax){
+            if(this.selected+1 <= this._catMax){
+                this.selected++;
+            } else {
+                this.selected = 0;
+            }
+
+            this._onCatClick(this.selected);
+            return;
+        }
+
         if(!this._canNext()){ return; }
 
         await this._move(SwitchingState.willNext);
@@ -362,7 +373,7 @@ class Home extends Page {
                 <div class="count">
                     <iron-icon will-pause icon="chevron-left" class="${this.sculpture === 0 ? 'disabled' : ''}" @click=${this._onPrevSculpture}></iron-icon> 
                     <div class="pagination"><span class="current">${this.sculptureIndex}</span> / <span class="total">${this.sculptureMax}</span></div> 
-                    <iron-icon will-pause icon="chevron-right" class="${this.sculptureIndex === this.sculptureMax ? 'disabled' : ''}" @click=${this._onNextSculpture}></iron-icon>
+                    <iron-icon will-pause icon="chevron-right" @click=${this._onNextSculpture}></iron-icon>
                 </div>
                 <div class="progress">
                     <paper-progress 
