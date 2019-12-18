@@ -29,7 +29,7 @@ class Home extends Page {
     @property({type: Number, reflect: false})
     public selected = 0;
     @property({type: Number, reflect: false})
-    public sculptureIndex = 0;
+    public sculptureIndex = 1;
     @property({type: Number, reflect: false})
     public sculptureMax = 0;
 
@@ -262,9 +262,9 @@ class Home extends Page {
 
     private async _onCatClick(idx: number){
         this.selected = idx;
-        this.sculptureIndex = 0;
+        this.sculptureIndex = 1;
         this.sculptureMax = this.categories[idx].sculptures.nodes.length - 1;
-        this.previewing = this.categories[idx].sculptures.nodes[this.sculptureIndex].featuredImage.sourceUrl;
+        this.previewing = this.categories[idx].sculptures.nodes[this.sculptureIndex-1].featuredImage.sourceUrl;
 
         const catItem = this.shadowRoot.querySelector('.series ul li.serie-'+idx+'');
         if(!catItem){
@@ -319,7 +319,7 @@ class Home extends Page {
                 break;
         }
 
-        this.previewing = this.categories[this.selected].sculptures.nodes[this.sculptureIndex].featuredImage.sourceUrl;
+        this.previewing = this.categories[this.selected].sculptures.nodes[this.sculptureIndex-1].featuredImage.sourceUrl;
         await this.updateComplete;
         await this._fadeCurrent();   
     }
@@ -352,8 +352,8 @@ class Home extends Page {
                     <iron-icon will-pause icon="unfold-more"></iron-icon>
                 </div>
                 <div class="count">
-                    <iron-icon will-pause icon="chevron-left" class="${this.sculptureIndex === 0 ? 'disabled' : ''}" @click=${this._onPrevSculpture}></iron-icon> 
-                    <div class="pagination"><span class="current">${this.sculptureIndex+1}</span> / <span class="total">${this.sculptureMax+1}</span></div> 
+                    <iron-icon will-pause icon="chevron-left" class="${this.sculptureIndex === 1 ? 'disabled' : ''}" @click=${this._onPrevSculpture}></iron-icon> 
+                    <div class="pagination"><span class="current">${this.sculptureIndex}</span> / <span class="total">${this.sculptureMax}</span></div> 
                     <iron-icon will-pause icon="chevron-right" class="${this.sculptureIndex === this.sculptureMax ? 'disabled' : ''}" @click=${this._onNextSculpture}></iron-icon>
                 </div>
                 <div class="progress">
