@@ -7,7 +7,7 @@ import Constants from '../constants';
 import { wrap } from '../core/errors/errors';
 import { WPCategory } from '../interfaces';
 import { pulseWith } from '../core/animations';
-import { timer, fromEvent, BehaviorSubject, EMPTY, merge } from 'rxjs';
+import { timer, fromEvent, BehaviorSubject, EMPTY, merge, scheduled, animationFrameScheduler } from 'rxjs';
 import { exhaustMap, concatMapTo, switchMap, tap, startWith, distinctUntilChanged } from 'rxjs/operators';
 import { PaperProgressElement } from '@polymer/paper-progress';
 import { Utils } from '../core/ui/ui';
@@ -152,11 +152,17 @@ class Home extends Page {
                 --paper-progress-active-color: rgb(0, 47, 167);
                 --paper-progress-secondary-color: rgba(0, 47, 167, .5);
                 --paper-progress-transition-duration: 0.08s;
+                --paper-progress-indeterminate-cycle-duration: 7s;
+
                 --paper-progress-transition-timing-function: ease;
                 --paper-progress-transition-delay: 0.08s;
             }
             `
         ];
+    }
+
+    private get _progress(): PaperProgressElement{
+        return this.shadowRoot.querySelector('#main-progress');
     }
 
     private _setupWalk(){
@@ -182,23 +188,22 @@ class Home extends Page {
             objects.push(enter$, leave$);
         };
 
-        const pauseHandle = merge(...objects).pipe(
+        const pauseHandle = scheduled(merge(...objects).pipe(
             concatMapTo(pause$),
             startWith(false)
-        );
+        ), animationFrameScheduler);
 
         return pauseHandle.pipe(
             switchMap(paused => {
+                this._progress.indeterminate = !paused;
                 if(paused === true){
                     return EMPTY;
                 }
 
                 return timer(3000, 3000).pipe(
-                    exhaustMap(async () => {
-                        const progress = this.shadowRoot.querySelector('#main-progress') as PaperProgressElement;
-        
-                        const animations = progress.getAnimations();
-                        progress.classList.add('transiting');
+                    exhaustMap(async () => {   
+                        const animations = this._progress.getAnimations();
+                        this._progress.classList.add('transiting');
         
                         if(this._canNext()){
                             await this._onNextSculpture();
@@ -217,12 +222,10 @@ class Home extends Page {
                         }
         
                         for(const animation of animations){
-                            await animation.finished;
+                            animation.cancel();
                         }
         
-                        requestAnimationFrame(() => {
-                            progress.classList.remove('transiting');
-                        });
+                        this._progress.classList.remove('transiting');
                     }),
                 );
             })
@@ -277,21 +280,16 @@ class Home extends Page {
             window.scrollTo({top: y, behavior: 'smooth'});
         }
 
-        if(this._currentAnimation){
-            await this._currentAnimation.finished;
-        }
-
         await this._fadeCurrent();
     }
 
     private async _fadeCurrent(){
         if(this._currentAnimation){
-            await this._currentAnimation.finished;
+            this._currentAnimation.cancel();
         }
 
         const animation = pulseWith(300);
         this._currentAnimation = this._previewed.animate(animation.effect, animation.options);
-        this._currentAnimation = null;
     }
 
     private get _previewed(){
