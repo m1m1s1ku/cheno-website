@@ -366,7 +366,7 @@ class Home extends Page {
             <div class="series">
                 <nav>
                     <ul>
-                        ${repeat(this.categories, (category, idx) => html`<li class="serie-${idx} ${this.selected === idx ? 'selected disabled' : ''}" @click=${() => this.selected === idx ? null : this._onCatClick(idx)}><h1 class="big">${category.name}</h1></li>`)}
+                        ${repeat(this.categories, (category, idx) => html`<li will-pause class="serie-${idx} ${this.selected === idx ? 'selected disabled' : ''}" @click=${() => this.selected === idx ? null : this._onCatClick(idx)}><h1 class="big">${category.name}</h1></li>`)}
                     </ul>
                 </nav>
             </div>
