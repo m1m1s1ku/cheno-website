@@ -85,6 +85,7 @@ class Home extends Page {
             }
 
             .previewed {
+                cursor: pointer;
                 height: 75vh;
                 width: 50vw;
             }
