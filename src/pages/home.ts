@@ -302,7 +302,7 @@ class Home extends Page {
     }
 
     private _canPrev(){
-        return this.sculpture > 0;
+        return this.sculptureIndex !== 1;
     }
 
     private _canNext(){
@@ -333,6 +333,12 @@ class Home extends Page {
     }
 
     private async _onPrevSculpture(_e?: Event){
+        if(this.sculptureIndex === 1 && this.selected > 0){
+            this.selected--;
+            await this._onCatClick(this.selected);
+            return;
+        }
+
         if(!this._canPrev()){ return; }
 
         await this._move(SwitchingState.willPrev);
@@ -346,7 +352,7 @@ class Home extends Page {
                 this.selected = 0;
             }
 
-            this._onCatClick(this.selected);
+            await this._onCatClick(this.selected);
             return;
         }
 
@@ -371,7 +377,7 @@ class Home extends Page {
                     <iron-icon will-pause icon="unfold-more"></iron-icon>
                 </div>
                 <div class="count">
-                    <iron-icon will-pause icon="chevron-left" class="${this.sculpture === 0 ? 'disabled' : ''}" @click=${this._onPrevSculpture}></iron-icon> 
+                    <iron-icon will-pause icon="chevron-left" class="${this.selected === 0 && this.sculptureIndex === 1 ? 'disabled' : ''}" @click=${this._onPrevSculpture}></iron-icon> 
                     <div class="pagination"><span class="current">${this.sculptureIndex}</span> / <span class="total">${this.sculptureMax}</span></div> 
                     <iron-icon will-pause icon="chevron-right" @click=${this._onNextSculpture}></iron-icon>
                 </div>
