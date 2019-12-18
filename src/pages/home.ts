@@ -272,9 +272,7 @@ class Home extends Page {
         }
         
         if(!Utils.isInViewport(catItem)){
-            const yOffset = -50; 
-            const y = catItem.getBoundingClientRect().top + window.pageYOffset + yOffset;
-
+            const y = catItem.getBoundingClientRect().top + window.pageYOffset - 100;
             window.scrollTo({top: y, behavior: 'smooth'});
         }
 
