@@ -92,6 +92,7 @@ class Home extends Page {
                 cursor: pointer;
                 height: 75vh;
                 width: 50vw;
+                margin: 10px;
             }
 
             .series, .preview {
