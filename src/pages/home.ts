@@ -264,7 +264,7 @@ class Home extends Page {
         this.selected = idx;
         this.sculptureIndex = 1;
         this.sculptureMax = this.categories[idx].sculptures.nodes.length - 1;
-        this.previewing = this.categories[idx].sculptures.nodes[this.sculptureIndex-1].featuredImage.sourceUrl;
+        await this._definePreviewed();
 
         const catItem = this.shadowRoot.querySelector('.series ul li.serie-'+idx+'');
         if(!catItem){
@@ -302,11 +302,20 @@ class Home extends Page {
     }
 
     private _canPrev(){
-        return this.sculptureIndex-1 >= 0;
+        return this.sculpture >= 0;
     }
 
     private _canNext(){
         return this.sculptureIndex+1 <= this.sculptureMax;
+    }
+
+    private get sculpture(){
+        return this.sculptureIndex-1;
+    }
+
+    private async _definePreviewed(){
+        this.previewing = this.categories[this.selected].sculptures.nodes[this.sculpture].featuredImage.sourceUrl;
+        await this.updateComplete;
     }
 
     private async _move(state: SwitchingState){
@@ -319,8 +328,7 @@ class Home extends Page {
                 break;
         }
 
-        this.previewing = this.categories[this.selected].sculptures.nodes[this.sculptureIndex-1].featuredImage.sourceUrl;
-        await this.updateComplete;
+        await this._definePreviewed();
         await this._fadeCurrent();   
     }
 
