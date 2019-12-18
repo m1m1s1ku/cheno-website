@@ -185,14 +185,11 @@ class Home extends Page {
         return pauseHandle.pipe(
             switchMap(paused => {
                 if(paused === true){
-                    console.warn('stream pause');
                     return EMPTY;
                 }
 
-                console.warn('stream start');
                 return timer(3000, 3000).pipe(
                     exhaustMap(async () => {
-
                         const progress = this.shadowRoot.querySelector('#main-progress') as PaperProgressElement;
         
                         const animations = progress.getAnimations();
