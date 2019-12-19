@@ -12,6 +12,7 @@ import { wrap } from './core/errors/errors';
 
 import { Subscription } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat';
+import { navigate } from './core/routing/routing';
 
 // Polyfills
 import('./polyfill');
@@ -349,7 +350,13 @@ export class ElaraApp extends Root {
 				<div class="main-menu">
 					<nav>
 						<ul>
-							${repeat(this._menuItems, (item) => html`<li><h3>${item.label}</h3></li>`)}
+							${repeat(this._menuItems, (item) => html`<li><h3 @click=${() => {
+								if(item.url.indexOf(Constants.base) !== -1){
+									item.url = item.url.replace(Constants.base, '');
+								}
+
+								navigate(item.url);
+							}}>${item.label}</h3></li>`)}
 						</ul>
 					</nav>
 				</div>
