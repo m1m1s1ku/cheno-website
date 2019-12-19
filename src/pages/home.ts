@@ -420,7 +420,12 @@ class Home extends Page {
             `}
 
             <div class="preview">
-                <iron-image will-pause id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade @click=${() => {
+                <iron-image will-pause id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade @click=${ async () => {
+                    const series = this.shadowRoot.querySelector('.series');
+                    const config = fadeWith(300, false);
+                    const animation = series.animate(config.effect, config.options);
+                    await animation.finished;
+                    
                     if(this._focused === this.categories[this.selected].sculptures.nodes[this.sculpture]){
                         this._focused = null;
                         this._enforcePauseSub.next(false);
