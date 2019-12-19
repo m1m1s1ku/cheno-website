@@ -73,6 +73,7 @@ class Home extends Page {
             }
 
             .series ul li h1.big {
+                display: inline;
                 font-family: var(--elara-font-display);
                 font-size: 1.2em;
             }
@@ -241,19 +242,20 @@ class Home extends Page {
                 query: `{
                     categories {
                       nodes {
-                        sculptures {
+                        sculptures(where: {orderby: {field: MODIFIED, order: DESC}}) {
                           nodes {
                             featuredImage {
                               sourceUrl(size: LARGE)
                             }
-                            title(format: RENDERED)
+                            title(format: RAW)
                           }
                         }
                         name
                         slug
                       }
                     }
-                  }`})})
+                  }
+                  `})})
             .then(res => res.json()).catch(_ => this.dispatchEvent(wrap(_)));
 
         this.categories = requestR.data.categories.nodes;
@@ -366,7 +368,7 @@ class Home extends Page {
             <div class="series">
                 <nav>
                     <ul>
-                        ${repeat(this.categories, (category, idx) => html`<li will-pause class="serie-${idx} ${this.selected === idx ? 'selected disabled' : ''}" @click=${() => this.selected === idx ? null : this._onCatClick(idx)}><h1 class="big">${category.name}</h1></li>`)}
+                        ${repeat(this.categories, (category, idx) => html`<li class="serie-${idx} ${this.selected === idx ? 'selected disabled' : ''}" @click=${() => this.selected === idx ? null : this._onCatClick(idx)}><h1  will-pause class="big">${category.name}</h1></li>`)}
                     </ul>
                 </nav>
             </div>

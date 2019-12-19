@@ -101,6 +101,24 @@ export class ElaraApp extends Root {
 					terrazzo {
 					  logo
 					}
+					menus {
+                        edges {
+                          node {
+                            id
+                            name
+                            slug
+                            menuItems {
+                              edges {
+                                node {
+                                  id
+                                  url
+                                  label
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
 				  }`
             })
 		}).then(res => res.json()).catch(_ => this.dispatchEvent(wrap(_)));
