@@ -72,12 +72,20 @@ export interface WPCategory {
     parent: number;
     slug: string;
     taxonomy: string;
-    sculptures: {nodes: {
-        name: string;
-        featuredImage: {
-            sourceUrl: string
-        }
-    }[]}
+    sculptures: {
+        nodes: Array<{
+            name: string;
+            featuredImage: {
+                sourceUrl: string;
+            };
+            content: {
+                rendered: string;
+            };
+            title: {
+                rendered: string;
+            };
+        }>;
+    };
 };
 
 export interface WPCreateCategory {

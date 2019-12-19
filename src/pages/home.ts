@@ -7,14 +7,27 @@ import Constants from '../constants';
 import { wrap } from '../core/errors/errors';
 import { WPCategory } from '../interfaces';
 import { pulseWith } from '../core/animations';
-import { timer, fromEvent, BehaviorSubject, EMPTY, merge, scheduled, animationFrameScheduler } from 'rxjs';
-import { exhaustMap, concatMapTo, switchMap, tap, startWith, distinctUntilChanged } from 'rxjs/operators';
+import { timer, fromEvent, BehaviorSubject, EMPTY, merge, scheduled, animationFrameScheduler, of } from 'rxjs';
+import { exhaustMap, concatMapTo, switchMap, tap, startWith, distinctUntilChanged, concatMap } from 'rxjs/operators';
 import { PaperProgressElement } from '@polymer/paper-progress';
 import { Utils } from '../core/ui/ui';
+import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 
 enum SwitchingState {
     willPrev = 'prev',
     willNext = 'next'
+};
+
+interface Sculpture {
+    featuredImage: {
+        sourceUrl: string;
+    };
+    content: {
+        rendered: string;
+    };
+    title: {
+        rendered: string;
+    };
 };
 
 class Home extends Page {
@@ -38,6 +51,9 @@ class Home extends Page {
 
     /* Non-updating values */
     private _currentAnimation: Animation;
+    @property({type: Object, reflect: false})
+    private _focused: Sculpture;
+    _enforcePauseSub: BehaviorSubject<boolean>;
 
     public static get styles(){
         return [
@@ -99,6 +115,11 @@ class Home extends Page {
             .series, .preview {
                 height: 100vh;
                 width: 50vw;
+            }
+
+            .series.single {
+                margin-top: 120px;
+                margin-left: 3em;
             }
 
             .preview {
@@ -167,6 +188,7 @@ class Home extends Page {
     }
 
     private _setupWalk(){
+        this._enforcePauseSub = new BehaviorSubject<boolean>(false);
         const pauseBS = new BehaviorSubject<boolean>(false);
         const pause$ = pauseBS.pipe(
             distinctUntilChanged()
@@ -196,13 +218,18 @@ class Home extends Page {
 
         return pauseHandle.pipe(
             switchMap(paused => {
+                return this._enforcePauseSub.pipe(
+                    concatMap(enforced => enforced !== paused ? of(enforced) : of(paused))
+                );
+            }),
+            switchMap(paused => {
                 this._progress.indeterminate = !paused;
                 if(paused === true){
                     return EMPTY;
                 }
 
                 return timer(3000, 3000).pipe(
-                    exhaustMap(async () => {   
+                    exhaustMap(async() => {
                         const animations = this._progress.getAnimations();
                         this._progress.classList.add('transiting');
         
@@ -247,6 +274,7 @@ class Home extends Page {
                             featuredImage {
                               sourceUrl(size: LARGE)
                             }
+                            content(format: RENDERED)
                             title(format: RENDERED)
                           }
                         }
@@ -365,15 +393,29 @@ class Home extends Page {
     public render(): void | TemplateResult {
         return html`
         <div class="home-container">
-            <div class="series">
+            ${!this._focused ? html`<div class="series">
                 <nav>
                     <ul>
                         ${repeat(this.categories, (category, idx) => html`<li class="serie-${idx} ${this.selected === idx ? 'selected disabled' : ''}" @click=${() => this.selected === idx ? null : this._onCatClick(idx)}><h1  will-pause class="big">${category.name}</h1></li>`)}
                     </ul>
                 </nav>
+            </div>` : html`
+            <div class="series single">
+                <h1>${this._focused.title}</h1>
+                ${unsafeHTML(this._focused.content)}
             </div>
+            `}
+
             <div class="preview">
-                <iron-image will-pause id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade></iron-image>
+                <iron-image will-pause id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade @click=${() => {
+                    if(this._focused === this.categories[this.selected].sculptures.nodes[this.sculpture]){
+                        this._focused = null;
+                        this._enforcePauseSub.next(false);
+                    } else {
+                        this._focused = this.categories[this.selected].sculptures.nodes[this.sculpture];
+                        this._enforcePauseSub.next(true);
+                    }
+                }}></iron-image>
                 <div class="unfold">
                     <iron-icon will-pause icon="unfold-more"></iron-icon>
                 </div>
