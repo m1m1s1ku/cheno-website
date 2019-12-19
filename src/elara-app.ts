@@ -335,9 +335,29 @@ export class ElaraApp extends Root {
 	`];
 	}
 
-	private _toggleMenu(){
+	private _toggleMenu(event: Event){
 		this.shadowRoot.querySelector('.main-menu').classList.toggle('visible');
-		this.shadowRoot.querySelector('.menu').classList.toggle('active');
+		const activated = this.shadowRoot.querySelector('.menu').classList.toggle('active');
+		
+		if(activated){
+			// cancel first click event
+			event.preventDefault();
+			event.stopPropagation();
+			// then set escape listener
+			this._hideOnClickOutside();
+		}
+	}
+
+	private _hideOnClickOutside() {
+		const outsideClickListener = event => {
+			if(event.target instanceof ElaraApp){
+				this.shadowRoot.querySelector('.main-menu').classList.remove('visible');
+				this.shadowRoot.querySelector('.menu').classList.remove('active');
+				document.removeEventListener('click', outsideClickListener);
+			}
+		};
+	
+		document.addEventListener('click', outsideClickListener);
 	}
 	
 	public render() {
