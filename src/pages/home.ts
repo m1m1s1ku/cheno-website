@@ -7,8 +7,8 @@ import Constants from '../constants';
 import { wrap } from '../core/errors/errors';
 import { WPCategory } from '../interfaces';
 import { pulseWith, fadeWith } from '../core/animations';
-import { timer, fromEvent, BehaviorSubject, EMPTY, merge, scheduled, animationFrameScheduler, of } from 'rxjs';
-import { exhaustMap, concatMapTo, switchMap, tap, startWith, distinctUntilChanged, concatMap } from 'rxjs/operators';
+import { timer, fromEvent, BehaviorSubject, EMPTY, merge, scheduled, animationFrameScheduler } from 'rxjs';
+import { exhaustMap, concatMapTo, switchMap, tap, startWith, distinctUntilChanged, map } from 'rxjs/operators';
 import { PaperProgressElement } from '@polymer/paper-progress';
 import { Utils, decodeHTML } from '../core/ui/ui';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
@@ -218,7 +218,7 @@ class Home extends Page {
         return pauseHandle.pipe(
             switchMap(paused => {
                 return this._enforcePauseSub.pipe(
-                    concatMap(enforced => enforced === false || enforced !== paused ? of(enforced) : of(paused))
+                    map(enforced => enforced === false || enforced !== paused ? enforced : paused)
                 );
             }),
             switchMap(paused => {
