@@ -6,7 +6,7 @@ import { repeat } from 'lit-html/directives/repeat';
 import Constants from '../constants';
 import { wrap } from '../core/errors/errors';
 import { WPCategory } from '../interfaces';
-import { pulseWith } from '../core/animations';
+import { pulseWith, fadeWith } from '../core/animations';
 import { timer, fromEvent, BehaviorSubject, EMPTY, merge, scheduled, animationFrameScheduler, of } from 'rxjs';
 import { exhaustMap, concatMapTo, switchMap, tap, startWith, distinctUntilChanged, concatMap } from 'rxjs/operators';
 import { PaperProgressElement } from '@polymer/paper-progress';
@@ -218,7 +218,7 @@ class Home extends Page {
         return pauseHandle.pipe(
             switchMap(paused => {
                 return this._enforcePauseSub.pipe(
-                    concatMap(enforced => enforced !== paused ? of(enforced) : of(paused))
+                    concatMap(enforced => enforced === false || enforced !== paused ? of(enforced) : of(paused))
                 );
             }),
             switchMap(paused => {
@@ -317,8 +317,12 @@ class Home extends Page {
             this._currentAnimation.cancel();
         }
 
-        const animation = pulseWith(300);
+        let animation = pulseWith(300);
         this._currentAnimation = this._previewed.animate(animation.effect, animation.options);
+        if(this._focused){
+            animation = fadeWith(300, true);
+            this.shadowRoot.querySelector('.series').animate(animation.effect, animation.options);
+        }
     }
 
     private get _previewed(){
