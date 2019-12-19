@@ -116,7 +116,7 @@ class Home extends Page {
                 width: 50vw;
             }
 
-            .series.single {
+            .series .single-container {
                 margin-top: 120px;
                 margin-left: 3em;
             }
@@ -403,9 +403,11 @@ class Home extends Page {
                     </ul>
                 </nav>
             </div>` : html`
-            <div class="series single">
-                <h1>${decodeHTML(this._focused.title)}</h1>
-                ${unsafeHTML(this._focused.content)}
+            <div class="series">
+                <div class="single-container">
+                    <h1>${decodeHTML(this._focused.title)}</h1>
+                    ${unsafeHTML(this._focused.content)}
+                </div>
             </div>
             `}
 
