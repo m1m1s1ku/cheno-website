@@ -121,6 +121,10 @@ class Home extends Page {
                 margin-left: 3em;
             }
 
+            .series .single-container img {
+                max-width: 30vw;
+            }
+
             .preview {
                display: flex;
                align-items: center;

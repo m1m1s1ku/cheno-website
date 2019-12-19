@@ -11,6 +11,7 @@ import Constants from './constants';
 import { wrap } from './core/errors/errors';
 
 import { Subscription } from 'rxjs';
+import { repeat } from 'lit-html/directives/repeat';
 
 // Polyfills
 import('./polyfill');
@@ -24,6 +25,9 @@ export class ElaraApp extends Root {
 	public static readonly is: string = 'elara-app';
 
 	public default = 'home';
+
+	@property({type: Array, reflect: false, noAccessor: true})
+	private _menuItems: ReadonlyArray<WPLink> = [];
 
 	@property({type: Array, reflect: false, noAccessor: true})
 	public legalLinks: WPLink[] = [];
@@ -125,7 +129,10 @@ export class ElaraApp extends Root {
 
 		const colors = requestR.data.terrazzo;
 		this.logo = colors.logo;
-		
+		const mainMenu = requestR.data.menus.edges.find(menu => menu.node.slug === 'menu');
+		let items = mainMenu.node.menuItems.edges;
+		items = items.map(item => item.node);
+		this._menuItems = items;
 		await this.performUpdate();
 	}
 
@@ -342,11 +349,7 @@ export class ElaraApp extends Root {
 				<div class="main-menu">
 					<nav>
 						<ul>
-							<li><h3>Accueil</h3></li>
-							<li><h3>Visites</h3></li>
-							<li><h3>Expositions</h3></li>
-							<li><h3>A propos</h3></li>
-							<li><h3>Contact</h3></li>
+							${repeat(this._menuItems, (item) => html`<li><h3>${item.label}</h3></li>`)}
 						</ul>
 					</nav>
 				</div>
