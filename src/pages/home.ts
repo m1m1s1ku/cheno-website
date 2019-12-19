@@ -10,7 +10,7 @@ import { pulseWith } from '../core/animations';
 import { timer, fromEvent, BehaviorSubject, EMPTY, merge, scheduled, animationFrameScheduler, of } from 'rxjs';
 import { exhaustMap, concatMapTo, switchMap, tap, startWith, distinctUntilChanged, concatMap } from 'rxjs/operators';
 import { PaperProgressElement } from '@polymer/paper-progress';
-import { Utils } from '../core/ui/ui';
+import { Utils, decodeHTML } from '../core/ui/ui';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 
 enum SwitchingState {
@@ -25,9 +25,7 @@ interface Sculpture {
     content: {
         rendered: string;
     };
-    title: {
-        rendered: string;
-    };
+    title: string;
 };
 
 class Home extends Page {
@@ -53,7 +51,8 @@ class Home extends Page {
     private _currentAnimation: Animation;
     @property({type: Object, reflect: false})
     private _focused: Sculpture;
-    _enforcePauseSub: BehaviorSubject<boolean>;
+
+    private _enforcePauseSub: BehaviorSubject<boolean>;
 
     public static get styles(){
         return [
@@ -343,6 +342,10 @@ class Home extends Page {
     }
 
     private async _definePreviewed(){
+        if(this._focused){
+            this._focused = this.categories[this.selected].sculptures.nodes[this.sculpture];
+        }
+
         this.previewing = this.categories[this.selected].sculptures.nodes[this.sculpture].featuredImage.sourceUrl;
         await this.updateComplete;
     }
@@ -401,7 +404,7 @@ class Home extends Page {
                 </nav>
             </div>` : html`
             <div class="series single">
-                <h1>${this._focused.title}</h1>
+                <h1>${decodeHTML(this._focused.title)}</h1>
                 ${unsafeHTML(this._focused.content)}
             </div>
             `}

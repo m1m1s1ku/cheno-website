@@ -74,16 +74,13 @@ export interface WPCategory {
     taxonomy: string;
     sculptures: {
         nodes: Array<{
-            name: string;
             featuredImage: {
                 sourceUrl: string;
             };
             content: {
                 rendered: string;
             };
-            title: {
-                rendered: string;
-            };
+            title: string;
         }>;
     };
 };
