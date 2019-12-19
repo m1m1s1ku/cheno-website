@@ -158,6 +158,10 @@ export class ElaraApp extends Root {
 	public static get styles(): CSSResult[] {
 		return [
 		css`
+		.logo {
+			cursor: pointer;
+		}
+		
 		.content {
 			color: var(--elara-font-color);
 			display: inline-block;
@@ -339,7 +343,9 @@ export class ElaraApp extends Root {
 	public render() {
 		return html`
 			<header>
-				<iron-image class="logo" sizing="contain" src="${this.logo}"></iron-image>
+				<iron-image class="logo" sizing="contain" src="${this.logo}" @click=${() => {
+					navigate(Constants.defaults.route);
+				}}></iron-image>
 				<button class="menu" @click=${this._toggleMenu}>
 					<svg viewBox="0 0 64 48">
 						<path d="M19,15 L45,15 C70,15 58,-2 49.0177126,7 L19,37"></path>
