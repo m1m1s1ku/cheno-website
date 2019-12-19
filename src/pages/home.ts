@@ -247,7 +247,7 @@ class Home extends Page {
                             featuredImage {
                               sourceUrl(size: LARGE)
                             }
-                            title(format: RAW)
+                            title(format: RENDERED)
                           }
                         }
                         name
