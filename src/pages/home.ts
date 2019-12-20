@@ -90,6 +90,7 @@ class Home extends Page {
                 display: inline;
                 font-family: var(--elara-font-display);
                 font-size: 1.2em;
+                position: relative;
             }
 
             @media (min-width: 500px){
@@ -177,6 +178,26 @@ class Home extends Page {
 
             .single-cat {
                 cursor: pointer;
+            }
+
+            .big::before {
+                content: '';
+                position: absolute;
+                background: var(--elara-secondary);
+                width: 80%;
+                height: 1px;
+                bottom: -2px;
+                transform-origin: 50% 0;
+                transform: scale3d(0,1,1);
+                opacity: 0;
+                transition: all 0.3s;
+                transition-property: opacity, transform;
+            }
+
+            .selected .big::before,
+            .selected:hover .big::before {
+                transform: scale3d(1,1,1);
+                opacity: 1;
             }
             `
         ];
@@ -404,7 +425,7 @@ class Home extends Page {
             ${!this._focused ? html`<div class="series">
                 <nav>
                     <ul>
-                        ${repeat(this.categories, (category, idx) => html`<li class="serie-${idx} ${this.selected === idx ? 'selected disabled' : ''}" @click=${() => this.selected === idx ? null : this._onCatClick(idx)}><h1  will-pause class="big">${category.name}</h1></li>`)}
+                        ${repeat(this.categories, (category, idx) => html`<li class="serie serie-${idx} ${this.selected === idx ? 'selected disabled' : ''}" @click=${() => this.selected === idx ? null : this._onCatClick(idx)}><h1  will-pause class="big">${category.name}</h1></li>`)}
                     </ul>
                 </nav>
             </div>` : html`

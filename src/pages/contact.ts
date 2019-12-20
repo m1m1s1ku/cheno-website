@@ -12,9 +12,13 @@ class ContactController extends Page {
             css`
             .contact {
                 display: grid;
+                margin-top: 4em;
+
                 grid-template-columns: repeat(2, 1fr);
+
                 padding: 2em;
                 padding-top: 6em;
+
                 --mdc-notched-outline-leading-width: 10px;
                 --mdc-notched-outline-trailing-border-radius: 0 10px 10px 0;
             }
@@ -25,15 +29,20 @@ class ContactController extends Page {
                 width: auto;
             }
 
-            form .field {
+            form .field.send {
                 display: flex;
                 justify-content: flex-end;
                 padding: 0;
             }
 
-            form .field > * {
+            form .field > mwc-textfield,
+            form .field > mwc-textarea {
                 margin: 1em 0;
                 width: 100%;
+            }
+
+            form .field.send > mwc-button {
+                width: auto;
             }
 
             .side.layer {
@@ -62,7 +71,7 @@ class ContactController extends Page {
                         outlined
                     ></mwc-textarea>
                 </div>
-                <div class="field">
+                <div class="field send">
                     <mwc-button raised label="Envoyer" icon="send" trailingIcon></mwc-button>
                 </div>
             </form>
