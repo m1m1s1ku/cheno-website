@@ -259,7 +259,6 @@ class Home extends Page {
                             
                             if(this.selected == this._catMax){
                                 next = 0;
-                                this._onCatClick(0);
                             } else {
                                 this.selected++;
                                 next = this.selected;
