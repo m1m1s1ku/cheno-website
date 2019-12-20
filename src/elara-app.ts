@@ -151,7 +151,8 @@ export class ElaraApp extends Root {
 	public get bootstrap(){		
 		return Promise.all([
 			this._setup(),
-			import('./polymer')
+			import('./polymer'),
+			import('./mwc')
 		]);
 	}
 

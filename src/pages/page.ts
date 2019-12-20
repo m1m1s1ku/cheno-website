@@ -72,7 +72,6 @@ class PageController extends Page {
             .page {
                 padding: 2em;
                 padding-top: 6em;
-                background: linear-gradient( to bottom, rgba(255, 255, 255, 0), rgba(249, 249, 249, 0.6) );
             }
 
             li {
@@ -82,7 +81,6 @@ class PageController extends Page {
             .content {
                 padding: 1em;
                 width: 100%;
-                background-color: rgba(255, 255, 255, 0.8);
             }
 
             .cols {
@@ -221,6 +219,7 @@ class PageController extends Page {
             ${this.article ? html`
             <div class="cols">
                 <div class="content">
+                    <h2>${this.article.title}</h2>
                     ${unsafeHTML(this.article.content)}
                 </div>
                 ${this.featured ? html`

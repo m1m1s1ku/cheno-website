@@ -11,11 +11,11 @@
     "postbuild": "node ./deploy.js"
   },
   "dependencies": {
-    "@polymer/iron-icons": "^3.0.1",
+    "@material/mwc-icon": "^0.12.0",
+    "@material/mwc-linear-progress": "^0.12.0",
+    "@material/mwc-textarea": "^0.12.0",
+    "@material/mwc-textfield": "^0.12.0",
     "@polymer/iron-image": "^3.0.2",
-    "@polymer/paper-icon-button": "^3.0.2",
-    "@polymer/paper-input": "^3.1.0",
-    "@polymer/paper-progress": "^3.0.1",
     "@polymer/paper-spinner": "^3.0.2",
     "@sentry/browser": "^5.10.2",
     "@webcomponents/webcomponentsjs": "^2.4.0",

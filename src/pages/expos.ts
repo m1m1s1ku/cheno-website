@@ -109,10 +109,7 @@ class Expos extends Page {
                 display: flex;
                 justify-content: space-between;
                 flex-direction: row;
-            }
-
-            paper-input {
-                --paper-input-container-focus-color: var(--elara-primary);
+                align-items: center;
             }
             
             .article-thumb {
@@ -222,9 +219,9 @@ class Expos extends Page {
         <div class="expos" role="main">
             <div class="title-search">
                 <h1>Expositions</h1>
-                <paper-input autofocus type="search" label="Recherche ..." @value-changed=${(event: CustomEvent) => {
+                <mwc-textfield label="Recherche" @input=${(event: CustomEvent) => {
                     this.search(event.detail.value);
-                }}></paper-input>
+                }}></mwc-textfield>
             </div>
             ${!this.loaded ? html`<paper-spinner active></paper-spinner>` : html``}
             ${repeat(this.articles, article => html`

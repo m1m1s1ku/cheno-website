@@ -9,7 +9,6 @@ import { WPCategory } from '../interfaces';
 import { pulseWith, fadeWith } from '../core/animations';
 import { timer, fromEvent, BehaviorSubject, EMPTY, merge, scheduled, animationFrameScheduler } from 'rxjs';
 import { exhaustMap, concatMapTo, switchMap, tap, startWith, distinctUntilChanged, map } from 'rxjs/operators';
-import { PaperProgressElement } from '@polymer/paper-progress';
 import { Utils, decodeHTML } from '../core/ui/ui';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 
@@ -147,18 +146,18 @@ class Home extends Page {
                 justify-content: flex-start;
             }
 
-            .preview .unfold iron-icon, .preview .count iron-icon {
+            .preview .unfold mwc-icon, .preview .count mwc-icon {
                 opacity: .5;
                 cursor: pointer;
                 transition: opacity .3s linear;
             }
 
-            .preview .count iron-icon.disabled {
+            .preview .count mwc-icon.disabled {
                 opacity: 0 !important;
                 cursor: default;
             }
 
-            .preview .unfold iron-icon:hover, .preview .count iron-icon:hover {
+            .preview .unfold mwc-icon:hover, .preview .count mwc-icon:hover {
                 opacity: 1;
             }
 
@@ -172,22 +171,15 @@ class Home extends Page {
                 width: 50vw;
             }
 
-            .preview .progress paper-progress {
+            .preview .progress mwc-linear {
                 width: 50vw;
-                --paper-progress-active-color: rgb(0, 47, 167);
-                --paper-progress-secondary-color: rgba(0, 47, 167, .5);
-                --paper-progress-transition-duration: 0.08s;
-                --paper-progress-indeterminate-cycle-duration: 7s;
+            }
 
-                --paper-progress-transition-timing-function: ease;
-                --paper-progress-transition-delay: 0.08s;
+            .single-cat {
+                cursor: pointer;
             }
             `
         ];
-    }
-
-    private get _progress(): PaperProgressElement{
-        return this.shadowRoot.querySelector('#main-progress');
     }
 
     private _setupWalk(){
@@ -226,16 +218,12 @@ class Home extends Page {
                 );
             }),
             switchMap(paused => {
-                this._progress.indeterminate = !paused;
                 if(paused === true){
                     return EMPTY;
                 }
 
                 return timer(3000, 3000).pipe(
-                    exhaustMap(async() => {
-                        const animations = this._progress.getAnimations();
-                        this._progress.classList.add('transiting');
-        
+                    exhaustMap(async() => {        
                         if(this._canNext()){
                             await this._onNextSculpture();
                         } else {
@@ -251,12 +239,6 @@ class Home extends Page {
         
                             await this._onCatClick(next);
                         }
-        
-                        for(const animation of animations){
-                            animation.cancel();
-                        }
-        
-                        this._progress.classList.remove('transiting');
                     }),
                 );
             })
@@ -428,7 +410,10 @@ class Home extends Page {
             </div>` : html`
             <div class="series">
                 <div class="single-container">
-                    <h1>${decodeHTML(this._focused.title)}</h1>
+                    <h3 class="single-cat" @click=${this._onSingle}>- ${this.categories[this.selected].name}</h3>
+                    <div class="title-container">
+                        <h1>${decodeHTML(this._focused.title)}</h1>
+                    </div>
                     ${unsafeHTML(this._focused.content)}
                 </div>
             </div>
@@ -437,20 +422,15 @@ class Home extends Page {
             <div class="preview">
                 <iron-image will-pause id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade @click=${this._onSingle}></iron-image>
                 <div class="unfold">
-                    <iron-icon will-pause icon="unfold-more"></iron-icon>
+                    <mwc-icon will-pause @click=${this._onSingle}>unfold_more</mwc-icon>
                 </div>
                 <div class="count">
-                    <iron-icon will-pause icon="chevron-left" class="${this.selected === 0 && this.sculptureIndex === 1 ? 'disabled' : ''}" @click=${this._onPrevSculpture}></iron-icon> 
+                    <mwc-icon class="${this.selected === 0 && this.sculptureIndex === 1 ? 'disabled' : ''}" @click=${this._onPrevSculpture} will-pause>chevron_left</mwc-icon>
                     <div class="pagination"><span class="current">${this.sculptureIndex}</span> / <span class="total">${this.sculptureMax}</span></div> 
-                    <iron-icon will-pause icon="chevron-right" @click=${this._onNextSculpture}></iron-icon>
+                    <mwc-icon will-pause @click=${this._onNextSculpture} will-pause>chevron_right</mwc-icon>
                 </div>
                 <div class="progress">
-                    <paper-progress 
-                        id="main-progress" 
-                        active 
-                        value=${(this.sculptureIndex / this.sculptureMax) * 100}
-                        secondary-progress=${(this.selected / this._catMax) * 100}
-                    ></paper-progress>
+                    <mwc-linear-progress id="main-progress" progress=${this.sculptureIndex / this.sculptureMax} buffer=${this.selected / this._catMax}></mwc-linear-progress>
                 </div>
             </div>
         </div>

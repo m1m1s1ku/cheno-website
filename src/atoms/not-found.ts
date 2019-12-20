@@ -42,7 +42,7 @@ class NotFound extends PureElement {
         <div class="text">
             <h1>You are lost !</h1>
             <p>You asked for : ${this.asked}.</p>
-            <a @click=${() => navigate(Constants.defaults.route)}><iron-icon icon="home"></iron-icon> Homepage</a>
+            <a @click=${() => navigate(Constants.defaults.route)}><mwc-icon>home</mwc-icon> Homepage</a>
             <ui-tree .width=${1366} .height=${768}></ui-tree>
         </div>
         `;
