@@ -191,7 +191,7 @@ export class ElaraApp extends Root {
 			justify-content: space-between;
 			align-items: flex-start;
 
-			z-index: 999;
+			z-index: 2;
 			
 			margin: 5px 30px;
 		}

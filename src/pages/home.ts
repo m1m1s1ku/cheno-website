@@ -116,6 +116,10 @@ class Home extends Page {
                 width: 50vw;
             }
 
+            .series {
+                z-index: 4;
+            }
+
             .series .single-container {
                 margin-top: 120px;
                 margin-left: 3em;
