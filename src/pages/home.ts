@@ -177,7 +177,8 @@ class Home extends Page {
             }
 
             .single-cat {
-                cursor: pointer;
+                display: inline;
+                cursor: crosshair;
             }
 
             .big::before {
