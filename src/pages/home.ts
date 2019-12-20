@@ -215,6 +215,8 @@ class Home extends Page {
             distinctUntilChanged()
         );
 
+        // TODO implement reset on click
+
         const items = Array.from(this.shadowRoot.querySelectorAll('[will-pause]'));
         const objects = [];
         for(const item of items){

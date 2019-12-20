@@ -57,10 +57,11 @@ class ContactController extends Page {
                 display: flex;
                 flex-direction: column;
                 align-items: flex-end;
-                background-color: #002fa7db;
+                background-color: rgba(0, 47, 167, 0.75);
                 color: white;
-                margin: 2em;
+                margin: -2em 0 2em 1em;
                 padding: 2em;
+                margin-top: -2em;
                 transition: all .3s;
             }
 
@@ -73,6 +74,7 @@ class ContactController extends Page {
                 background: whitesmoke;
                 padding: 1em;
                 margin: 1em 0;
+                border-radius: 2px;
             }
 
             .ask {
