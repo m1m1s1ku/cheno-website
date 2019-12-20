@@ -87,6 +87,12 @@ class ContactController extends Page {
             .quality label {
                 color: var(--elara-secondary);
             }
+
+            @media (max-width: 485px){
+                .contact {
+                    display: block;
+                }
+            }
             `
         ];
     }
