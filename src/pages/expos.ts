@@ -238,6 +238,10 @@ class Expos extends Page {
                 </a>
             </article>
             `)}
+
+            ${this.loaded && this.articles.length === 0 ? html`
+                <p>Aucune exposition à afficher</p>
+            ` : html``}
         </div>
         `;
     }
