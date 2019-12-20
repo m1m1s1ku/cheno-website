@@ -10,6 +10,7 @@ import { Utils, chunk, decodeHTML } from '../core/ui/ui';
 
 import Constants from '../constants';
 import { oc } from 'ts-optchain';
+import { dumpExpositions } from '../compat';
 
 interface ArticleMinimal {
     id: string;
@@ -124,6 +125,8 @@ class Expos extends Page {
     public async firstUpdated(){
         this._load();
         document.title = 'Expositions' + ' | ' + Constants.title;
+
+        await dumpExpositions();
     }
     
     private async _load(){

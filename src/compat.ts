@@ -1,13 +1,12 @@
-export async function dump(){
+export async function dumpSeries(){
     const oldhtmL = await fetch('http://corsunblock.herokuapp.com/https://cheno.fr').then(res => res.text());
 
     const oldStub = document.implementation.createHTMLDocument('stub');
     oldStub.body.innerHTML = oldhtmL;
 
     const root = oldStub.body;
-    const seriesLinks = Array.from(root.querySelectorAll('.article-continue')).map((item: HTMLLinkElement) => item.href.replace('http://localhost:3000', 'https://cheno.fr'));
-    
-    
+    const seriesLinks = Array.from(root.querySelectorAll('.article-continue')).map((item: HTMLLinkElement) => item.href.replace('http://localhost:3000', 'https://cheno.fr')).reverse();
+
     const currentDocument = document.implementation.createHTMLDocument('current');
     const series = [];
 
@@ -19,7 +18,7 @@ export async function dump(){
         const newRoot = currentDocument.body;
         const title = (newRoot.querySelector('.title') as HTMLDivElement).innerText.trim();
         const excerpt = (newRoot.querySelector('.title-desc') as HTMLDivElement).innerText.trim();
-        const items = Array.from(newRoot.querySelectorAll('.grid__item'));
+        const items = Array.from(newRoot.querySelectorAll('.grid__item')).reverse();
 
         const category = {
             title,
@@ -59,60 +58,37 @@ export async function dump(){
     return series;
 }
 
-        /*const dumped = await import('../../dump.json');
-        const oldData = dumped.default;
 
-        const login = await fetch(Constants.api+Constants.login, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                username: 'Ghostfly',
-                password: '@PkP@%Q^P4EYKW!u'
-            })
-        }).then(res => res.json());
+export async function dumpExpositions(){
+    const oldhtmL = await fetch('http://corsunblock.herokuapp.com/https://cheno.fr/expos').then(res => res.text());
 
-        const retrieveAsFile = async (url: string, proxy: string) => {
-            try {
-                const blob = await retrieveAsBlob(url, proxy);
-                return new File([blob], url.replace(/[\#\?].*$/,'').substring(url.lastIndexOf('/')+1));
-            } catch {
-                return null;
+    const oldStub = document.implementation.createHTMLDocument('stub');
+    oldStub.body.innerHTML = oldhtmL;
+
+    const root = oldStub.body;
+
+    const expositionsCards = Array.from(root.querySelectorAll('.card-media')).reverse();
+
+    const selectors = {
+        date: '.subtle',
+        title: '.card-media-body-heading',
+        content: '.card-media-body-supporting-bottom span:first-child',
+        place: '.card-media-body-supporting-bottom span:last-child'
+    };
+
+    const expos = [];
+    for(const card of expositionsCards){
+        const expo = {};
+        for(const selectorKey of Object.keys(selectors)){
+            const element = card.querySelector(selectors[selectorKey]);
+            if(element){
+                expo[selectorKey] = element.innerText.trim();
             }
-        };
+        }
+        expos.push(expo);
+    }
 
-        const retrieveAsBlob = async (url: string, proxy: string) => {
-            try {
-                return await fetch(proxy.concat(url)).then(r => r.blob());
-            } catch {
-                return null;
-            }
-        };
+    console.warn(expos);
 
-        const maker = new WPBridge(login.token, null).maker;
-        for(const category of oldData){
-            const catID = await maker.category({
-                description: category.excerpt,
-                name: category.title,
-                slug: slugify(category.title, '-'),
-                parent: null
-            }).toPromise();
-
-            for(const sculpture of category.sculptures){
-                const media = await retrieveAsFile(sculpture.image, Constants.proxyB);
-                const mediaID = await maker.media(media, slugify(sculpture.title, '-')).toPromise();
-                const sculptureID = await maker.post({
-                    title: sculpture.title,
-                    status: WPArticleStatus.publish,
-                    content: sculpture.excerpt,
-                    categories: [catID],
-                    tags:[],
-                    date: new Date().toISOString(),
-                    excerpt: sculpture.excerpt,
-                    password: '',
-                    featured_media: mediaID,
-                    slug: slugify(sculpture.title, '-')
-                }).toPromise();
-
-                console.warn('added sculpture', sculptureID);
-            }
-        }*/
+    return expos;
+}
