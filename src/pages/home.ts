@@ -7,8 +7,8 @@ import Constants from '../constants';
 import { wrap } from '../core/errors/errors';
 import { WPCategory } from '../interfaces';
 import { pulseWith, fadeWith } from '../core/animations';
-import { timer, fromEvent, BehaviorSubject, EMPTY, merge, scheduled, animationFrameScheduler } from 'rxjs';
-import { exhaustMap, concatMapTo, switchMap, tap, startWith, distinctUntilChanged, map } from 'rxjs/operators';
+import { timer, fromEvent, BehaviorSubject, EMPTY, merge, scheduled, animationFrameScheduler, Subject } from 'rxjs';
+import { concatMapTo, switchMap, tap, startWith, distinctUntilChanged, map, takeUntil, skipWhile } from 'rxjs/operators';
 import { Utils, decodeHTML } from '../core/ui/ui';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 
@@ -52,6 +52,7 @@ class Home extends Page {
     private _focused: Sculpture;
 
     private _enforcePauseSub: BehaviorSubject<boolean>;
+    private _stop: Subject<unknown>;
 
     public static get styles(){
         return [
@@ -207,8 +208,20 @@ class Home extends Page {
             `
         ];
     }
+    
+    public async connectedCallback(){
+        super.connectedCallback();
+        await this._setupWalk();
+    }
+
+    public disconnectedCallback(){
+        super.disconnectedCallback();
+        this._stop.next(true);
+        this._stop.complete();
+    }
 
     private _setupWalk(){
+        this._stop = new Subject();
         this._enforcePauseSub = new BehaviorSubject<boolean>(false);
         const pauseBS = new BehaviorSubject<boolean>(false);
         const pause$ = pauseBS.pipe(
@@ -236,22 +249,24 @@ class Home extends Page {
 
         const pauseHandle = scheduled(merge(...objects).pipe(
             concatMapTo(pause$),
-            startWith(false)
+            startWith(false),
         ), animationFrameScheduler);
 
         return pauseHandle.pipe(
-            switchMap(paused => {
-                return this._enforcePauseSub.pipe(
-                    map(enforced => enforced === false || enforced !== paused ? enforced : paused)
-                );
-            }),
-            switchMap(paused => {
-                if(paused === true){
+            switchMap(current => {
+                if(current === true){
                     return EMPTY;
                 }
 
-                return timer(3000, 3000).pipe(
-                    exhaustMap(async() => {        
+                return timer(5000, 5000).pipe(
+                    switchMap(_ => {
+                        return this._enforcePauseSub.pipe(
+                            map(enforced => enforced === false || current)
+                        );
+                    }),
+                    skipWhile((paused) => !paused),
+                    takeUntil(this._stop),
+                    switchMap(async() => {                               
                         if(this._canNext()){
                             await this._onNextSculpture();
                         } else {
@@ -273,7 +288,8 @@ class Home extends Page {
     }
 
     public async firstUpdated(_changedProperties: PropertyValues){
-        super.firstUpdated(_changedProperties);        
+        super.firstUpdated(_changedProperties);
+
         const requestR = await fetch(Constants.graphql, {
 			method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -302,8 +318,6 @@ class Home extends Page {
 
         await this._onCatClick(0);
         this.loaded = true;
-
-        await this._setupWalk();
     }
 
     private async _onCatClick(idx: number){

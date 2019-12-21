@@ -1,11 +1,16 @@
 import { html, TemplateResult } from 'lit-html';
-import { css } from 'lit-element';
+import { css, query } from 'lit-element';
 
 import Page from '../core/strategies/Page';
 import { fadeWith } from '../core/animations';
 
 class ContactController extends Page {
     public static readonly is: string = 'ui-contact';
+
+    @query('.simple #name') protected name!: HTMLInputElement;
+    @query('.simple #email') protected email!: HTMLInputElement;
+    @query('.simple #phone') protected phone!: HTMLInputElement;
+    @query('.simple #message') protected message!: HTMLTextAreaElement;
 
     public static get styles(){
         return [
@@ -104,20 +109,43 @@ class ContactController extends Page {
         <div id="contact" class="contact" role="main">
             <div class="side">
                 <h1>Contact</h1>
-                <form>
+                <form class="simple">
                     <div class="field">
                         <mwc-textfield
+                            id="name"
+                            label="Nom"
+                            iconTrailing="account_box"
+                        ></mwc-textfield>
+                    </div>
+                    <div class="field">
+                        <mwc-textfield
+                            id="email"
                             label="E-mail"
                             iconTrailing="mail_outline"
                         ></mwc-textfield>
                     </div>
                     <div class="field">
+                        <mwc-textfield
+                            id="phone"
+                            label="Téléphone"
+                            iconTrailing="phone"
+                        ></mwc-textfield>
+                    </div>
+                    <div class="field">
                         <mwc-textarea 
+                            id="message"
                             label="Message"
                         ></mwc-textarea>
                     </div>
                     <div class="field send">
-                        <mwc-button raised label="Envoyer" icon="send" trailingIcon></mwc-button>
+                        <mwc-button disabled raised label="Envoyer" icon="send" trailingIcon @click=${async() => {
+                            console.warn('will send', {
+                                name: this.name.value,
+                                email: this.email.value,
+                                phone: this.phone.value,
+                                message: this.message.value
+                            });
+                        }}></mwc-button>
                     </div>
                 </form>
             </div>
@@ -152,7 +180,7 @@ class ContactController extends Page {
                         </mwc-formfield>
                     </div>
                     <div class="ask">
-                        <mwc-button raised icon="send" trailingIcon></mwc-button>
+                        <mwc-button disabled raised icon="send" trailingIcon ></mwc-button>
                     </div>
                 </form>
             </div>
