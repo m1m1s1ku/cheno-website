@@ -2,7 +2,6 @@ import { html, TemplateResult } from 'lit-html';
 import { css, query } from 'lit-element';
 
 import Page from '../core/strategies/Page';
-import { fadeWith } from '../core/animations';
 
 class ContactController extends Page {
     public static readonly is: string = 'ui-contact';
@@ -62,37 +61,15 @@ class ContactController extends Page {
                 display: flex;
                 flex-direction: column;
                 align-items: flex-end;
-                background-color: rgba(0, 47, 167, 0.75);
-                color: white;
-                margin: -2em 0 2em 1em;
-                padding: 2em;
+                margin: 0 0 2em 1em;
                 margin-top: -2em;
                 transition: all .3s;
+                padding: 4em;
             }
 
             .side.layer h3,
             .side.layer p {
                 user-select: none;
-            }
-
-            .side.layer form {
-                background: whitesmoke;
-                padding: 1em;
-                margin: 1em 0;
-                border-radius: 2px;
-            }
-
-            .ask {
-                margin: 1em .5em;
-                align-self: flex-end;
-            }
-
-            .quality {
-                padding: 2em;
-            }
-
-            .quality label {
-                color: var(--elara-secondary);
             }
 
             @media (max-width: 485px){
@@ -108,7 +85,8 @@ class ContactController extends Page {
         return html`
         <div id="contact" class="contact" role="main">
             <div class="side">
-                <h1>Contact</h1>
+                <h2>Remplissez juste, le formulaire.</h2>
+                <h4>On répond vite, c'est promis !</h4>
                 <form class="simple">
                     <div class="field">
                         <mwc-textfield
@@ -150,46 +128,12 @@ class ContactController extends Page {
                 </form>
             </div>
             <div class="side layer">
-                <h3>Visite</h3>
-                <p>Envie d'entrer dans un monde de Coccinelles ?</p>
-                <form>
-                    <mwc-textfield required label="Date" icon="event"></mwc-textfield>
-                    <mwc-textarea label="Message" placeholder="J'aimerais visiter le jardin pour..."></mwc-textarea>
-                    <div class="quality" @change=${async (_e: Event) => {
-                        const radio = _e.target as HTMLInputElement;
-                        let animationConfig = fadeWith(100, false);
-                        let animation = this._qualityLabel.animate(animationConfig.effect, animationConfig.options);
-                        await animation.finished;
+                <h4>Envie de voir les oeuvres dans leur milieu naturel ?</h4>
+                <p>Des visites dans le "Jardin des Sculptures" sont possibles sur simple demande, n'hésitez pas !</p>
 
-                        if(radio.value === 'particulier'){
-                            this._qualityLabel.innerText = 'un';
-                        } else {
-                            this._qualityLabel.innerText = 'une';
-                        }
-
-                        animationConfig = fadeWith(100, true);
-                        animation = this._qualityLabel.animate(animationConfig.effect, animationConfig.options);
-                        await animation.finished;
-                    }}>
-                        <label>Je suis <span id="quality-label">une</span></label>
-                        <mwc-formfield label="Entreprise">
-                            <mwc-radio value="entreprise" name="location" checked></mwc-radio>
-                        </mwc-formfield>
-                        <mwc-formfield label="Particulier">
-                            <mwc-radio value="particulier" name="location"></mwc-radio>
-                        </mwc-formfield>
-                    </div>
-                    <div class="ask">
-                        <mwc-button disabled raised icon="send" trailingIcon ></mwc-button>
-                    </div>
-                </form>
             </div>
         </div>
         `;
-    }
-
-    private get _qualityLabel(): HTMLSpanElement {
-        return this.shadowRoot.querySelector('#quality-label');
     }
 }
 customElements.define(ContactController.is, ContactController);
