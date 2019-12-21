@@ -50,7 +50,7 @@ export class ElaraApp extends Root {
 
 	public constructor(){
 		super();        
-		
+
 		// TODO XXX : Remove after SSR complete
         document.title = Constants.title;
 		this._subscriptions = new Subscription();
@@ -287,9 +287,9 @@ export class ElaraApp extends Root {
 		}
 
 		.main-menu {
+			min-width: 30%;
 			position: fixed;
-			min-height: 30vh;
-			width: 30vw;
+			min-height: 100px;
 			right: 0;
 			top: 0;
 			visibility: hidden;
@@ -297,6 +297,12 @@ export class ElaraApp extends Root {
 			opacity: 0;
 			transition: visibility 0s .3s, opacity .3s linear;
 			border-radius: 0 0 4px 4px;
+		}
+
+		@media (max-width: 700px){
+			.main-menu {
+				min-width: 100%;
+			}
 		}
 
 		.main-menu::after {
