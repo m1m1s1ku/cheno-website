@@ -6,7 +6,7 @@ import Page from '../core/strategies/Page';
 import { navigate } from '../core/routing/routing';
 
 import Constants from '../constants';
-import { dumpExpositions } from '../compat';
+import { decodeHTML } from '../core/ui/ui';
 
 interface ArticleMinimal {
     content: string;
@@ -38,7 +38,7 @@ class Expos extends Page {
                 --spacing-s: 8px;
                 --spacing-l: 24px;
                 --spacing-xl: 64px;
-                --width-container: 1200px;
+                --width-container: 100vw;
 
                 padding: var(--spacing-xl) var(--spacing-l);
                 align-items: flex-start;
@@ -90,9 +90,14 @@ class Expos extends Page {
             .card:hover .card__background {
                 transform: translateZ(0);
             }
-              
+            
+            .card-grid:hover > .card:not(:hover) .card__heading,
+            .card-grid:hover > .card:not(:hover) .card__date,
+            .card-grid:hover > .card:not(:hover) .card__place {
+                mix-blend-mode: overlay;
+            }
             .card-grid:hover > .card:not(:hover) .card__background {
-                filter: brightness(0.5) saturate(0) contrast(1.2) blur(10px);
+                filter: brightness(.8) contrast(1) blur(5px);
             }
               
             .card__content {
@@ -102,26 +107,18 @@ class Expos extends Page {
                 top: 0;
             }
               
-            .card__place {
+            .card__place, .card__date {
                 color: var(--text-light);
-                font-size: 0.9rem;
+                font-size: 1em;
                 margin-bottom: var(--spacing-s);
-                text-transform: uppercase;
-            }
-
-            .card__date {
-                color: var(--text-light);
-                font-size: 0.9rem;
-                margin-bottom: var(--spacing-s);
-                text-transform: uppercase;
             }
               
             .card__heading {
                 color: var(--text-light);
-                font-size: 1.9rem;
+                font-size: 1.5em;
                 text-shadow: 2px 2px 20px rgba(0,0,0,0.2);
                 line-height: 1.4;
-                word-spacing: 100vw;
+                word-spacing: 3px;
             }
 
             .card-grid {
@@ -132,6 +129,7 @@ class Expos extends Page {
                 margin-top: 2em;
                 max-width: var(--width-container);
                 width: 100%;
+                transition: all 2s;
             }
             
             @media(min-width: 540px) {
@@ -152,8 +150,6 @@ class Expos extends Page {
     public async firstUpdated(){
         this._load();
         document.title = 'Expositions' + ' | ' + Constants.title;
-
-        await dumpExpositions();
     }
     
     private async _load(){
@@ -164,7 +160,7 @@ class Expos extends Page {
             },
             body: JSON.stringify({
                 query: `{
-                    expositions {
+                    expositions(first: 500) {
                       nodes {
                         id
                         title(format: RENDERED)
@@ -200,6 +196,9 @@ class Expos extends Page {
         <div class="expos" role="main">
             <div class="title-search">
                 <h1>Expositions</h1>
+                <div class="periods">
+                    
+                </div>
                 <mwc-textfield label="Recherche" @input=${(event: CustomEvent) => {
                     const target = event.target as HTMLInputElement;
                     this.search(target.value);
@@ -214,7 +213,7 @@ class Expos extends Page {
                     <div class="card__background" style="background-image: url(${article.featuredImage.sourceUrl})"></div>
                     <div class="card__content">
                         <p class="card__place">${article.place}</p>
-                        <h3 class="card__heading">${article.title}</h3>
+                        <h3 class="card__heading">${decodeHTML(article.title)}</h3>
                         <p class="card__date">${article.date_expo}</p>
                     </div>
                 </a>

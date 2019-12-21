@@ -58,8 +58,75 @@ export async function dumpSeries(){
     return series;
 }
 
+/* 
+function import(){
+        const expos = await dumpExpositions();
+        const login = await fetch(Constants.api+Constants.login, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: 'Ghostfly',
+                password: null
+            })
+        }).then(res => res.json());
 
-export async function dumpExpositions(){
+        const maker = new Bridge(login.token, null).maker;
+
+        const retrieveAsBlob = async (url: string, proxy: string) => {
+            try {
+                return await fetch(proxy.concat(url)).then(r => r.blob());
+            } catch {
+                return null;
+            }
+        };
+
+        const retrieveAsFile = async (url: string, proxy: string) => {
+            try {
+                const blob = await retrieveAsBlob(url, proxy);
+                return new File([blob], url.replace(/[\#\?].*$/,'').substring(url.lastIndexOf('/')+1));
+            } catch {
+                return null;
+            }
+        };
+
+        for(const expo of expos){
+            console.warn(expo);
+
+            const mediaFile = await retrieveAsFile(expo.image, Constants.proxy);
+            const mediaId = await maker.media(mediaFile, expo.title).toPromise();
+
+            const post = await maker.post({
+                title: expo.title,
+                // eslint-disable-next-line @typescript-eslint/camelcase
+                date_expo: expo.date,
+                place: expo.place,
+                status: WPArticleStatus.publish,
+                content: expo.content,
+                categories: [],
+                tags: [],
+                date: new Date().toISOString(),
+                excerpt: expo.content,
+                password: '',
+                // eslint-disable-next-line @typescript-eslint/camelcase
+                featured_media: mediaId,
+                slug: slugify(expo.title, '-'),
+            }).toPromise();
+
+            if(post){
+                console.warn('created', post);
+            }
+        }
+}
+*/
+
+
+export async function dumpExpositions(): Promise<{
+    date: string;
+    title: string;
+    content: string;
+    place: string;
+    image: string;
+}[]>{
     const oldhtmL = await fetch('http://corsunblock.herokuapp.com/https://cheno.fr/expos').then(res => res.text());
 
     const oldStub = document.implementation.createHTMLDocument('stub');
@@ -73,7 +140,8 @@ export async function dumpExpositions(){
         date: '.subtle',
         title: '.card-media-body-heading',
         content: '.card-media-body-supporting-bottom span:first-child',
-        place: '.card-media-body-supporting-bottom span:last-child'
+        place: '.card-media-body-supporting-bottom span:last-child',
+        image: '.card-media-object'
     };
 
     const expos = [];
@@ -81,14 +149,16 @@ export async function dumpExpositions(){
         const expo = {};
         for(const selectorKey of Object.keys(selectors)){
             const element = card.querySelector(selectors[selectorKey]);
-            if(element){
+            if(element && selectorKey !== 'image'){
                 expo[selectorKey] = element.innerText.trim();
+            } else if(element && selectorKey === 'image'){
+                expo[selectorKey] = 'https://cheno.fr/'+element.style.backgroundImage.replace('url(','').replace(')','').replace(/\"/gi, '');
             }
         }
         expos.push(expo);
     }
 
-    console.warn(expos);
+    // console.warn(expos);
 
     return expos;
 }
