@@ -94,7 +94,7 @@ class ContactController extends Page {
         <div id="contact" class="contact" role="main">
             <div class="side">
                 <h2>Remplissez juste, le formulaire.</h2>
-                <h4>On répond vite, c'est promis !</h4>
+                <h4>Réponse rapide, c'est promis !</h4>
                 <h4><mwc-icon>warning</mwc-icon> Page en cours de maintenance</h4>
                 <form class="simple">
                     <div class="field">
