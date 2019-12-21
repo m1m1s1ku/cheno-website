@@ -207,10 +207,11 @@ class Expos extends Page {
             return !(entry.intersectionRatio <= 0);
         };
 
-        const update = (card: HTMLElement) => {
-            return () => {
+        const update = (card: HTMLElement, on: IntersectionObserver) => {
+            return function() {
                 card.classList.remove('hide');
                 card.classList.add('reveal');
+                on.unobserve(card);
             };
         };
 
@@ -219,8 +220,7 @@ class Expos extends Page {
                 for(const entry of entries){
                     if(canUpdate(entry)){
                         const target = entry.target as HTMLElement;
-                        pool.add(target.id, update(target));
-                        this.unobserve(target);
+                        pool.add(target.id, update(target, this));
                     }
                 };
             });
