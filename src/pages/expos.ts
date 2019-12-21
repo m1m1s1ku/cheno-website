@@ -29,7 +29,10 @@ class Expos extends Page {
     public articles: ReadonlyArray<ArticleMinimal> = [];
     @property({type: Array, reflect: false})
     private ghost: ReadonlyArray<ArticleMinimal> = [];
-    rafPool: RafPool;
+
+    private rafPool: RafPool;
+    @property({type: Object, reflect: false})
+    private exposByYear: Map<number, ArticleMinimal[]> = new Map<number, ArticleMinimal[]>();
 
     public static get styles(){
         return [
@@ -41,6 +44,7 @@ class Expos extends Page {
                 --spacing-l: 24px;
                 --spacing-xl: 64px;
                 --width-container: 100vw;
+                --mdc-tab-text-transform: normal;
 
                 padding: var(--spacing-xl) var(--spacing-l);
                 align-items: flex-start;
@@ -155,6 +159,10 @@ class Expos extends Page {
             .card.reveal {
                 opacity: 1;
             }
+
+            .periods {
+                width: 100%;
+            }
             `
         ];
     }
@@ -162,8 +170,6 @@ class Expos extends Page {
     public async firstUpdated(){
         this._load();
         document.title = 'Expositions' + ' | ' + Constants.title;
-
-        // TODO : Add pagination
     }
     
     private async _load(){
@@ -200,6 +206,20 @@ class Expos extends Page {
         this.ghost = res;
         this.loaded = true;
 
+        const exposByYear = new Map<number, ArticleMinimal[]>();
+        for(const expo of res){
+            const period = parseInt(expo.date_expo.match(/\d{4}/)[0], 10);
+            if(period && exposByYear[period]){
+                exposByYear.set(period, [...exposByYear[period], expo]);
+            } else {
+                exposByYear.set(period, [expo]);
+            }
+        }
+
+        const iterator = exposByYear.keys();
+
+        console.warn(iterator.next());
+        this.exposByYear = exposByYear;
         await this.updateComplete;
 
         this.rafPool = new RafPool();
@@ -249,13 +269,22 @@ class Expos extends Page {
         <div class="expos" role="main">
             <div class="title-search">
                 <h1>Expositions</h1>
-                <div class="periods">
-                    
-                </div>
                 <mwc-textfield label="Recherche" @input=${(event: CustomEvent) => {
                     const target = event.target as HTMLInputElement;
                     this.search(target.value);
                 }}></mwc-textfield>
+            </div>
+            <div class="periods">
+                <mwc-tab-bar scrolling>
+                    ${repeat(this.exposByYear, ([year, _expos]) => html`<mwc-tab dir label=${year} @click=${async () => {
+                        this.articles = this.ghost.filter((article) => parseInt(article.date_expo.match(/\d{4}/)[0], 10) == year);
+                        await this.updateComplete;
+                        Array.from(this.shadowRoot.querySelectorAll('.card.hide')).forEach((item) => {
+                            item.classList.remove('hide');
+                            item.classList.add('reveal');
+                        });
+                    }}></mwc-tab>`)}
+                <mwc-tab-bar>
             </div>
             ${!this.loaded ? html`<div class="loader"><paper-spinner active></paper-spinner></div>` : html``}
             <div class="card-grid">

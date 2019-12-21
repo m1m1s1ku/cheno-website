@@ -5,3 +5,5 @@ import '@material/mwc-linear-progress';
 import '@material/mwc-button';
 import '@material/mwc-formfield';
 import '@material/mwc-radio';
+import '@material/mwc-tab-bar';
+import '@material/mwc-tab';
