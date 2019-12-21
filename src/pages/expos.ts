@@ -8,7 +8,7 @@ import { navigate } from '../core/routing/routing';
 import Constants from '../constants';
 import { decodeHTML } from '../core/ui/ui';
 
-interface ArticleMinimal {
+export interface ArticleMinimal {
     content: string;
     date_expo: string;
     excerpt: string;
@@ -129,7 +129,7 @@ class Expos extends Page {
                 margin-top: 2em;
                 max-width: var(--width-container);
                 width: 100%;
-                transition: all 2s;
+                transition: filter .3s;
             }
             
             @media(min-width: 540px) {

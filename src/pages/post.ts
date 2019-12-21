@@ -8,8 +8,8 @@ import Constants from '../constants';
 
 import { Utils, decodeHTML, onImageContainerClicked } from '../core/ui/ui';
 import { fadeWith } from '../core/animations';
-import { ProjectMinimal } from './project';
 import { wrap } from '../core/errors/errors';
+import { ArticleMinimal } from './expos';
 
 class Single extends Page {
     public static readonly is: string = 'ui-post';
@@ -17,7 +17,7 @@ class Single extends Page {
     public static readonly hasRouting: boolean = true;
 
     @property({type: Object, reflect: false})
-    public article: ProjectMinimal;
+    public article: ArticleMinimal;
     @property({type: String, reflect: false})
     public featured: string;
     private _toLoad: string;
@@ -40,8 +40,10 @@ class Single extends Page {
                 content
                 excerpt
                 featuredImage {
-                sourceUrl
+                    sourceUrl
                 }
+                date_expo
+                place
             }
         }              
         `;
@@ -54,14 +56,14 @@ class Single extends Page {
             body: JSON.stringify({
                 query: projectQuery
             })
-        }).then(res => res.json()).then(res => res.data.expositionBy).catch(_ => this.dispatchEvent(wrap(_))) as ProjectMinimal;
+        }).then(res => res.json()).then(res => res.data.expositionBy).catch(_ => this.dispatchEvent(wrap(_))) as ArticleMinimal;
 
         this.loaded = true;
 
         const post = first;
         document.title = post.title + ' | ' + Constants.title;
         this.article = post;
-        this.featured = oc<ProjectMinimal>(post).featuredImage.sourceUrl('');
+        this.featured = oc<ArticleMinimal>(post).featuredImage.sourceUrl('');
 
         if(Utils.animationsReduced()){
             return;
@@ -86,27 +88,40 @@ class Single extends Page {
                 align-items: center;
                 justify-content: center;
             }
+
+            .article__header {
+                display: flex;
+                justify-content: space-between;
+                flex-direction: row;
+            }
             `
         ];
     }
 
     public render(): void | TemplateResult {
         return html`
-        <div id="blog" class="blog single" role="main">
+        <div id="single" class="single" role="main">
             ${!this.loaded ? html`
             <div class="loading">
                 <paper-spinner active></paper-spinner>
             </div>` : html``}
             ${this.article ? html`
-            <h1>${decodeHTML(this.article.title)}</h1>
-            ${this.featured ? html`
-            <div class="image-container" @click=${onImageContainerClicked}>
-                <iron-image style="width: 100vw; height: 400px;" sizing="contain" src="${this.featured}"></iron-image>
-            </div>
-            ` : html``}
-            <div class="content">
-                ${unsafeHTML(this.article.content)}
-            </div>
+            <article>
+                <div class="article__header">
+                    <h1>${decodeHTML(this.article.title)}</h1>
+                    <p class="place">${this.article.place}</p>
+                </div>
+                <p class="date">${this.article.date_expo}</p>
+
+                ${this.featured ? html`
+                <div class="image-container" @click=${onImageContainerClicked}>
+                    <iron-image style="width: 100vw; height: 400px;" sizing="contain" src="${this.featured}"></iron-image>
+                </div>
+                ` : html``}
+                <div class="content">
+                    ${unsafeHTML(this.article.content)}
+                </div>
+            </article>
             ` : html``}
         </div>
         `;
