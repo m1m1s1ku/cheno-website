@@ -10,9 +10,10 @@ import { Utils, decodeHTML, onImageContainerClicked } from '../core/ui/ui';
 import { fadeWith } from '../core/animations';
 import { wrap } from '../core/errors/errors';
 import { ArticleMinimal } from './expos';
+import { navigate } from '../core/routing/routing';
 
 class Single extends Page {
-    public static readonly is: string = 'ui-post';
+    public static readonly is: string = 'ui-expo';
 
     public static readonly hasRouting: boolean = true;
 
@@ -80,6 +81,7 @@ class Single extends Page {
             .single {
                 margin-top: 6em;
                 padding: 2em;
+                overflow: hidden;
             }
 
             .images {
@@ -93,6 +95,17 @@ class Single extends Page {
                 display: flex;
                 justify-content: space-between;
                 flex-direction: row;
+            }
+
+            .article__header h1 {
+                display: flex;
+                align-items: center;
+                flex-direction: row;
+            }
+
+            .article__header h1 mwc-icon {
+                cursor: pointer;
+                font-size: 1.15em;
             }
             `
         ];
@@ -108,7 +121,9 @@ class Single extends Page {
             ${this.article ? html`
             <article>
                 <div class="article__header">
-                    <h1>${decodeHTML(this.article.title)}</h1>
+                    <h1><mwc-icon @click=${() => {
+                        navigate('expos');
+                    }}>chevron_left</mwc-icon> ${decodeHTML(this.article.title)}</h1>
                     <p class="place">${this.article.place}</p>
                 </div>
                 <p class="date">${this.article.date_expo}</p>
@@ -128,7 +143,7 @@ class Single extends Page {
     }
 
     private get page(){
-        return this.shadowRoot.querySelector('#blog');
+        return this.shadowRoot.querySelector('#single');
     }
 }
 customElements.define(Single.is, Single);

@@ -7,6 +7,7 @@ import { navigate } from '../core/routing/routing';
 
 import Constants from '../constants';
 import { decodeHTML } from '../core/ui/ui';
+import RafPool from 'raf-pool';
 
 export interface ArticleMinimal {
     content: string;
@@ -28,6 +29,7 @@ class Expos extends Page {
     public articles: ReadonlyArray<ArticleMinimal> = [];
     @property({type: Array, reflect: false})
     private ghost: ReadonlyArray<ArticleMinimal> = [];
+    rafPool: RafPool;
 
     public static get styles(){
         return [
@@ -61,6 +63,7 @@ class Expos extends Page {
             .card {
                 list-style: none;
                 position: relative;
+                transition: opacity .3s;
             }
               
             .card:before {
@@ -143,6 +146,14 @@ class Expos extends Page {
                     grid-template-columns: repeat(4, 1fr); 
                 }
             }
+
+            .card.hide {
+                opacity: 0;
+            }
+
+            .card.reveal {
+                opacity: 1;
+            }
             `
         ];
     }
@@ -150,6 +161,8 @@ class Expos extends Page {
     public async firstUpdated(){
         this._load();
         document.title = 'Expositions' + ' | ' + Constants.title;
+
+        // TODO : Add pagination
     }
     
     private async _load(){
@@ -185,6 +198,46 @@ class Expos extends Page {
         this.articles = res;
         this.ghost = res;
         this.loaded = true;
+        await this.updateComplete;
+
+        this.rafPool = new RafPool();
+
+        const canUpdate = (entry: IntersectionObserverEntry) => {
+            // not visible
+            return !(entry.intersectionRatio <= 0);
+        };
+
+        const update = (card: HTMLElement) => {
+            return () => {
+                card.classList.remove('hide');
+                card.classList.add('reveal');
+            };
+        };
+
+        const setup = (pool: RafPool) => {
+            return new IntersectionObserver(function(entries: IntersectionObserverEntry[]) {
+                for(const entry of entries){
+                    if(canUpdate(entry)){
+                        const target = entry.target as HTMLElement;
+                        pool.add(target.id, update(target));
+                        this.unobserve(target);
+                    }
+                };
+            });
+        };
+
+        const intersectionObserver = setup(this.rafPool);
+
+        const cards = Array.from(this.shadowRoot.querySelectorAll('.card'));
+
+        for(const card of cards){
+            intersectionObserver.observe(card);
+        }
+    }
+
+    public disconnectedCallback(){
+        super.disconnectedCallback();
+        this.rafPool.reset();
     }
 
     public search(value: string){
@@ -204,11 +257,11 @@ class Expos extends Page {
                     this.search(target.value);
                 }}></mwc-textfield>
             </div>
-            ${!this.loaded ? html`<paper-spinner active></paper-spinner>` : html``}
+            ${!this.loaded ? html`<div class="loader"><paper-spinner active></paper-spinner></div>` : html``}
             <div class="card-grid">
                 ${repeat(this.articles, article => html`
-                <a class="card" @click=${() => {
-                    navigate('post/'+article.slug);
+                <a id=${article.id} class="card hide" @click=${() => {
+                    navigate('expo/'+article.slug);
                 }}>
                     <div class="card__background" style="background-image: url(${article.featuredImage.sourceUrl})"></div>
                     <div class="card__content">
