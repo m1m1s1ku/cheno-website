@@ -97,7 +97,7 @@ class Expos extends Page {
                 mix-blend-mode: overlay;
             }
             .card-grid:hover > .card:not(:hover) .card__background {
-                filter: brightness(.8) contrast(1) blur(5px);
+                filter: brightness(.8) contrast(.7) blur(2px);
             }
               
             .card__content {
