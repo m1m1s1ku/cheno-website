@@ -198,6 +198,7 @@ class Expos extends Page {
         this.articles = res;
         this.ghost = res;
         this.loaded = true;
+        
         await this.updateComplete;
 
         this.rafPool = new RafPool();
@@ -207,11 +208,10 @@ class Expos extends Page {
             return !(entry.intersectionRatio <= 0);
         };
 
-        const update = (card: HTMLElement, on: IntersectionObserver) => {
+        const update = (card: HTMLElement) => {
             return function() {
                 card.classList.remove('hide');
                 card.classList.add('reveal');
-                on.unobserve(card);
             };
         };
 
@@ -221,15 +221,14 @@ class Expos extends Page {
                     if(!canUpdate(entry)) continue;
 
                     const target = entry.target as HTMLElement;
-                    pool.add(target.id, update(target, this));
+                    pool.add(target.id, update(target));
+                    this.unobserve(target);
                 };
             });
         };
 
         const intersectionObserver = setup(this.rafPool);
-
         const cards = Array.from(this.shadowRoot.querySelectorAll('.card'));
-
         for(const card of cards){
             intersectionObserver.observe(card);
         }
