@@ -36,7 +36,7 @@ class Expos extends Page {
     private rafPool: RafPool;
     @property({type: Object, reflect: false})
     private exposByYear: Map<number, ArticleMinimal[]> = new Map<number, ArticleMinimal[]>();
-    _year: number;
+    private _year: number;
 
     public static get styles(){
         return [
@@ -216,7 +216,7 @@ class Expos extends Page {
             }
         }
 
-        this.exposByYear = exposByYear;
+        this.exposByYear = new Map([...exposByYear.entries()].sort((a, b) => b[0]-a[0]));
         await this.updateComplete;
 
         this.rafPool = new RafPool();

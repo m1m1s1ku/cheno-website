@@ -214,10 +214,6 @@ class Home extends Page {
         ];
     }
     
-    public async connectedCallback(){
-        super.connectedCallback();
-    }
-
     public disconnectedCallback(){
         super.disconnectedCallback();
         this._stop.next(true);
