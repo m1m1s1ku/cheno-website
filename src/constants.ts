@@ -4,8 +4,8 @@
 const Constants = {
     domain: 'cheno.fr',
     instagram: 'https://www.instagram.com/valeriecheno/?__a=1',
-    base: 'http://lemondeenchantier.com/wp-tester',
-    graphql: 'http://lemondeenchantier.com/wp-tester/graphql/',
+    base: 'https://base.cheno.fr',
+    graphql: 'https://base.cheno.fr/graphql/',
     title: 'Cheno',
     defaults: {
         route: 'home'
