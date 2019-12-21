@@ -215,7 +215,7 @@ class Expos extends Page {
         };
 
         const setup = (pool: RafPool) => {
-            return new IntersectionObserver(function(entries: IntersectionObserverEntry[]) {
+            return new IntersectionObserver(function(this: IntersectionObserver, entries: IntersectionObserverEntry[]) {
                 for(const entry of entries){
                     if(canUpdate(entry)){
                         const target = entry.target as HTMLElement;
