@@ -8,6 +8,7 @@ import { navigate } from '../core/routing/routing';
 import Constants from '../constants';
 import { decodeHTML } from '../core/ui/ui';
 import RafPool from 'raf-pool';
+import { fadeWith } from '../core/animations';
 
 export interface ArticleMinimal {
     content: string;
@@ -33,6 +34,7 @@ class Expos extends Page {
     private rafPool: RafPool;
     @property({type: Object, reflect: false})
     private exposByYear: Map<number, ArticleMinimal[]> = new Map<number, ArticleMinimal[]>();
+    _year: number;
 
     public static get styles(){
         return [
@@ -216,9 +218,6 @@ class Expos extends Page {
             }
         }
 
-        const iterator = exposByYear.keys();
-
-        console.warn(iterator.next());
         this.exposByYear = exposByYear;
         await this.updateComplete;
 
@@ -276,13 +275,21 @@ class Expos extends Page {
             </div>
             <div class="periods">
                 <mwc-tab-bar scrolling>
-                    ${repeat(this.exposByYear, ([year, _expos]) => html`<mwc-tab dir label=${year} @click=${async () => {
-                        this.articles = this.ghost.filter((article) => parseInt(article.date_expo.match(/\d{4}/)[0], 10) == year);
+                    ${repeat(this.exposByYear, ([year, _expos]) => html`<mwc-tab dir label=${year} @click=${async () => {     
+                        if(this._year === year) return;
+                          
+                        const grid = this.shadowRoot.querySelector('.card-grid');
+                        const filtering = this.ghost.filter((article) => parseInt(article.date_expo.match(/\d{4}/)[0], 10) == year);
+                        this.articles = filtering;
                         await this.updateComplete;
-                        Array.from(this.shadowRoot.querySelectorAll('.card.hide')).forEach((item) => {
+                        Array.from(grid.querySelectorAll('.card.hide')).forEach((item) => {
                             item.classList.remove('hide');
                             item.classList.add('reveal');
                         });
+
+                        const animation = fadeWith(300, true);
+                        grid.animate(animation.effect, animation.options);
+                        this._year = year;
                     }}></mwc-tab>`)}
                 <mwc-tab-bar>
             </div>
