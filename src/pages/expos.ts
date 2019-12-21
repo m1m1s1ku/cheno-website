@@ -111,6 +111,7 @@ class Expos extends Page {
             }
               
             .card__place, .card__date {
+                margin: 0;
                 color: var(--text-light);
                 font-size: 1em;
                 margin-bottom: var(--spacing-s);
@@ -198,7 +199,7 @@ class Expos extends Page {
         this.articles = res;
         this.ghost = res;
         this.loaded = true;
-        
+
         await this.updateComplete;
 
         this.rafPool = new RafPool();
