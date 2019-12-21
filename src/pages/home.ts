@@ -1,5 +1,5 @@
 import { html, TemplateResult } from 'lit-html';
-import { property, css, PropertyValues } from 'lit-element';
+import { property, css, PropertyValues, query, queryAll } from 'lit-element';
 
 import Page from '../core/strategies/Page';
 import { repeat } from 'lit-html/directives/repeat';
@@ -8,7 +8,7 @@ import { wrap } from '../core/errors/errors';
 import { WPCategory } from '../interfaces';
 import { pulseWith, fadeWith } from '../core/animations';
 import { timer, fromEvent, BehaviorSubject, merge, scheduled, animationFrameScheduler, Subject, EMPTY } from 'rxjs';
-import { switchMap, tap, takeUntil, throttleTime, startWith, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { switchMap, tap, takeUntil, startWith, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Utils, decodeHTML } from '../core/ui/ui';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 
@@ -29,6 +29,11 @@ interface Sculpture {
 
 class Home extends Page {
     public static readonly is: string = 'ui-home';
+
+    @query('.series') protected series!: HTMLElement;
+    @query('#unfold') protected unfold!: HTMLElement;
+    @query('#pause') protected pause!: HTMLElement;
+    @queryAll('[will-pause]') protected pausables: NodeListOf<HTMLElement>;
 
     @property({type: Boolean, reflect: false})
     public loaded = false;
@@ -224,23 +229,26 @@ class Home extends Page {
         this._enforcePauseSub = new BehaviorSubject<boolean>(false);
         const pauseBS = new BehaviorSubject<boolean>(false);
 
-        const items = Array.from(this.shadowRoot.querySelectorAll('[will-pause]'));
+        const items = Array.from(this.pausables);
         const objects = [];
         for(const item of items){
             const click$ = fromEvent<MouseEvent>(item, 'click', (_, key) => key).pipe(
                 tap(() => {
+                    this.pause.innerText = 'pause';
                     pauseBS.next(true);
                 })
             );
 
             const leave$ = fromEvent<MouseEvent>(item, 'mouseout', (_, key) => key).pipe(
                 tap(() => {
+                    this.pause.innerText = 'play_arrow';
                     pauseBS.next(false);
                 })
             );
 
             const enter$ = fromEvent<MouseEvent>(item, 'mouseenter', (_, key) => key).pipe(
                 tap(() => {
+                    this.pause.innerText = 'pause';
                     pauseBS.next(true);
                 })
             );
@@ -253,8 +261,7 @@ class Home extends Page {
 
         const events = scheduled(merge(...objects), animationFrameScheduler);
         return events.pipe(
-            throttleTime(300),
-            debounceTime(300),
+            debounceTime(1000),
             startWith(null as Event),
             switchMap(_ => {
                 return pause$;
@@ -425,17 +432,20 @@ class Home extends Page {
     }
 
     private async _onSingle(){
-        const series = this.shadowRoot.querySelector('.series');
         const config = fadeWith(300, false);
-        const animation = series.animate(config.effect, config.options);
+        const animation = this.series.animate(config.effect, config.options);
         await animation.finished;
+
+        const willFocus = this._focused !== this.categories[this.selected].sculptures.nodes[this.sculpture];
         
-        if(this._focused === this.categories[this.selected].sculptures.nodes[this.sculpture]){
-            this._focused = null;
-            this._enforcePauseSub.next(false);
-        } else {
+        if(willFocus){
+            this.unfold.innerText = 'unfold_more';
             this._focused = this.categories[this.selected].sculptures.nodes[this.sculpture];
             this._enforcePauseSub.next(true);
+        } else {
+            this.unfold.innerText = 'rounded_corner';
+            this._focused = null;
+            this._enforcePauseSub.next(false);
         }
     }
 
@@ -465,12 +475,13 @@ class Home extends Page {
             <div class="preview">
                 <iron-image will-pause id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade @click=${this._onSingle}></iron-image>
                 <div class="unfold">
-                    <mwc-icon will-pause @click=${this._onSingle}>unfold_more</mwc-icon>
+                    <mwc-icon id="unfold" will-pause @click=${this._onSingle}>unfold_more</mwc-icon>
                 </div>
                 <div class="count">
                     <mwc-icon class="${this.selected === 0 && this.sculptureIndex === 1 ? 'disabled' : ''}" @click=${this._onPrevSculpture} will-pause>chevron_left</mwc-icon>
                     <div class="pagination"><span class="current">${this.sculptureIndex}</span> / <span class="total">${this.sculptureMax}</span></div> 
                     <mwc-icon will-pause @click=${this._onNextSculpture} will-pause>chevron_right</mwc-icon>
+                    <mwc-icon will-pause id="pause" disabled>pause</mwc-icon>
                 </div>
                 <div class="progress">
                     <mwc-linear-progress id="main-progress" progress=${this.sculptureIndex / this.sculptureMax} buffer=${this.selected / this._catMax}></mwc-linear-progress>
