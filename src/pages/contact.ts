@@ -60,11 +60,10 @@ class ContactController extends Page {
             .side.layer {
                 display: flex;
                 flex-direction: column;
-                align-items: flex-end;
-                margin: 0 0 2em 1em;
-                margin-top: -2em;
-                transition: all .3s;
-                padding: 4em;
+                align-items: flex-start;
+                margin: 4em;
+                padding: 2em;
+                border-left: 1px solid #CCC;
             }
 
             .side.layer h3,
@@ -77,6 +76,15 @@ class ContactController extends Page {
                     display: block;
                 }
             }
+
+            .book {
+                align-self: flex-end;
+            }
+
+            .ecology-smile {
+                display: flex;
+                align-items: center;
+            }
             `
         ];
     }
@@ -87,6 +95,7 @@ class ContactController extends Page {
             <div class="side">
                 <h2>Remplissez juste, le formulaire.</h2>
                 <h4>On répond vite, c'est promis !</h4>
+                <h4><mwc-icon>warning</mwc-icon> Page en cours de maintenance</h4>
                 <form class="simple">
                     <div class="field">
                         <mwc-textfield
@@ -128,9 +137,11 @@ class ContactController extends Page {
                 </form>
             </div>
             <div class="side layer">
-                <h4>Envie de voir les oeuvres dans leur milieu naturel ?</h4>
+                <h2>Besoin d'une présentation ?</h2>
                 <p>Des visites dans le "Jardin des Sculptures" sont possibles sur simple demande, n'hésitez pas !</p>
-
+                <h3>Un rendu papier ?</h3>
+                <mwc-button class="book" disabled raised label="Book numérique" icon="picture_as_pdf"></mwc-button>
+                <p class="ecology-smile">(à n'imprimer que si nécessaire ! <mwc-icon>tag_faces</mwc-icon>)</p>
             </div>
         </div>
         `;
