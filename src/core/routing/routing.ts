@@ -8,7 +8,7 @@ import { ElaraApp } from '../../elara-app';
  * @param {string} route route without base prefix
  */
 export function navigate(route: string) {
-    if(route.indexOf('http') !== -1){
+    if(route.indexOf('http') !== -1 || route.indexOf('mailto') !== -1){
         window.open(route, '_blank');
         return true;
     }
