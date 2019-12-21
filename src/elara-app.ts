@@ -303,6 +303,9 @@ export class ElaraApp extends Root {
 			.main-menu {
 				min-width: 100%;
 			}
+			header {
+				z-index: 5;
+			}
 		}
 
 		.main-menu::after {
