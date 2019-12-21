@@ -214,8 +214,8 @@ export class ElaraApp extends Root {
 		}
 
 		.logo {
-			width: 150px; 
-			height: 100px;
+			width: 150px;
+			height: 90px;
 		}
 
 		.menu {

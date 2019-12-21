@@ -1,6 +1,6 @@
 import { html, TemplateResult } from 'lit-html';
 import { repeat } from 'lit-html/directives/repeat';
-import { css, property } from 'lit-element';
+import { css, property, query } from 'lit-element';
 
 import Page from '../core/strategies/Page';
 import { navigate } from '../core/routing/routing';
@@ -30,6 +30,8 @@ class Expos extends Page {
     public articles: ReadonlyArray<ArticleMinimal> = [];
     @property({type: Array, reflect: false})
     private ghost: ReadonlyArray<ArticleMinimal> = [];
+
+    @query('.card-grid') protected grid!: HTMLElement;
 
     private rafPool: RafPool;
     @property({type: Object, reflect: false})
@@ -158,10 +160,6 @@ class Expos extends Page {
                 opacity: 0;
             }
 
-            .card.reveal {
-                opacity: 1;
-            }
-
             .periods {
                 width: 100%;
             }
@@ -223,15 +221,11 @@ class Expos extends Page {
 
         this.rafPool = new RafPool();
 
-        const canUpdate = (entry: IntersectionObserverEntry) => {
-            // not visible
-            return !(entry.intersectionRatio <= 0);
-        };
+        const canUpdate = function(entry: IntersectionObserverEntry){ return entry.intersectionRatio >= 0; };
 
         const update = (card: HTMLElement) => {
             return function() {
                 card.classList.remove('hide');
-                card.classList.add('reveal');
             };
         };
 
@@ -248,7 +242,7 @@ class Expos extends Page {
         };
 
         const intersectionObserver = setup(this.rafPool);
-        const cards = Array.from(this.shadowRoot.querySelectorAll('.card'));
+        const cards = Array.from(this.grid.querySelectorAll('.card'));
         for(const card of cards){
             intersectionObserver.observe(card);
         }
@@ -277,18 +271,17 @@ class Expos extends Page {
                 <mwc-tab-bar scrolling>
                     ${repeat(this.exposByYear, ([year, _expos]) => html`<mwc-tab dir label=${year} @click=${async () => {     
                         if(this._year === year) return;
-                          
-                        const grid = this.shadowRoot.querySelector('.card-grid');
+
                         const filtering = this.ghost.filter((article) => parseInt(article.date_expo.match(/\d{4}/)[0], 10) == year);
                         this.articles = filtering;
                         await this.updateComplete;
-                        Array.from(grid.querySelectorAll('.card.hide')).forEach((item) => {
+                        Array.from(this.grid.querySelectorAll('.card.hide')).forEach((item) => {
                             item.classList.remove('hide');
                             item.classList.add('reveal');
                         });
 
                         const animation = fadeWith(300, true);
-                        grid.animate(animation.effect, animation.options);
+                        this.grid.animate(animation.effect, animation.options);
                         this._year = year;
                     }}></mwc-tab>`)}
                 <mwc-tab-bar>
