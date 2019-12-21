@@ -88,7 +88,7 @@ class Expos extends Page {
             }
               
             .card:hover .card__background {
-                transform: scale(1.05) translateZ(0);
+                transform: translateZ(0);
             }
               
             .card-grid:hover > .card:not(:hover) .card__background {
@@ -201,7 +201,8 @@ class Expos extends Page {
             <div class="title-search">
                 <h1>Expositions</h1>
                 <mwc-textfield label="Recherche" @input=${(event: CustomEvent) => {
-                    this.search(event.detail.value);
+                    const target = event.target as HTMLInputElement;
+                    this.search(target.value);
                 }}></mwc-textfield>
             </div>
             ${!this.loaded ? html`<paper-spinner active></paper-spinner>` : html``}
