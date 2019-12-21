@@ -68,6 +68,10 @@ class Expos extends Page {
                 width: 100%;
             }
 
+            .title-search mwc-textfield {
+                margin: 0 0 0 1em;
+            }
+            
             .card {
                 list-style: none;
                 position: relative;
