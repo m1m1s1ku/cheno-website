@@ -204,6 +204,7 @@ export class ElaraApp extends Root {
 			margin: 5px;
 			color: rgba(0,0,0,.8);
 			user-select: none;
+			mix-blend-mode: soft-light;
 		}
 
 		@media (min-width: 700px){
