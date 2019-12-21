@@ -52,6 +52,7 @@ try {
           }
         
           $response = get();
+          var_dump($response);
           $title = $response->title;
           $description = $response->description;
           $image = $response->image;

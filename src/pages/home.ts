@@ -7,8 +7,8 @@ import Constants from '../constants';
 import { wrap } from '../core/errors/errors';
 import { WPCategory } from '../interfaces';
 import { pulseWith, fadeWith } from '../core/animations';
-import { timer, fromEvent, BehaviorSubject, EMPTY, merge, scheduled, animationFrameScheduler, Subject } from 'rxjs';
-import { concatMapTo, switchMap, tap, startWith, distinctUntilChanged, map, takeUntil, skipWhile } from 'rxjs/operators';
+import { timer, fromEvent, BehaviorSubject, merge, scheduled, animationFrameScheduler, Subject, EMPTY } from 'rxjs';
+import { switchMap, tap, takeUntil, throttleTime, startWith, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Utils, decodeHTML } from '../core/ui/ui';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 
@@ -211,7 +211,6 @@ class Home extends Page {
     
     public async connectedCallback(){
         super.connectedCallback();
-        await this._setupWalk();
     }
 
     public disconnectedCallback(){
@@ -224,47 +223,46 @@ class Home extends Page {
         this._stop = new Subject();
         this._enforcePauseSub = new BehaviorSubject<boolean>(false);
         const pauseBS = new BehaviorSubject<boolean>(false);
-        const pause$ = pauseBS.pipe(
-            distinctUntilChanged()
-        );
-
-        // TODO implement reset on click
 
         const items = Array.from(this.shadowRoot.querySelectorAll('[will-pause]'));
         const objects = [];
         for(const item of items){
-            const enter$ = fromEvent<MouseEvent>(item, 'mouseenter', (_, key) => key).pipe(
+            const click$ = fromEvent<MouseEvent>(item, 'click', (_, key) => key).pipe(
                 tap(() => {
                     pauseBS.next(true);
                 })
             );
-    
+
             const leave$ = fromEvent<MouseEvent>(item, 'mouseout', (_, key) => key).pipe(
                 tap(() => {
                     pauseBS.next(false);
                 })
             );
-            objects.push(enter$, leave$);
+
+            const enter$ = fromEvent<MouseEvent>(item, 'mouseenter', (_, key) => key).pipe(
+                tap(() => {
+                    pauseBS.next(true);
+                })
+            );
+            objects.push(click$, leave$, enter$);
         };
 
-        const pauseHandle = scheduled(merge(...objects).pipe(
-            concatMapTo(pause$),
-            startWith(false),
-        ), animationFrameScheduler);
+        const pause$ = pauseBS.asObservable().pipe(
+            distinctUntilChanged()
+        );
 
-        return pauseHandle.pipe(
-            switchMap(current => {
-                if(current === true){
-                    return EMPTY;
-                }
+        const events = scheduled(merge(...objects), animationFrameScheduler);
+        return events.pipe(
+            throttleTime(300),
+            debounceTime(300),
+            startWith(null as Event),
+            switchMap(_ => {
+                return pause$;
+            }),
+            switchMap((paused) => {
+                if(paused) return EMPTY;
 
                 return timer(5000, 5000).pipe(
-                    switchMap(_ => {
-                        return this._enforcePauseSub.pipe(
-                            map(enforced => enforced === false || current)
-                        );
-                    }),
-                    skipWhile((paused) => !paused),
                     takeUntil(this._stop),
                     switchMap(async() => {                               
                         if(this._canNext()){
@@ -318,6 +316,8 @@ class Home extends Page {
 
         await this._onCatClick(0);
         this.loaded = true;
+        await this.updateComplete;
+        await this._setupWalk();
     }
 
     private async _onCatClick(idx: number){
@@ -441,21 +441,23 @@ class Home extends Page {
 
     public render(): void | TemplateResult {
         return html`
-        <div class="home-container">
-            ${!this._focused ? html`<div class="series">
+        <div class="home-container" will-pause>
+            ${!this._focused ? html`<div class="series" will-pause>
                 <nav>
                     <ul>
-                        ${repeat(this.categories, (category, idx) => html`<li class="serie serie-${idx} ${this.selected === idx ? 'selected disabled' : ''}" @click=${() => this.selected === idx ? null : this._onCatClick(idx)}><h1  will-pause class="big">${category.name}</h1></li>`)}
+                        ${repeat(this.categories, (category, idx) => html`<li class="serie serie-${idx} ${this.selected === idx ? 'selected disabled' : ''}" @click=${() => this.selected === idx ? null : this._onCatClick(idx)}><h1 class="big" will-pause>${category.name}</h1></li>`)}
                     </ul>
                 </nav>
             </div>` : html`
-            <div class="series">
-                <div class="single-container">
-                    <h3 class="single-cat" @click=${this._onSingle}>- ${this.categories[this.selected].name}</h3>
+            <div class="series" will-pause>
+                <div class="single-container" will-pause>
+                    <h3 will-pause class="single-cat" @click=${this._onSingle}>- ${this.categories[this.selected].name}</h3>
                     <div class="title-container">
-                        <h1>${decodeHTML(this._focused.title)}</h1>
+                        <h1 will-pause>${decodeHTML(this._focused.title)}</h1>
                     </div>
-                    ${unsafeHTML(this._focused.content)}
+                    <div class="content">
+                        ${unsafeHTML(this._focused.content)}
+                    </div>
                 </div>
             </div>
             `}
