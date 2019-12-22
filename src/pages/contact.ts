@@ -4,15 +4,17 @@ import { css, query } from 'lit-element';
 import Page from '../core/strategies/Page';
 import { navigate } from '../core/routing/routing';
 import { TextField } from '@material/mwc-textfield';
+import { TextArea } from '@material/mwc-textarea';
+import { Button } from '@material/mwc-button';
 
 class ContactController extends Page {
     public static readonly is: string = 'ui-contact';
 
-    @query('.simple #name') protected name!: HTMLInputElement;
-    @query('.simple #email') protected email!: HTMLInputElement;
-    @query('.simple #phone') protected phone!: HTMLInputElement;
-    @query('.simple #message') protected message!: HTMLTextAreaElement;
-    @query('.simple #send') protected send!: HTMLButtonElement;
+    @query('.simple #name') protected name!: TextField;
+    @query('.simple #email') protected email!: TextField;
+    @query('.simple #phone') protected phone!: TextField;
+    @query('.simple #message') protected message!: TextArea;
+    @query('.simple #send') protected send!: Button;
 
     public static get styles(){
         return [
@@ -112,7 +114,13 @@ class ContactController extends Page {
             <div class="side">
                 <h2>Remplissez juste, le formulaire.</h2>
                 <h4 class="helper">Réponse rapide, c'est promis !</h4>
-                <form class="simple" @input=${() => {
+                <form class="simple" @input=${(e: KeyboardEvent) => {
+                    const field = e.target as TextField;
+                    if(field.validity.customError){
+                        field.setCustomValidity('');
+                        this.email.reportValidity();
+                    }
+
                     const fields = Array.from(this.shadowRoot.querySelectorAll('.field mwc-textfield, .field mwc-textarea')) as TextField[];
                     this.send.disabled = fields.some(field => field.checkValidity() === false);
                 }}>
@@ -127,10 +135,10 @@ class ContactController extends Page {
                     </div>
                     <div class="field">
                         <mwc-textfield
+                            type="email"
                             id="email"
                             label="E-mail"
                             required
-                            pattern="^([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)$"
                             iconTrailing="mail_outline"
                         ></mwc-textfield>
                     </div>
@@ -181,10 +189,15 @@ class ContactController extends Page {
                                 this.message.disabled = true;
                                 this.send.disabled = true;
                             } else {
-                                console.warn(sending.error);
-                                // show error on form
-                                // allow retry
-                                // present mailto link
+                                if(sending.error && sending.error.indexOf('_replyto') !== -1){
+                                    this.email.setCustomValidity('E-mail invalide');
+                                    this.email.reportValidity();
+                                    this.send.disabled = true;
+                                    
+                                    return;
+                                }
+
+                                throw new Error(sending.error);
                             }
                         }}></mwc-button>
                     </div>
