@@ -149,7 +149,7 @@ export class ElaraApp extends Root {
 			this.logoPath.classList.add('write');
 			setTimeout(() => {
 				this.logoPath.querySelector('path').style.fill = '#000';
-			}, 3000);
+			}, 2000);
 		});
 	}
 

@@ -25,39 +25,14 @@ function makeGenericHandler(error = null){
         ${error.continue == true ? '<button class="continue" onclick="dismiss()">Pas grave, je continue.</button>' : ''}
         <button class="reload" onclick="reload()" raised toggles>Rafraîchir</button>
       </div>
-    ` : `
-    <div id="loader">
-      <div id="dot"></div>
-      <div class="step" id="s1"></div>
-      <div class="step" id="s2"></div>
-      <div class="step" id="s3"></div>
-    </div>
-    `}
+    ` : ``}
   </div>
   `;
   return handler;
 }
 
 function _onDomLoaded(){
-  let willRemove = false;
   let handler = null;
-
-  document.body.classList.add('scrolling-disabled');
-
-  if(location.hash.indexOf('redirect') !== -1){
-    handler = document.querySelector('#handler');
-    if(handler){
-      willRemove = true;
-    }
-  } else {
-    willRemove = false;
-    document.body.appendChild(makeGenericHandler());
-  }
-
-  if(willRemove && handler){
-    // Remove load handler immediatly on redirect
-    handler.parentElement.removeChild(handler);
-  }
 
   const loadingPromises = [
     // When elara is defined we directly run her bootstrap to load website while global loading.
@@ -78,25 +53,6 @@ function _onDomLoaded(){
     if(!handler){
       handler = document.querySelector('#handler');
     }
-    
-    window.requestAnimationFrame(() => {
-      const spinner = document.querySelector('#spinner');
-      const debug = false;
-      
-      if(debug) return;
-
-      setTimeout(() => {
-        if(spinner){
-          spinner.parentElement.removeChild(spinner);
-        }
-        if(handler){
-          handler.classList.add('hidden');
-          handler.parentElement.removeChild(handler);
-        }
-  
-        document.body.classList.remove('scrolling-disabled');
-      }, 500);
-    });
   });
 }
 

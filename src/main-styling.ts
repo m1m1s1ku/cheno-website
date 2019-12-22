@@ -185,22 +185,20 @@ footer {
 .main-menu nav ul li h3:hover {
     opacity: 1;
 }
-
-.write {
-    stroke-dasharray: 7512.03125;
-    stroke-dashoffset: 7512.03125;
-    animation: dash 3s linear forwards;
-    transition: all .3s;
-}
-
+  
 svg.logo path {
     transition: fill .3s;
 }
-
-@keyframes dash {
-    to {
-      stroke-dashoffset: 0;
-    }
+  
+.write {
+    stroke-dasharray: 7512.03125;
+    stroke-dashoffset: 7512.03125;
+    animation: writeLine 2s linear forwards;
 }
 
+@keyframes writeLine {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
 `;
