@@ -1,6 +1,6 @@
 import { html, TemplateResult } from 'lit-html';
 import { repeat } from 'lit-html/directives/repeat';
-import { css, property, query } from 'lit-element';
+import { css, property, query, queryAll } from 'lit-element';
 
 import Page from '../core/strategies/Page';
 import { navigate } from '../core/routing/routing';
@@ -32,6 +32,7 @@ class Expos extends Page {
     private ghost: ReadonlyArray<ArticleMinimal> = [];
 
     @query('.card-grid') protected grid!: HTMLElement;
+    @queryAll('.card') protected cards!: NodeListOf<HTMLElement>;
 
     private rafPool: RafPool;
     @property({type: Object, reflect: false})
@@ -246,7 +247,7 @@ class Expos extends Page {
         };
 
         const intersectionObserver = setup(this.rafPool);
-        const cards = Array.from(this.grid.querySelectorAll('.card'));
+        const cards = Array.from(this.cards);
         for(const card of cards){
             intersectionObserver.observe(card);
         }
