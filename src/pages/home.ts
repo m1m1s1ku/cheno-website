@@ -462,7 +462,9 @@ class Home extends Page {
                     <mwc-icon class="${this.selected === 0 && this.sculptureIndex === 1 ? 'disabled' : ''}" @click=${this._onPrevSculpture} will-pause>chevron_left</mwc-icon>
                     <div class="pagination"><span class="current">${this.sculptureIndex}</span> / <span class="total">${this.sculptureMax}</span></div> 
                     <mwc-icon will-pause @click=${this._onNextSculpture} will-pause>chevron_right</mwc-icon>
-                    <mwc-icon will-pause id="pause" disabled>play_arrow</mwc-icon>
+                    <mwc-icon will-pause id="pause" @click=${() => {
+                        this._enforcePauseSub.next(!this._enforcePauseSub.getValue());
+                    }}>play_arrow</mwc-icon>
                 </div>
                 <div class="progress">
                     <mwc-linear-progress id="main-progress" progress=${this.sculptureIndex / this.sculptureMax} buffer=${this.selected / this._catMax}></mwc-linear-progress>
