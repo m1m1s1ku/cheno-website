@@ -50,12 +50,11 @@ class Home extends Page {
 
     @property({type: Number, reflect: false})
     public serieProgress = 0;
-
-    /* Non-updating values */
-    private _currentAnimation: Animation;
     @property({type: Object, reflect: false})
     private _focused: Sculpture;
 
+    /* Non-updating values */
+    private _currentAnimation: Animation;
     private _enforcePauseSub: BehaviorSubject<boolean>;
     private _stop: Subject<unknown>;
 
@@ -97,6 +96,7 @@ class Home extends Page {
                 font-family: var(--elara-font-display);
                 font-size: 1.2em;
                 position: relative;
+                padding: .5em 0;
             }
 
             @media (min-width: 500px){
@@ -191,24 +191,12 @@ class Home extends Page {
                 cursor: crosshair;
             }
 
-            .big::before {
-                content: '';
-                position: absolute;
-                background: var(--elara-secondary);
-                width: 80%;
-                height: 1px;
-                bottom: -2px;
-                transform-origin: 50% 0;
-                transform: scale3d(0,1,1);
-                opacity: 0;
-                transition: all 0.3s;
-                transition-property: opacity, transform;
-            }
-
-            .selected .big::before,
-            .selected:hover .big::before {
-                transform: scale3d(1,1,1);
-                opacity: 1;
+            .selected .big {
+                background-image: linear-gradient(120deg, #002Fa7 0%, #8fd3f4 100%);
+                background-repeat: no-repeat;
+                background-size: 100% 0.1em;
+                background-position: 25px 88%;
+                transition: all 0.25s ease-out;
             }
             `
         ];
@@ -265,7 +253,7 @@ class Home extends Page {
             switchMap((paused) => {
                 if(paused) return EMPTY;
 
-                return timer(5000, 5000).pipe(
+                return timer(3500, 3500).pipe(
                     takeUntil(this._stop),
                     switchMap(async() => {                               
                         if(this._canNext()){
@@ -435,11 +423,11 @@ class Home extends Page {
         const willFocus = this._focused !== this.categories[this.selected].sculptures.nodes[this.sculpture];
         
         if(willFocus){
-            this.unfold.innerText = 'unfold_more';
+            this.unfold.innerText = 'unfold_less';
             this._focused = this.categories[this.selected].sculptures.nodes[this.sculpture];
             this._enforcePauseSub.next(true);
         } else {
-            this.unfold.innerText = 'rounded_corner';
+            this.unfold.innerText = 'unfold_more';
             this._focused = null;
             this._enforcePauseSub.next(false);
         }
