@@ -1,4 +1,4 @@
-import { html, css, CSSResult, property, SVGTemplateResult } from 'lit-element';
+import { html, CSSResult, property, SVGTemplateResult, query } from 'lit-element';
 
 import crayon from 'crayon';
 
@@ -13,6 +13,7 @@ import { wrap } from './core/errors/errors';
 import { Subscription } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat';
 import { navigate } from './core/routing/routing';
+import { MainStyling } from './main-styling';
 
 // Polyfills
 import('./polyfill');
@@ -34,6 +35,7 @@ export class ElaraApp extends Root {
 	public legalLinks: WPLink[] = [];
 	@property({type: Array, reflect: false, noAccessor: true})
 	public socialLinks: WPLink[] = [];
+	@query('svg.logo') logoPath!: SVGElement;
 
 	@property({type: Array, reflect: false, noAccessor: true})
 	public socialThumbs: {
@@ -142,6 +144,13 @@ export class ElaraApp extends Root {
 
 	public async firstUpdated(): Promise<void> {
 		this.router.load();
+
+		requestAnimationFrame(() => {
+			this.logoPath.classList.add('write');
+			setTimeout(() => {
+				this.logoPath.querySelector('path').style.fill = '#000';
+			}, 3000);
+		});
 	}
 
 	/**
@@ -160,193 +169,7 @@ export class ElaraApp extends Root {
 	}
 
 	public static get styles(): CSSResult[] {
-		return [
-		css`
-		.logo {
-			cursor: pointer;
-		}
-		
-		.content {
-			color: var(--elara-font-color);
-			display: inline-block;
-
-			font-family: var(--elara-font-primary);
-			opacity: 1;
-			margin: 0;
-			height: 100%;
-			width: 100%;
-		}
-
-		.content.hidden {
-			opacity: 0;
-			z-index: 0;
-			visibility: hidden;
-		}
-
-		header {
-			position: fixed;
-			top: 0;
-			right: 0;
-			left: 0;
-
-			display: flex;
-			flex-direction: row;
-			justify-content: space-between;
-			align-items: flex-start;
-
-			z-index: 2;
-			
-			margin: 5px 30px;
-		}
-
-		footer {
-			position: fixed;
-			bottom: 0;
-			left: 0;
-			pointer-events: none;
-			margin: 5px;
-			color: rgba(0,0,0,.8);
-			user-select: none;
-			mix-blend-mode: soft-light;
-		}
-
-		@media (min-width: 700px){
-			footer {
-				margin: 30px;
-			}
-		}
-
-		.logo {
-			width: 150px;
-			height: 90px;
-		}
-
-		.menu {
-			z-index: 999;
-			--color: #333;
-			width: 36px;
-			height: 36px;
-			padding: 0;
-			margin: 0;
-			margin-top: 10px;
-			outline: none;
-			position: relative;
-			border: none;
-			background: none;
-			cursor: pointer;
-			-webkit-appearence: none;
-			-webkit-tap-highlight-color: transparent;
-		}
-		.menu svg {
-			width: 64px;
-			height: 48px;
-			top: -6px;
-			left: -14px;
-			stroke: var(--color);
-			stroke-width: 3px;
-			stroke-linecap: round;
-			stroke-linejoin: round;
-			fill: none;
-			display: block;
-			position: absolute;
-		}
-		.menu svg path {
-			transition: stroke-dasharray var(--duration, 0.85s) var(--easing, ease) var(--delay, 0s), stroke-dashoffset var(--duration, 0.85s) var(--easing, ease) var(--delay, 0s);
-			stroke-dasharray: var(--array-1, 24px) var(--array-2, 100px);
-			stroke-dashoffset: var(--offset, 126px);
-			-webkit-transform: translateZ(0);
-					transform: translateZ(0);
-		}
-		.menu svg path:nth-child(2) {
-			--duration: .2s;
-			--easing: ease-in;
-			--offset: 100px;
-			--array-2: 74px;
-		}
-		.menu svg path:nth-child(3) {
-			--offset: 133px;
-			--array-2: 107px;
-		}
-		.menu.active {
-			--color: #fff;
-		}
-		.menu.active svg path {
-			--offset: 57px;
-		}
-		.menu.active svg path:nth-child(1), .menu.active svg path:nth-child(3) {
-			--delay: .15s;
-			--easing: cubic-bezier(.2, .4, .2, 1.1);
-		}
-		.menu.active svg path:nth-child(2) {
-			--duration: .4s;
-			--offset: 2px;
-			--array-1: 1px;
-		}
-		.menu.active svg path:nth-child(3) {
-			--offset: 58px;
-		}
-
-		.main-menu {
-			min-width: 30%;
-			position: fixed;
-			min-height: 100px;
-			right: 0;
-			top: 0;
-			visibility: hidden;
-			overflow: hidden;
-			opacity: 0;
-			transition: visibility 0s .3s, opacity .3s linear;
-			border-radius: 0 0 4px 4px;
-		}
-
-		@media (max-width: 700px){
-			.main-menu {
-				min-width: 100%;
-			}
-			header {
-				z-index: 5;
-			}
-		}
-
-		.main-menu::after {
-			position: absolute;
-			bottom: 26px;
-			content:'';
-			width: 100%;
-			height: 100vh;
-			background-color: rgba(86, 86, 86, .9);
-			transform: skewY(-20deg);
-			border-radius: 4px;
-			z-index: -1;
-		}
-
-		.main-menu.visible {
-			opacity: 1;
-			transition: opacity .3s linear;
-			visibility: visible;
-		}
-
-		.main-menu nav ul {
-			padding: 0 20px;
-		}
-
-		.main-menu nav ul li {
-			color: white;
-			cursor: pointer;
-			list-style: none;
-		}
-
-		.main-menu nav ul li h3 {
-			opacity: .5;
-			line-height: 3em;
-			font-family: var(--elara-font-primary);
-			transition: opacity .3s linear;
-		}
-
-		.main-menu nav ul li h3:hover {
-			opacity: 1;
-		}
-	`];
+		return [MainStyling];
 	}
 
 	private _toggleMenu(event: Event){
@@ -377,9 +200,32 @@ export class ElaraApp extends Root {
 	public render() {
 		return html`
 			<header>
-				<iron-image class="logo" sizing="contain" src="${this.logo}" @click=${() => {
-					navigate(Constants.defaults.route);
-				}}></iron-image>
+				<svg @click=${() => {
+					if(this.route !== 'home'){
+						navigate('home');
+					}
+				}} class="logo" id="logo" x="0px" y="0px" viewBox="0 0 1556 723" xml:space="preserve">
+					<path fill="transparent" stroke="#000" stroke-width="4" d="M508.52,508.89c-26.21,1.87-47.48,17.07-71.62,24.68c3.39,63.68,22.43,117.43-3.4,125.48
+						c-12.48,1.83-14.59-8.19-17.12-18.81c-4.77-24.93-10.72-52.28-3.04-74.52c-2.69-33.8-28.83-8.56-45.87-5.6
+						c-46.85,17.61-92.75,31.77-141.35,44.12c-358.76,95.4-188.94-107.58-148.86-134.23c282.79-214.74,484.72-277.82,525.9-309.22
+						c15.11-16.37,55.87-3.79,29.47,9.02c-52.96,36.03-111.25,52.72-166.62,83.74C371.04,301.5-5.12,522.35,32.54,584
+						c17.6,41.3,198.46-13.77,219.91-13.53c48.48-12.81,90.17-37.17,139.51-47.4c26.09-5.26,9.61-59.66,14.27-75.58
+						c17.12-25.87,1.73-54.8-2-87.32c0.37-7.77,3.94-12.43,9.41-16.8c49.68-29.66,20.35,49.41,23.17,72.68
+						c0.33,45.12-4.22,77.79,4.19,86.71c31.76-0.83,70.93-15.47,70.85-50.44c3.84-78.96-14.8-111.31,14.07-122.91
+						c33.64-5.55,18.59,33.46,16.76,51.55c-3.01,23.97-3.69,46.65-3.27,71.11c0.84,33.11,37.01,0.39,53.85-1.7
+						c72.79-14.79,72.36-75.27,112.81-119.79c14.53-15.83,67.43-78.05,66.01-35.98c-30.85,36.95-67.37,69.99-84.62,118.17
+						c268.73-60.97,187.84-283.1,265.12-88.67c6.78-25.93,52.69-116.55,72.96-89.15c21.93,122.97,9.13,88.69,66.1,51.77
+						c27.02-42.11,11.02-62.64,38.55-56.62c14.57,7.06,2.07,25.66,9.83,39.57c7.84,21.65,36.15,24.44,51.44,12.17
+						c55.82-77.82-34.53-61.02-20.51-88.16c37.71-29.98,86.92-43.26,129.68-67.01c49.26-22.83,92.91-51.24,145.13-67.76
+						c97.1-55.69,81.01-53.63,97.99-46.55c-6.13,21.17-79.3,44.5-86.67,54.32c-0.19-0.36-0.5-0.96-0.82-1.57
+						c0.47,0.52,0.94,1.05,1.4,1.57c-25.72,16.47-49.95,39.92-78.86,52.97c-81.25,28.4-70.11,34.24-98.05,48.42
+						c-18.55,4.17-32.06,18.32-51.16,21.95c-53.91,5.75,20.19,27.87-4.67,91.73c-7.11,20.64-23.92,33.26-46.6,34.14
+						c-47.41,1.34-53.27-38.85-66.15-28.37c-41.03,84.21-82.39,70.47-109.71-5.7c-15.05,26.86-32.46,54.86-38.13,86.5
+						c-5.62,44.23-27.09,2.63-32.1-14.46c-11.89-29.41-14.45-78.46-31.36-45.22c-91.68,129.64-236.32,106.87-221.76,152.63
+						c-1.14,35.47,40.31,19.16,63.06,20.45c95.27-5.54,114.18-32.66,135.18-23.68c21.74,22.81-58.43,30.12-67.18,35.79
+						C607.79,548.13,670.2,464.45,626.8,460.3c-26.5,13.65-50.86,21.6-79.47,32.87c-11.84,8.63,0.28,37.04-1,50.49
+						c1.43,29.98,6.68,52.16,9.33,81.44c-0.06,8.27-0.75,19.52-12.42,16.98C495.14,637.45,518.15,538.14,508.52,508.89z"/>
+				</svg>
 				<button aria-label="Menu" class="menu" @click=${this._toggleMenu}>
 					<svg viewBox="0 0 64 48">
 						<path d="M19,15 L45,15 C70,15 58,-2 49.0177126,7 L19,37"></path>
