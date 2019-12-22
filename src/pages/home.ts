@@ -7,8 +7,8 @@ import Constants from '../constants';
 import { wrap } from '../core/errors/errors';
 import { WPCategory } from '../interfaces';
 import { pulseWith, fadeWith } from '../core/animations';
-import { timer, fromEvent, BehaviorSubject, merge, scheduled, animationFrameScheduler, Subject, EMPTY, of } from 'rxjs';
-import { switchMap, tap, takeUntil, startWith, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { timer, fromEvent, BehaviorSubject, merge, scheduled, animationFrameScheduler, Subject, EMPTY } from 'rxjs';
+import { switchMap, tap, takeUntil, startWith, debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { Utils, decodeHTML } from '../core/ui/ui';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 
@@ -225,31 +225,28 @@ class Home extends Page {
         };
 
         const pause$ = pauseBS.asObservable().pipe(
-            distinctUntilChanged(),
-            switchMap((paused) => {
-                const enforced = this._enforcePauseSub.getValue();
-                if(paused !== enforced){
-                    return of(enforced);
-                } else {
-                    return of(paused);
-                }
-            })
+            distinctUntilChanged()
         );
 
         const events = scheduled(merge(...objects), animationFrameScheduler);
         return events.pipe(
-            debounceTime(1000),
+            debounceTime(300),
             startWith(null as Event),
             switchMap(_ => {
                 return pause$;
             }),
-            switchMap((paused) => {
-                if(paused){
-                    this.pause.innerText = 'pause';
-                    return EMPTY;
+            map((paused) => {
+                const enforced = this._enforcePauseSub.getValue();
+                if(paused !== enforced){
+                    return enforced;
                 } else {
-                    this.pause.innerText = 'play_arrow';
+                    return paused;
                 }
+            }),
+            switchMap((paused) => {                    
+                this.pause.innerText = paused ? 'pause' : 'play_arrow';
+
+                if(paused) return EMPTY;
 
                 return timer(3500, 3500);
             }),
@@ -422,11 +419,11 @@ class Home extends Page {
         if(willFocus){
             this.unfold.innerText = 'minimize';
             this._focused = this.categories[this.selected].sculptures.nodes[this.sculpture];
-            this._enforcePauseSub.next(true);
+            this._enforcePauseSub.next(false);
         } else {
             this.unfold.innerText = 'maximize';
             this._focused = null;
-            this._enforcePauseSub.next(false);
+            this._enforcePauseSub.next(true);
         }
     }
 
@@ -454,15 +451,15 @@ class Home extends Page {
             `}
 
             <div class="preview">
-                <iron-image will-pause id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade @click=${this._onSingle}></iron-image>
+                <iron-image id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade @click=${this._onSingle}></iron-image>
                 <div class="unfold">
-                    <mwc-icon id="unfold" will-pause @click=${this._onSingle}>maximize</mwc-icon>
+                    <mwc-icon id="unfold" @click=${this._onSingle}>maximize</mwc-icon>
                 </div>
                 <div class="count">
-                    <mwc-icon class="${this.selected === 0 && this.sculptureIndex === 1 ? 'disabled' : ''}" @click=${this._onPrevSculpture} will-pause>chevron_left</mwc-icon>
+                    <mwc-icon class="${this.selected === 0 && this.sculptureIndex === 1 ? 'disabled' : ''}" @click=${this._onPrevSculpture}>chevron_left</mwc-icon>
                     <div class="pagination"><span class="current">${this.sculptureIndex}</span> / <span class="total">${this.sculptureMax}</span></div> 
-                    <mwc-icon will-pause @click=${this._onNextSculpture} will-pause>chevron_right</mwc-icon>
-                    <mwc-icon will-pause id="pause" @click=${() => {
+                    <mwc-icon @click=${this._onNextSculpture}>chevron_right</mwc-icon>
+                    <mwc-icon id="pause" @click=${() => {
                         this._enforcePauseSub.next(!this._enforcePauseSub.getValue());
                     }}>play_arrow</mwc-icon>
                 </div>
