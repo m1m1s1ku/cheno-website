@@ -3,6 +3,7 @@ import { css, query } from 'lit-element';
 
 import Page from '../core/strategies/Page';
 import { navigate } from '../core/routing/routing';
+import { TextField } from '@material/mwc-textfield';
 
 class ContactController extends Page {
     public static readonly is: string = 'ui-contact';
@@ -11,6 +12,7 @@ class ContactController extends Page {
     @query('.simple #email') protected email!: HTMLInputElement;
     @query('.simple #phone') protected phone!: HTMLInputElement;
     @query('.simple #message') protected message!: HTMLTextAreaElement;
+    @query('.simple #send') protected send!: HTMLButtonElement;
 
     public static get styles(){
         return [
@@ -109,27 +111,32 @@ class ContactController extends Page {
         <div id="contact" class="contact" role="main">
             <div class="side">
                 <h2>Remplissez juste, le formulaire.</h2>
-                <h4 class="helper">Réponse rapide, c'est promis ! <mwc-icon @click=${() => {
-                    navigate('mailto:cheno@cheno.fr');
-                }}>email</mwc-icon></h4>
-                <h4><mwc-icon>warning</mwc-icon> Page en cours de maintenance</h4>
-                <form class="simple">
+                <h4 class="helper">Réponse rapide, c'est promis !</h4>
+                <form class="simple" @input=${() => {
+                    const fields = Array.from(this.shadowRoot.querySelectorAll('.field mwc-textfield, .field mwc-textarea')) as TextField[];
+                    this.send.disabled = fields.some(field => field.checkValidity() === false);
+                }}>
                     <div class="field">
                         <mwc-textfield
                             id="name"
                             label="Nom"
                             iconTrailing="account_box"
+                            required
+                            pattern=".{1,}"
                         ></mwc-textfield>
                     </div>
                     <div class="field">
                         <mwc-textfield
                             id="email"
                             label="E-mail"
+                            required
+                            pattern="^([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)$"
                             iconTrailing="mail_outline"
                         ></mwc-textfield>
                     </div>
                     <div class="field">
                         <mwc-textfield
+                            required
                             id="phone"
                             label="Téléphone"
                             iconTrailing="phone"
@@ -138,17 +145,47 @@ class ContactController extends Page {
                     <div class="field">
                         <mwc-textarea 
                             id="message"
+                            required
                             label="Message"
+                            pattern=".{1,}"
                         ></mwc-textarea>
                     </div>
                     <div class="field send">
-                        <mwc-button disabled raised label="Envoyer" icon="send" trailingIcon @click=${async() => {
-                            console.warn('will send', {
-                                name: this.name.value,
-                                email: this.email.value,
-                                phone: this.phone.value,
-                                message: this.message.value
-                            });
+                        <mwc-button id="send" disabled raised label="Envoyer" icon="send" trailingIcon @click=${async() => {
+                            if(!(this.name.value && this.name.value.length > 0 &&
+                                this.email.value && this.email.value.length > 0 &&
+                                this.message.value && this.message.value.length > 0 && 
+                                this.phone.value && this.phone.value.length > 0))
+                            {
+
+                                return;
+                            }
+
+                            const formData = new FormData();
+                            formData.set('name', this.name.value);
+                            formData.set('email', this.email.value);
+                            formData.set('telephone', this.phone.value);
+                            formData.set('message', this.message.value);
+                            const headers = new Headers();
+                            headers.append('Accept', 'application/json');
+                            const sending = await fetch('https://formspree.io/mdoaggpz',{
+                                method: 'POST',
+                                body: formData,
+                                headers
+                            }).then(res => res.json());
+
+                            if(sending.ok){
+                                this.name.disabled = true;
+                                this.email.disabled = true;
+                                this.phone.disabled = true;
+                                this.message.disabled = true;
+                                this.send.disabled = true;
+                            } else {
+                                console.warn(sending.error);
+                                // show error on form
+                                // allow retry
+                                // present mailto link
+                            }
                         }}></mwc-button>
                     </div>
                 </form>
