@@ -7,7 +7,7 @@ import Constants from '../constants';
 import { wrap } from '../core/errors/errors';
 import { WPCategory } from '../interfaces';
 import { pulseWith, fadeWith } from '../core/animations';
-import { timer, fromEvent, BehaviorSubject, merge, scheduled, animationFrameScheduler, Subject, EMPTY } from 'rxjs';
+import { timer, fromEvent, BehaviorSubject, merge, scheduled, animationFrameScheduler, Subject, EMPTY, of } from 'rxjs';
 import { switchMap, tap, takeUntil, startWith, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Utils, decodeHTML } from '../core/ui/ui';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
@@ -218,29 +218,22 @@ class Home extends Page {
         for(const item of items){
             const click$ = fromEvent<MouseEvent>(item, 'click', (_, key) => key).pipe(
                 tap(() => {
-                    this.pause.innerText = 'pause';
                     pauseBS.next(true);
                 })
             );
-
-            const leave$ = fromEvent<MouseEvent>(item, 'mouseout', (_, key) => key).pipe(
-                tap(() => {
-                    this.pause.innerText = 'play_arrow';
-                    pauseBS.next(false);
-                })
-            );
-
-            const enter$ = fromEvent<MouseEvent>(item, 'mouseenter', (_, key) => key).pipe(
-                tap(() => {
-                    this.pause.innerText = 'pause';
-                    pauseBS.next(true);
-                })
-            );
-            objects.push(click$, leave$, enter$);
+            objects.push(click$);
         };
 
         const pause$ = pauseBS.asObservable().pipe(
-            distinctUntilChanged()
+            distinctUntilChanged(),
+            switchMap((paused) => {
+                const enforced = this._enforcePauseSub.getValue();
+                if(paused !== enforced){
+                    return of(enforced);
+                } else {
+                    return of(paused);
+                }
+            })
         );
 
         const events = scheduled(merge(...objects), animationFrameScheduler);
@@ -251,27 +244,31 @@ class Home extends Page {
                 return pause$;
             }),
             switchMap((paused) => {
-                if(paused) return EMPTY;
+                if(paused){
+                    this.pause.innerText = 'pause';
+                    return EMPTY;
+                } else {
+                    this.pause.innerText = 'play_arrow';
+                }
 
-                return timer(3500, 3500).pipe(
-                    takeUntil(this._stop),
-                    switchMap(async() => {                               
-                        if(this._canNext()){
-                            await this._onNextSculpture();
-                        } else {
-                            let next = this.selected;
-                            
-                            if(this.selected == this._catMax){
-                                next = 0;
-                            } else {
-                                this.selected++;
-                                next = this.selected;
-                            }
-        
-                            await this._onCatClick(next);
-                        }
-                    }),
-                );
+                return timer(3500, 3500);
+            }),
+            takeUntil(this._stop),
+            switchMap(async() => {                               
+                if(this._canNext()){
+                    await this._onNextSculpture();
+                } else {
+                    let next = this.selected;
+                    
+                    if(this.selected == this._catMax){
+                        next = 0;
+                    } else {
+                        this.selected++;
+                        next = this.selected;
+                    }
+
+                    await this._onCatClick(next);
+                }
             })
         ).toPromise();
     }
@@ -423,11 +420,11 @@ class Home extends Page {
         const willFocus = this._focused !== this.categories[this.selected].sculptures.nodes[this.sculpture];
         
         if(willFocus){
-            this.unfold.innerText = 'unfold_less';
+            this.unfold.innerText = 'minimize';
             this._focused = this.categories[this.selected].sculptures.nodes[this.sculpture];
             this._enforcePauseSub.next(true);
         } else {
-            this.unfold.innerText = 'unfold_more';
+            this.unfold.innerText = 'maximize';
             this._focused = null;
             this._enforcePauseSub.next(false);
         }
@@ -459,13 +456,13 @@ class Home extends Page {
             <div class="preview">
                 <iron-image will-pause id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade @click=${this._onSingle}></iron-image>
                 <div class="unfold">
-                    <mwc-icon id="unfold" will-pause @click=${this._onSingle}>unfold_more</mwc-icon>
+                    <mwc-icon id="unfold" will-pause @click=${this._onSingle}>maximize</mwc-icon>
                 </div>
                 <div class="count">
                     <mwc-icon class="${this.selected === 0 && this.sculptureIndex === 1 ? 'disabled' : ''}" @click=${this._onPrevSculpture} will-pause>chevron_left</mwc-icon>
                     <div class="pagination"><span class="current">${this.sculptureIndex}</span> / <span class="total">${this.sculptureMax}</span></div> 
                     <mwc-icon will-pause @click=${this._onNextSculpture} will-pause>chevron_right</mwc-icon>
-                    <mwc-icon will-pause id="pause" disabled>pause</mwc-icon>
+                    <mwc-icon will-pause id="pause" disabled>play_arrow</mwc-icon>
                 </div>
                 <div class="progress">
                     <mwc-linear-progress id="main-progress" progress=${this.sculptureIndex / this.sculptureMax} buffer=${this.selected / this._catMax}></mwc-linear-progress>
