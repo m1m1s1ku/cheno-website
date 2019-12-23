@@ -70,16 +70,12 @@ export class ElaraApp extends Root {
 			return this.load('page/'+req.params.page);
 		});
 
-		this.router.path('/blog', () => {
-			return this.load('blog');
+		this.router.path('/contact', () => {
+			return this.load('contact');
 		});
 
-		this.router.path('/projet/:slug', req => {
-			return this.load('projet/'+req.params.slug);
-		});
-
-		this.router.path('/post/:slug', (req) => {
-			return this.load('post/'+req.params.slug);
+		this.router.path('/expo/:slug', (req) => {
+			return this.load('expo/'+req.params.slug);
 		});
 
 		this.router.path('/**', (req) => {
@@ -187,7 +183,7 @@ export class ElaraApp extends Root {
 	}
 
 	private _hideOnClickOutside() {
-		const outsideClickListener = event => {
+		const outsideClickListener = (event: Event) => {
 			if(event.target instanceof ElaraApp){
 				this.shadowRoot.querySelector('.main-menu').classList.remove('visible');
 				this.shadowRoot.querySelector('.menu').classList.remove('active');
