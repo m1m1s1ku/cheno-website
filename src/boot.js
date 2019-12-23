@@ -63,13 +63,7 @@ function _onDomLoaded(){
  * @returns
  */
 function _onGenericError(event) {
-  let willThrow = null;
-  if(event instanceof ErrorEvent){
-    willThrow = event.error;
-  } else {
-    willThrow = event.detail;
-  }
-
+  const willThrow = event instanceof ErrorEvent ? event.error : event.detail;
   document.body.appendChild(makeGenericHandler(willThrow));
 }
 
