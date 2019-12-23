@@ -41,5 +41,5 @@ async function handleFetch(e){
     event.respondWith(handleRequest(e.request));
 }
 
-self.addEventListener('activate', handleActivate);
+// self.addEventListener('activate', handleActivate);
 self.addEventListener('fetch', handleFetch);
