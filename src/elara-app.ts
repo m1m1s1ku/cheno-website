@@ -62,16 +62,9 @@ export class ElaraApp extends Root {
 		this.router.path('/', () => {
 			return this.load('home');
 		});
-		this.router.path('/home', () => {
-			return this.load('home');
-		});
 
 		this.router.path('/page/:page', (req) => {
 			return this.load('page/'+req.params.page);
-		});
-
-		this.router.path('/contact', () => {
-			return this.load('contact');
 		});
 
 		this.router.path('/expo/:slug', (req) => {
