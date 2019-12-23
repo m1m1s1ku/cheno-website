@@ -14,7 +14,7 @@ import { Subscription } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat';
 import { navigate } from './core/routing/routing';
 import { MainStyling } from './main-styling';
-import { SVGLogo } from './logo';
+import { SVGLogo, HamburgerIcon } from './icons';
 
 // Polyfills
 import('./polyfill');
@@ -197,35 +197,29 @@ export class ElaraApp extends Root {
 	
 		document.addEventListener('click', outsideClickListener);
 	}
+
+	private _menuItem(item: WPLink){
+		return html`<li><h3 @click=${() => {
+			if(item.url.indexOf(Constants.base) !== -1){
+				item.url = item.url.replace(Constants.base, '');
+			}
+
+			navigate(item.url);
+		}}>${item.label}</h3></li>`;
+	}
 	
 	public render() {
 		return html`
 			<header>
-				<span @click=${() => this.route !== Constants.defaults.route ? navigate('home') : null} class="drawing-logo">${SVGLogo}</span>
-				<button aria-label="Menu" class="menu" @click=${this._toggleMenu}>
-					<svg viewBox="0 0 64 48">
-						<path d="M19,15 L45,15 C70,15 58,-2 49.0177126,7 L19,37"></path>
-						<path d="M19,24 L45,24 C61.2371586,24 57,49 41,33 L32,24"></path>
-						<path d="M45,33 L19,33 C-8,33 6,-2 22,14 L45,37"></path>
-					</svg>
-				</button>
-				<div class="main-menu">
-					<nav>
-						<ul>
-							${repeat(this._menuItems, (item) => html`<li><h3 @click=${() => {
-								if(item.url.indexOf(Constants.base) !== -1){
-									item.url = item.url.replace(Constants.base, '');
-								}
-
-								navigate(item.url);
-							}}>${item.label}</h3></li>`)}
-						</ul>
-					</nav>
-				</div>
+				<span @click=${() => this.route !== Constants.defaults.route ? navigate('home') : null} class="drawing-logo">
+					${SVGLogo}
+				</span>
+				<button aria-label="Menu" class="menu" @click=${this._toggleMenu}>${HamburgerIcon}</button>
+				<div class="main-menu"><nav><ul>${repeat(this._menuItems, this._menuItem)}</ul></nav></div>
 			</header>
 			<main id="main" class="content"></main>
 			<footer>
-			&copy; ${new Date().getFullYear()}. Cheno
+				&copy; ${new Date().getFullYear()}. Cheno
 			</footer>
 		`;
 	}

@@ -23,3 +23,9 @@ export const SVGLogo = svg`<svg class="logo" id="logo" x="0px" y="0px" viewBox="
     c1.43,29.98,6.68,52.16,9.33,81.44c-0.06,8.27-0.75,19.52-12.42,16.98C495.14,637.45,518.15,538.14,508.52,508.89z"
     />
 </svg>`;
+
+export const HamburgerIcon = svg`<svg viewBox="0 0 64 48">
+    <path d="M19,15 L45,15 C70,15 58,-2 49.0177126,7 L19,37"></path>
+    <path d="M19,24 L45,24 C61.2371586,24 57,49 41,33 L32,24"></path>
+    <path d="M45,33 L19,33 C-8,33 6,-2 22,14 L45,37"></path>
+</svg>`;
