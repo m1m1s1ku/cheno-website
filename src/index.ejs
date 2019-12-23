@@ -22,6 +22,7 @@
     <meta name="theme-color" content="#ffffff">
     <link rel="preconnect" href="https://sentry.io" crossorigin>
     <link rel="preconnect" href="https://base.cheno.fr">
+    <link rel="preconnect" href="https://ajax.googleapis.com" crossorigin>
 
     <custom-style>
         <style>
@@ -189,7 +190,11 @@
     <script type="text/javascript">
       // Load GFonts the async way (cached by ServiceWorker)
       WebFontConfig = {
-        google: { families: [ 'Andika|Comfortaa|Material+Icons' ] }
+        google: { families: [ 
+          'Andika:400,700',
+          'Comfortaa:400,700',
+          'Material+Icons&display=swap'
+         ] }
       };
       
       const loadGFonts = function(){
