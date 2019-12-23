@@ -164,8 +164,7 @@ const productionConfig = WebpackMerge([
           minifyCSS: true,
           minifyJS: true
         }
-      }),
-      new RemoveServiceWorkerPlugin({ filename: 'service-worker.js' })
+      })
     ]
   }
 ]);
