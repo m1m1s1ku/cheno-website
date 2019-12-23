@@ -51,7 +51,7 @@ export class ElaraApp extends Root {
 	public router: crayon.Router;
 
 	public constructor(){
-		super();        
+		super(); 
 
 		// TODO XXX : Remove after SSR complete
         document.title = Constants.title;
