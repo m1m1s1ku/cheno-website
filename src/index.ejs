@@ -22,8 +22,6 @@
     <meta name="theme-color" content="#ffffff">
     <link rel="preconnect" href="https://sentry.io" crossorigin>
     <link rel="preconnect" href="https://base.cheno.fr">
-    <link href="https://fonts.googleapis.com/css?family=Andika|Comfortaa&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Material+Icons&display=block" rel="stylesheet">
 
     <custom-style>
         <style>
@@ -178,5 +176,18 @@
   </head>
   <body>
     <elara-app></elara-app>
+    <script type="text/javascript">
+      WebFontConfig = {
+        google: { families: [ 'Andika|Comfortaa|Material+Icons' ] }
+      };
+      (function() {
+        var wf = document.createElement('script');
+        wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+        wf.type = 'text/javascript';
+        wf.async = 'true';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(wf, s);
+      })(); 
+    </script>
   </body>
 </html>
