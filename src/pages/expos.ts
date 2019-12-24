@@ -235,17 +235,15 @@ class Expos extends Page {
             };
         };
 
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
-        const self = this;
         const setup = (pool: RafPool) => {
-            return new IntersectionObserver(function(this: IntersectionObserver, entries: IntersectionObserverEntry[]) {
+            return new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
                 for(const entry of entries){
                     if(!canUpdate(entry)) continue;
 
                     const target = entry.target as HTMLElement;
                     pool.add(target.id, update(target));
 
-                    self._intersectionObserver.unobserve(target);
+                    this._intersectionObserver.unobserve(target);
                 };
             });
         };
