@@ -38,6 +38,7 @@ class Expos extends Page {
     @property({type: Object, reflect: false})
     private exposByYear: Map<number, ArticleMinimal[]> = new Map<number, ArticleMinimal[]>();
     private _year: number;
+    private _intersectionObserver: IntersectionObserver;
 
     public static get styles(){
         return [
@@ -234,6 +235,8 @@ class Expos extends Page {
             };
         };
 
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
         const setup = (pool: RafPool) => {
             return new IntersectionObserver(function(this: IntersectionObserver, entries: IntersectionObserverEntry[]) {
                 for(const entry of entries){
@@ -241,15 +244,16 @@ class Expos extends Page {
 
                     const target = entry.target as HTMLElement;
                     pool.add(target.id, update(target));
-                    this.unobserve(target);
+
+                    self._intersectionObserver.unobserve(target);
                 };
             });
         };
 
-        const intersectionObserver = setup(this.rafPool);
+        this._intersectionObserver = setup(this.rafPool);
         const cards = Array.from(this.cards);
         for(const card of cards){
-            intersectionObserver.observe(card);
+            this._intersectionObserver.observe(card);
         }
     }
 

@@ -23,11 +23,10 @@ export const MainStyling = css`
 }
 
 header {
-    position: fixed;
+    position: absolute;
     top: 0;
     right: 0;
     left: 0;
-
     display: flex;
     flex-direction: row;
     justify-content: space-between;
