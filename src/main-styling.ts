@@ -59,7 +59,9 @@ footer {
     height: 90px;
 }
 
-.menu {
+.menu {    
+    position: fixed;
+    right: 20px;
     z-index: 999;
     --color: #333;
     width: 36px;
@@ -68,7 +70,6 @@ footer {
     margin: 0;
     margin-top: 10px;
     outline: none;
-    position: relative;
     border: none;
     background: none;
     cursor: pointer;
