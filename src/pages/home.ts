@@ -154,11 +154,11 @@ class Home extends Page {
 
         const catSculpture = location.pathname.split('/').filter((val) => val !== '' && val !== 'home');
         this.selected = this.categories.findIndex(category => category.slug === catSculpture[0]);
-        this._focused = this.categories[this.selected].sculptures.nodes.find((sculpture) => slugify(sculpture.title, '-') === catSculpture[1]);
 
-        if(!this.selected && !this._focused){
+        if(this.selected === -1){
             await this._onCatClick(0);
         } else {
+            this._focused = this.categories[this.selected].sculptures.nodes.find((sculpture) => slugify(sculpture.title, '-') === catSculpture[1]);
             this.sculptureIndex = 1;
             this.sculptureMax = this.categories[this.selected].sculptures.nodes.length;
             await this._definePreviewed();
