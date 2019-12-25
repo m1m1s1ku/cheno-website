@@ -59,20 +59,20 @@ export class ElaraApp extends Root {
 		this._subscriptions = new Subscription();
 
 		this.router = crayon.create();
-		this.router.path('/', () => {
-			return this.load('home');
+		this.router.path('/', async () => {
+			await this.load('home');
 		});
 
-		this.router.path('/page/:page', (req) => {
-			return this.load('page/'+req.params.page);
+		this.router.path('/page/:page', async (req) => {
+			await this.load('page/'+req.params.page);
 		});
 
-		this.router.path('/expo/:slug', (req) => {
-			return this.load('expo/'+req.params.slug);
+		this.router.path('/expo/:slug', async (req) => {
+			await this.load('expo/'+req.params.slug);
 		});
 
-		this.router.path('/**', (req) => {
-			return this.load(req.pathname.replace('/', ''));
+		this.router.path('/**', async (req) => {
+			await this.load(req.pathname.replace('/', ''));
 		});
 
 		this._subscriptions.add(this.router.events.subscribe(event => {
