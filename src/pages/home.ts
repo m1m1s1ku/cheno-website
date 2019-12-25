@@ -1,5 +1,5 @@
 import { html, TemplateResult } from 'lit-html';
-import { property, PropertyValues, query, queryAll } from 'lit-element';
+import { property, PropertyValues, query } from 'lit-element';
 
 import Page from '../core/strategies/Page';
 import { repeat } from 'lit-html/directives/repeat';
@@ -7,11 +7,12 @@ import Constants from '../constants';
 import { wrap } from '../core/errors/errors';
 import { WPCategory } from '../interfaces';
 import { pulseWith, fadeWith } from '../core/animations';
-import { timer, fromEvent, BehaviorSubject, merge, scheduled, animationFrameScheduler, Subject, EMPTY } from 'rxjs';
-import { switchMap, tap, takeUntil, startWith, debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { timer, BehaviorSubject, scheduled, animationFrameScheduler, Subject, EMPTY, fromEvent, combineLatest } from 'rxjs';
+import { switchMap, takeUntil, startWith, debounceTime, map } from 'rxjs/operators';
 import { Utils, decodeHTML } from '../core/ui/ui';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import { HomeStyling } from './home-styles';
+import { LinearProgress } from '@material/mwc-linear-progress';
 
 enum SwitchingState {
     willPrev = 'prev',
@@ -34,7 +35,7 @@ class Home extends Page {
     @query('.series') protected series!: HTMLElement;
     @query('#unfold') protected unfold!: HTMLElement;
     @query('#pause') protected pause!: HTMLElement;
-    @queryAll('[will-pause]') protected pausables: NodeListOf<HTMLElement>;
+    @query('#main-progress') protected progress!: LinearProgress;
 
     @property({type: Boolean, reflect: false})
     public loaded = false;
@@ -75,40 +76,28 @@ class Home extends Page {
     private _setupWalk(){
         this._stop = new Subject();
         this._enforcePauseSub = new BehaviorSubject<boolean>(false);
-        const pauseBS = new BehaviorSubject<boolean>(false);
 
-        const items = Array.from(this.pausables);
-        const objects = [];
-        for(const item of items){
-            const click$ = fromEvent<MouseEvent>(item, 'click', (_, key) => key).pipe(
-                tap(() => {
-                    pauseBS.next(true);
-                })
-            );
-            objects.push(click$);
-        };
+        const pause$ = combineLatest([this._enforcePauseSub, fromEvent(this.pause, 'click')]).pipe(
+            map(([enforced, _event]) => {
+                if(enforced || this.pause.innerText === 'play_arrow'){
+                    return true;
+                }
 
-        const pause$ = pauseBS.asObservable().pipe(
-            distinctUntilChanged()
+                return false;
+            })
         );
 
-        const events = scheduled(merge(...objects), animationFrameScheduler);
+        const events = scheduled(pause$, animationFrameScheduler);
         return events.pipe(
             debounceTime(300),
             startWith(null as Event),
-            switchMap(_ => {
-                return pause$;
-            }),
-            map((paused) => {
-                const enforced = this._enforcePauseSub.getValue();
-                if(paused !== enforced){
-                    return enforced;
-                } else {
-                    return paused;
-                }
-            }),
             switchMap((paused) => {                    
                 this.pause.innerText = paused ? 'pause' : 'play_arrow';
+                if(paused){
+                    this.progress.close();
+                } else {
+                    this.progress.open();
+                }
 
                 if(paused) return EMPTY;
 
@@ -283,29 +272,27 @@ class Home extends Page {
         if(willFocus){
             this.unfold.innerText = 'minimize';
             this._focused = this.categories[this.selected].sculptures.nodes[this.sculpture];
-            this._enforcePauseSub.next(false);
         } else {
             this.unfold.innerText = 'maximize';
             this._focused = null;
-            this._enforcePauseSub.next(true);
         }
     }
 
     public render(): void | TemplateResult {
         return html`
-        <div class="home-container" will-pause>
-            ${!this._focused ? html`<div class="series" will-pause>
+        <div class="home-container">
+            ${!this._focused ? html`<div class="series">
                 <nav>
                     <ul>
-                        ${repeat(this.categories, (category, idx) => html`<li class="serie serie-${idx} ${this.selected === idx ? 'selected disabled' : ''}" @click=${() => this.selected === idx ? null : this._onCatClick(idx)}><h1 class="big" will-pause>${category.name}</h1></li>`)}
+                        ${repeat(this.categories, (category, idx) => html`<li class="serie serie-${idx} ${this.selected === idx ? 'selected disabled' : ''}" @click=${() => this.selected === idx ? null : this._onCatClick(idx)}><h1 class="big">${category.name}</h1></li>`)}
                     </ul>
                 </nav>
             </div>` : html`
-            <div class="series" will-pause>
-                <div class="single-container" will-pause>
-                    <h3 will-pause class="single-cat" @click=${this._onSingle}>- ${this.categories[this.selected].name}</h3>
+            <div class="series">
+                <div class="single-container">
+                    <h3 class="single-cat" @click=${this._onSingle}>- ${this.categories[this.selected].name}</h3>
                     <div class="title-container">
-                        <h1 will-pause>${decodeHTML(this._focused.title)}</h1>
+                        <h1>${decodeHTML(this._focused.title)}</h1>
                     </div>
                     <div class="content">
                         ${unsafeHTML(this._focused.content)}
