@@ -20,9 +20,7 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-config" content="<%= htmlWebpackPlugin.options.pathname %>/assets/icons/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
-    <link rel="preconnect" href="https://sentry.io" crossorigin>
     <link rel="preconnect" href="https://base.cheno.fr">
-    <link rel="preconnect" href="https://ajax.googleapis.com" crossorigin>
 
     <custom-style>
         <style>
@@ -178,34 +176,41 @@
   <body>
     <elara-app></elara-app>
     <script type="text/javascript">
+
+    </script>
+    <script src="https://browser.sentry-cdn.com/5.10.2/bundle.min.js" integrity="sha384-ssBfXiBvlVC7bdA/VX03S88B5MwXQWdnpJRbUYFPgswlOBwETwTp6F3SMUNpo9M9" crossorigin="anonymous"></script>
+    <script>
+    // Load GFonts the async way (cached by ServiceWorker)
+    WebFontConfig = {
+      google: { families: [ 
+        'Andika:400,700',
+        'Comfortaa:400,700',
+        'Material+Icons&display=swap'
+        ] }
+    };
+    
+    const loadGFonts = function(){
+      const wf = document.createElement('script');
+      wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+      wf.type = 'text/javascript';
+      wf.async = 'true';
+      const s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(wf, s);
+    };
+
+    loadGFonts();
+
+    window.addEventListener('load', () => {
+      Sentry.init({ dsn: 'https://8b03983c61b541c780aacedeb557fafe@sentry.io/1866364' });
+
       // Check that service workers are registered
       if ('serviceWorker' in navigator) {
         // Use the window load event to keep the page load performant
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('<%= htmlWebpackPlugin.options.pathname %>/elara-worker.js');
-        });
+        navigator.serviceWorker.register('<%= htmlWebpackPlugin.options.pathname %>/elara-worker.js');
       }
+    });
     </script>
     <script type="text/javascript">
-      // Load GFonts the async way (cached by ServiceWorker)
-      WebFontConfig = {
-        google: { families: [ 
-          'Andika:400,700',
-          'Comfortaa:400,700',
-          'Material+Icons&display=swap'
-         ] }
-      };
-      
-      const loadGFonts = function(){
-        const wf = document.createElement('script');
-        wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
-        wf.type = 'text/javascript';
-        wf.async = 'true';
-        const s = document.getElementsByTagName('script')[0];
-        s.parentNode.insertBefore(wf, s);
-      };
-
-      loadGFonts();
     </script>
   </body>
 </html>
