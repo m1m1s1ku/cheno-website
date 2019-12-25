@@ -38,14 +38,14 @@ header {
 }
 
 footer {
-    position: fixed;
+    position: absolute;
     bottom: 0;
     left: 0;
-    pointer-events: none;
     margin: 5px;
     color: rgba(0,0,0,.8);
     user-select: none;
     mix-blend-mode: soft-light;
+    z-index: 999;
 }
 
 @media (min-width: 700px){
@@ -63,7 +63,6 @@ footer {
     position: fixed;
     right: 20px;
     z-index: 999;
-    --color: #333;
     width: 36px;
     height: 36px;
     padding: 0;
@@ -81,7 +80,7 @@ footer {
     height: 48px;
     top: -6px;
     left: -14px;
-    stroke: var(--color);
+    stroke: var(--elara-font-color);
     stroke-width: 3px;
     stroke-linecap: round;
     stroke-linejoin: round;

@@ -127,7 +127,7 @@ class PageController extends Page {
             a,
             .first-letter,
             .authorName a {
-                color: rgba(0, 0, 0, 0.84);
+                color: var(--elara-font-color);
                 text-rendering: optimizeLegibility;
             }
 

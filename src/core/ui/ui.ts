@@ -88,8 +88,6 @@ export function ifDefined(property: unknown, template: TemplateResult, initial: 
 
 export const CSS = {
     queries: {
-        DARK: '(prefers-color-scheme: dark)',
-        LIGHT: '(prefers-color-scheme: light)',
         ANIMATIONS: '(prefers-reduced-motion: reduce)'
     },
     spinner: css`

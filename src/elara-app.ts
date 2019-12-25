@@ -47,6 +47,8 @@ export class ElaraApp extends Root {
 	@property({type: String, reflect: false, noAccessor: true})
 	public logo: string;
 
+	public scheme: 'dark' | 'light' = 'light';
+
 	private _subscriptions: Subscription;
 
 	public router: crayon.Router;
@@ -76,12 +78,57 @@ export class ElaraApp extends Root {
 		});
 
 		this._subscriptions.add(this.router.events.subscribe(event => {
-			if (event.type === crayon.RouterEventType.SameRouteAbort) {
-				this.load(event.data.replace('/', ''));
+			if (event.type !== crayon.RouterEventType.SameRouteAbort) {
+				return;
 			}
-		 }));
+
+			this.load(event.data.replace('/', ''));
+		}));
+
+		document.addEventListener('colorschemechange', this._onSchemeChange.bind(this));
 
 		this.hasElaraRouting = true;
+	}
+
+	private _onSchemeChange(e: CustomEvent<{colorScheme: 'dark' | 'light'}>){
+		this.scheme = e.detail.colorScheme;
+
+		if(this.scheme === 'dark'){
+			document.documentElement.style.setProperty('--elara-background-color', '#373737');
+			document.documentElement.style.setProperty('--elara-font-color', '#f0f0f0');
+			document.documentElement.style.setProperty('--elara-font-hover', '#9e9e9e');
+		} else {
+			document.documentElement.style.removeProperty('--elara-background-color');
+			document.documentElement.style.removeProperty('--elara-font-color');
+			document.documentElement.style.removeProperty('--elara-font-hover');
+		}
+
+		requestAnimationFrame(() => {
+			this.logoPath.classList.add('write');
+			if(this.scheme === 'dark'){
+				this.logoPath.querySelector('path').style.stroke = 'black';
+			} else {
+				this.logoPath.querySelector('path').style.stroke = 'white';
+			}
+
+
+			const switchSVG = () => {
+				if(this.scheme === 'dark'){
+					this.logoPath.querySelector('path').style.fill = 'white';
+				} else {
+					this.logoPath.querySelector('path').style.fill = 'black';
+				}
+			};
+
+			if(this.loaded){
+				switchSVG();
+				return;
+			}
+
+			setTimeout(() => {
+				switchSVG();
+			}, 2000);
+		});
 	}
 
 	/**
@@ -133,14 +180,10 @@ export class ElaraApp extends Root {
 	}
 
 	public async firstUpdated(): Promise<void> {
-		this.router.load();
-
-		requestAnimationFrame(() => {
-			this.logoPath.classList.add('write');
-			setTimeout(() => {
-				this.logoPath.querySelector('path').style.fill = '#000';
-			}, 2000);
-		});
+		await this.router.load();
+		setTimeout(() => {
+			this.loaded = true;
+		}, 2000);
 	}
 
 	/**
@@ -154,7 +197,8 @@ export class ElaraApp extends Root {
 		return Promise.all([
 			this._setup(),
 			import('./polymer'),
-			import('./mwc')
+			import('./mwc'),
+			import('./labs')
 		]);
 	}
 
@@ -208,6 +252,7 @@ export class ElaraApp extends Root {
 			</header>
 			<main id="main" class="content"></main>
 			<footer>
+				<dark-mode-toggle id="dark-mode" appearance="toggle"></dark-mode-toggle>
 				&copy; ${new Date().getFullYear()}. Cheno
 			</footer>
 		`;
