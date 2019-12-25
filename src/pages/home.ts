@@ -159,7 +159,9 @@ class Home extends Page {
             await this._onCatClick(0);
         } else {
             this._focused = this.categories[this.selected].sculptures.nodes.find((sculpture) => slugify(sculpture.title, '-') === catSculpture[1]);
-            this.sculptureIndex = 1;
+            const sculptIndex = this.categories[this.selected].sculptures.nodes.findIndex((sculpture) => slugify(sculpture.title, '-') === catSculpture[1]);
+
+            this.sculptureIndex = sculptIndex === -1 ? 1 : sculptIndex;
             this.sculptureMax = this.categories[this.selected].sculptures.nodes.length;
             await this._definePreviewed();
         }
