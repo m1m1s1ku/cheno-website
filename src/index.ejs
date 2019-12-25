@@ -9,31 +9,17 @@
 
     <base href="/">
     
-    <meta name="theme-color" content="#b47e71">
+    <meta name="theme-color" content="#002FA7">
 
     <link rel="apple-touch-icon" sizes="180x180" href="<%= htmlWebpackPlugin.options.pathname %>/assets/icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="<%= htmlWebpackPlugin.options.pathname %>/assets/icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="<%= htmlWebpackPlugin.options.pathname %>/assets/icons/favicon-16x16.png">
     <link rel="manifest" href="<%= htmlWebpackPlugin.options.pathname %>/assets/manifest.json">
-    <link rel="mask-icon" href="<%= htmlWebpackPlugin.options.pathname %>/assets/icons/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="mask-icon" href="<%= htmlWebpackPlugin.options.pathname %>/assets/icons/safari-pinned-tab.svg" color="#002FA7">
     <link rel="shortcut icon" href="<%= htmlWebpackPlugin.options.pathname %>/favicon.ico">
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-config" content="<%= htmlWebpackPlugin.options.pathname %>/assets/icons/browserconfig.xml">
-    <meta name="theme-color" content="#ffffff">
     <link rel="preconnect" href="https://base.cheno.fr">
-
-    <custom-style>
-        <style>
-          html {
-            --lumo-primary-color: hsla(88, 43%, 37%, 1);
-            --lumo-primary-color-50pct: hsla(88, 43%, 37%, .5);
-            --lumo-primary-color-10pct: hsla(88, 43%, 37%, .1);
-            --lumo-primary-text-color: var(--lumo-primary-color);
-            --lumo-primary-contrast-color: #FFF;
-            --lumo-font-size-m: 17px;
-          }
-        </style>
-      </custom-style>
       
     <style>
       :root {
@@ -125,7 +111,6 @@
         top: 0;
       }
 
-
       button.continue, button.reload {
         display: inline-block;
         position: relative;
@@ -206,8 +191,6 @@
         navigator.serviceWorker.register('<%= htmlWebpackPlugin.options.pathname %>/elara-worker.js');
       }
     });
-    </script>
-    <script type="text/javascript">
     </script>
   </body>
 </html>
