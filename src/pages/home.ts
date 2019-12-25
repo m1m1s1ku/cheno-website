@@ -9,7 +9,7 @@ import { WPCategory } from '../interfaces';
 import { pulseWith, fadeWith } from '../core/animations';
 import { timer, BehaviorSubject, scheduled, animationFrameScheduler, Subject, EMPTY, fromEvent, combineLatest } from 'rxjs';
 import { switchMap, takeUntil, startWith, debounceTime, map } from 'rxjs/operators';
-import { Utils, decodeHTML } from '../core/ui/ui';
+import { Utils, decodeHTML, slugify } from '../core/ui/ui';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import { HomeStyling } from './home-styles';
 import { LinearProgress } from '@material/mwc-linear-progress';
@@ -152,7 +152,18 @@ class Home extends Page {
 
         this.categories = requestR.data.categories.nodes;
 
-        await this._onCatClick(0);
+        const catSculpture = location.pathname.split('/').filter((val) => val !== '' && val !== 'home');
+        this.selected = this.categories.findIndex(category => category.slug === catSculpture[0]);
+        this._focused = this.categories[this.selected].sculptures.nodes.find((sculpture) => slugify(sculpture.title, '-') === catSculpture[1]);
+
+        if(!this.selected && !this._focused){
+            await this._onCatClick(0);
+        } else {
+            this.sculptureIndex = 1;
+            this.sculptureMax = this.categories[this.selected].sculptures.nodes.length;
+            await this._definePreviewed();
+        }
+
         this.loaded = true;
         await this.updateComplete;
         await this._setupWalk();
@@ -213,9 +224,13 @@ class Home extends Page {
     private async _definePreviewed(){
         if(this._focused){
             this._focused = this.categories[this.selected].sculptures.nodes[this.sculpture];
+            history.pushState({}, this._focused.title, 'home/' + this.categories[this.selected].slug + '/' + slugify(this._focused.title, '-'));
+        } else {
+            history.pushState({}, this.categories[this.selected].name, 'home/' + this.categories[this.selected].slug);
         }
 
         this.previewing = this.categories[this.selected].sculptures.nodes[this.sculpture].featuredImage.sourceUrl;
+
         await this.updateComplete;
     }
 
@@ -272,9 +287,11 @@ class Home extends Page {
         if(willFocus){
             this.unfold.innerText = 'minimize';
             this._focused = this.categories[this.selected].sculptures.nodes[this.sculpture];
+            history.pushState({}, this._focused.title, 'home/' + this.categories[this.selected].slug + '/' + slugify(this._focused.title, '-'));
         } else {
             this.unfold.innerText = 'maximize';
             this._focused = null;
+            history.pushState({}, this.categories[this.selected].name, 'home/' + this.categories[this.selected].slug);
         }
     }
 
