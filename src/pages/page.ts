@@ -1,7 +1,6 @@
 import { html, TemplateResult } from 'lit-html';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import { css, property } from 'lit-element';
-import { oc } from 'ts-optchain';
 
 import Page from '../core/strategies/Page';
 import Constants from '../constants';
@@ -54,13 +53,17 @@ class PageController extends Page {
         this.loaded = true;
 
         const post = first;
-        
+
         if(!document.title){
             document.title = post.title + ' | ' + Constants.title;
         }
 
         this.article = post;
-        this.featured = oc<ProjectMinimal>(post).featuredImage.sourceUrl('/assets/logo.png');
+        if(post.featuredImage && post.featuredImage.sourceUrl){
+            this.featured = post.featuredImage.sourceUrl;
+        } else {
+            this.featured = '';
+        }
 
         if(Utils.animationsReduced()){
             return;

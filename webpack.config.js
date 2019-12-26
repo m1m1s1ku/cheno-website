@@ -112,9 +112,6 @@ const commonConfig = WebpackMerge([
         {
           test: /\.tsx?$/,
           loader: 'ts-loader',
-          options: {
-            compiler: 'ttypescript'
-          },
           exclude: /node_modules/
         },
         {

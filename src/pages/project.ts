@@ -3,7 +3,6 @@ import {repeat} from 'lit-html/directives/repeat';
 
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import { css, property } from 'lit-element';
-import { oc } from 'ts-optchain';
 
 import Page from '../core/strategies/Page';
 import Constants from '../constants';
@@ -94,7 +93,11 @@ class Project extends Page {
         .then(res => res.data.sculptureBy)
         .catch(_ => this.dispatchEvent(wrap(_))) as ProjectMinimal;
 
-        this.featured = oc<ProjectMinimal>(first).featuredImage.sourceUrl('/assets/logo.png');
+        if(first.featuredImage && first.featuredImage.sourceUrl){
+            this.featured = first.featuredImage.sourceUrl;
+        } else {
+            this.featured = '';
+        }
 
         const testing = document.createElement('div');
         testing.innerHTML = first.content;
