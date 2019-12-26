@@ -105,11 +105,13 @@ export class ElaraApp extends Root {
 		this.theme = e.detail.colorScheme;
 
 		if(this.theme === 'dark'){
+			document.documentElement.style.setProperty('--mdc-theme-primary', 'var(--elara-font-color)');
 			document.documentElement.style.setProperty('--elara-placeholder-background', 'rgba(165,165,165,.5)');
 			document.documentElement.style.setProperty('--elara-background-color', '#373737');
 			document.documentElement.style.setProperty('--elara-font-color', '#f0f0f0');
 			document.documentElement.style.setProperty('--elara-font-hover', '#9e9e9e');
 		} else {
+			document.documentElement.style.setProperty('--mdc-theme-primary', 'var(--elara-primary)');
 			document.documentElement.style.setProperty('--elara-placeholder-background', 'rgba(67, 84, 128, 0.5)');
 			document.documentElement.style.removeProperty('--elara-background-color');
 			document.documentElement.style.removeProperty('--elara-font-color');

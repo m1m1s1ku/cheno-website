@@ -371,7 +371,7 @@ class Home extends Page {
             </div>
             `}
             <div class="preview">
-                <iron-image id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade @click=${this._onSingle}></iron-image>
+                <iron-image id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade="true" @click=${this._onSingle}></iron-image>
                 <div class="unfold">
                     <mwc-icon id="unfold" @click=${this._onSingle}>maximize</mwc-icon>
                 </div>
