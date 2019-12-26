@@ -1,15 +1,15 @@
 <?php
     function get(){
-        $url = "https://base.cheno.fr" . $_SERVER['REQUEST_URI'];
+        $hasSlash = $_SERVER['REQUEST_URI'][strlen($_SERVER['REQUEST_URI'])-1] == '/' ? true : false;
+        $url = "https://base.cheno.fr" . $_SERVER['REQUEST_URI'] . ($hasSlash ? '' : '/');
         $ch = curl_init();
-
+  
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_URL, $url);
-
+  
         $response = curl_exec($ch);
-
         return json_decode($response);
-    }
+      }
 
     function ogFor($title, $url, $description, $image){
         if(empty($title)){
