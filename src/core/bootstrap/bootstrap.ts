@@ -49,7 +49,7 @@ export async function load (route: string, content: HTMLElement): Promise<HTMLEl
 
     content.appendChild(loaded);
 
-    if(!Utils.animationsReduced()){
+    if(!Utils.animationsReduced() && content.animate){
         const config = fadeWith(200, true);
         content.animate(config.effect, config.options);
     }
