@@ -112,7 +112,9 @@ class Project extends Page {
         this.project = first;
         this.gallery = links;
         this.loaded = true;
-        document.title = this.project.title + ' | ' + Constants.title;
+        if(!document.title){
+            document.title = this.project.title + ' | ' + Constants.title;
+        }
         if(Utils.animationsReduced()){
             return;
         }

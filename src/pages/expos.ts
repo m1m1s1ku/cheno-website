@@ -174,7 +174,9 @@ class Expos extends Page {
     
     public async firstUpdated(){
         this._load();
-        document.title = 'Expositions' + ' | ' + Constants.title;
+        if(!document.title){
+            document.title = 'Expositions' + ' | ' + Constants.title;
+        }
     }
     
     private async _load(){

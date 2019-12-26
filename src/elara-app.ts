@@ -56,8 +56,10 @@ export class ElaraApp extends Root {
 	public constructor(){
 		super(); 
 
-		// TODO XXX : Remove after SSR complete
-        document.title = Constants.title;
+		if(!document.title){
+			document.title = Constants.title;
+		}
+
 		this._subscriptions = new Subscription();
 
 		this.router = crayon.create();

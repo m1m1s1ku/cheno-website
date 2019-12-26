@@ -54,7 +54,11 @@ class PageController extends Page {
         this.loaded = true;
 
         const post = first;
-        document.title = post.title + ' | ' + Constants.title;
+        
+        if(!document.title){
+            document.title = post.title + ' | ' + Constants.title;
+        }
+
         this.article = post;
         this.featured = oc<ProjectMinimal>(post).featuredImage.sourceUrl('/assets/logo.png');
 

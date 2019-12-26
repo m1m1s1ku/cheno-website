@@ -62,7 +62,10 @@ class Single extends Page {
         this.loaded = true;
 
         const post = first;
-        document.title = post.title + ' | ' + Constants.title;
+        
+        if(!document.title){
+            document.title = post.title + ' | ' + Constants.title;
+        }
         this.article = post;
         this.featured = oc<ArticleMinimal>(post).featuredImage.sourceUrl('');
 
