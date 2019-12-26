@@ -161,7 +161,7 @@ class Home extends Page {
             this._focused = this.categories[this.selected].sculptures.nodes.find((sculpture) => slugify(sculpture.title, '-') === catSculpture[1]);
             const sculptIndex = this.categories[this.selected].sculptures.nodes.findIndex((sculpture) => slugify(sculpture.title, '-') === catSculpture[1]);
 
-            this.sculptureIndex = sculptIndex === -1 ? 1 : sculptIndex;
+            this.sculptureIndex = sculptIndex === -1 ? 1 : sculptIndex + 1;
             this.sculptureMax = this.categories[this.selected].sculptures.nodes.length;
             await this._definePreviewed();
         }
