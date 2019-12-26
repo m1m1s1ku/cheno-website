@@ -9,8 +9,9 @@ export const HomeStyling = css`
 }
 
 .series ul {
-    margin-top: 100px;
     text-align: right;
+    margin: 0;
+    margin-top: 100px;
 }
 
 .series ul li {

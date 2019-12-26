@@ -248,12 +248,18 @@ export class ElaraApp extends Root {
 					${SVGLogo}
 				</span>
 				<button aria-label="Menu" class="menu" @click=${this._toggleMenu}>${HamburgerIcon}</button>
-				<div class="main-menu"><nav><ul>${repeat(this._menuItems, this._menuItem)}</ul></nav></div>
+				<div class="main-menu">
+					<dark-mode-toggle id="dark-mode" appearance="toggle"></dark-mode-toggle>
+					<nav>
+						<ul>
+						${repeat(this._menuItems, this._menuItem)}
+						</ul>
+					</nav>
+				</div>
 			</header>
 			<main id="main" class="content"></main>
 			<footer>
-				<dark-mode-toggle id="dark-mode" appearance="toggle"></dark-mode-toggle>
-				&copy; ${new Date().getFullYear()}. Cheno
+				<span class="copy">&copy; ${new Date().getFullYear()}. Cheno</span>
 			</footer>
 		`;
 	}

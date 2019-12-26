@@ -7,13 +7,15 @@ export const MainStyling = css`
 
 .content {
     color: var(--elara-font-color);
-    display: inline-block;
-
     font-family: var(--elara-font-primary);
+
     opacity: 1;
     margin: 0;
     height: 100%;
+    position: relative;
+    display : table;
     width: 100%;
+    min-height: 100%;
 }
 
 .content.hidden {
@@ -38,20 +40,10 @@ header {
 }
 
 footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    margin: 5px;
-    color: rgba(0,0,0,.8);
-    user-select: none;
+    margin: 30px;
+    color: var(--elara-font-color);
     mix-blend-mode: soft-light;
     z-index: 999;
-}
-
-@media (min-width: 700px){
-    footer {
-        margin: 30px;
-    }
 }
 
 .logo {
@@ -199,5 +191,16 @@ svg.logo path {
     to {
         stroke-dashoffset: 0;
     }
+}
+
+footer .switch dark-mode-toggle {
+    display: inline-block;
+}
+
+#dark-mode {
+    display: inline;
+    position: absolute;
+    right: 0;
+    bottom: 100px;
 }
 `;
