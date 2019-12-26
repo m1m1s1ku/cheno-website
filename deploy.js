@@ -1,7 +1,7 @@
 // @ts-check
 const replace = require('replace-in-file');
 const {join} = require('path');
-const {renameSync, writeFileSync} = require('fs');
+const {renameSync, writeFileSync, readFileSync} = require('fs');
 const { exec } = require('child_process');
 
 console.warn('deploying php into html');
@@ -12,6 +12,8 @@ const configFile = join(distFolder, 'config.json');
 const htmlFile = join(distFolder, 'index.html');
 const htaccessFile = join(distFolder, '.htaccess');
 const serviceWorkerFile = join(distFolder, 'elara-worker.js');
+
+
 
 try {
     exec('git rev-parse --short HEAD', (_err, stdout) => {
@@ -26,40 +28,7 @@ try {
         const options = {
           files: htmlFile,
           from: '<!-- {{SSRFunctions}} -->',
-          to: `
-          <?php
-          function get(){
-            $url = "https://base.cheno.fr" . $_SERVER['REQUEST_URI'];
-            $ch = curl_init();
-        
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_URL, $url);
-        
-            $response = curl_exec($ch);
-        
-            return json_decode($response);
-          }
-        
-          function ogFor($title, $url, $description, $image){
-            return <<<EOD
-            <title>$title</title>
-            <meta property='og:title' content="$title" />
-            <meta property='og:url' content="$url" />
-            <meta name='description' content="$description" />
-            <meta property='og:type' content="website" />
-            <meta property='og:image' content="$image" />
-            EOD;
-          }
-        
-          $response = get();
-          // var_dump($response);
-          $title = $response->title;
-          $description = $response->description;
-          $image = $response->image;
-          $url = $response->url;
-        
-          ?>
-          `
+          to: readFileSync('ssr.php').toString('UTF-8')
         };
 
         replace.sync(options);
