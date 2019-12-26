@@ -106,9 +106,9 @@ export class ElaraApp extends Root {
 		requestAnimationFrame(() => {
 			this.logoPath.classList.add('write');
 			if(this.scheme === 'dark'){
-				this.logoPath.querySelector('path').style.stroke = 'black';
-			} else {
 				this.logoPath.querySelector('path').style.stroke = 'white';
+			} else {
+				this.logoPath.querySelector('path').style.stroke = 'black';
 			}
 
 

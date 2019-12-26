@@ -96,6 +96,7 @@ class ContactController extends Page {
                 width: 30px;
                 height: 30px;
                 cursor: pointer;
+                fill: var(--elara-font-color);
             }
 
             .helper {
