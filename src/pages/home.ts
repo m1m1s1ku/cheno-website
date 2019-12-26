@@ -70,16 +70,17 @@ class Home extends Page {
             HomeStyling,
             css`
             .text-input__loading {
-                height: 340px;
                 width: 100%;
             }
 
             .text-input__loading--line {
-                height: 10px;
-                margin: 10px;
+                margin-top: 1em;
+                margin-bottom: 1em;
+                margin-left: auto; 
+                margin-right: 10%;
                 animation: pulse 1s infinite ease-in-out;
             }
-    
+            
             @keyframes pulse {
                 0% {
                     background-color: rgba(165, 165, 165, 0.1);
@@ -90,7 +91,7 @@ class Home extends Page {
                 100% {
                     background-color: rgba(165, 165, 165, 0.1);
                 }
-            }              
+            }
             `
         ];
     }
@@ -337,17 +338,20 @@ class Home extends Page {
         }
     }
 
-    private get loadingPlaceholder(){
+    private loadingPlaceholder(bars: number, definedWidth: number = null, definedHeight: number = null){
         function rand(min: number, max: number): number {
             return Math.floor(Math.random() * (max - min) ) + min;
         }
 
-        const random = () => rand(0, window.innerWidth / 2.3);
-        const arr = new Array(20);
+        const fakeArr = new Array(bars);
+
+        const randomHeight = () => definedHeight ? definedHeight : rand(100, window.innerHeight / (bars * 2));
+        const randomWidth = () => definedWidth ? definedWidth : rand(0, window.innerWidth / 2.5);
+
         return html`
         <div class='loader text-input__loading'>
-            ${repeat(arr, () => html`
-                <div class='text-input__loading--line' .style="width: ${random()}px"></div>
+            ${repeat(fakeArr, () => html`
+                <div class='text-input__loading--line picture' .style="width: ${randomWidth()}px; height: ${randomHeight()}px"></div>
             `)}
         </div>
         `;
@@ -396,11 +400,11 @@ class Home extends Page {
             ` : html`
             <div class="series">
                 <div class="single-container">
-                    ${this.loadingPlaceholder}
+                    ${this.loadingPlaceholder(20, null, 10)}
                 </div>
             </div>
             <div class="preview">
-                ${this.loadingPlaceholder}
+                ${this.loadingPlaceholder(1, window.innerWidth / 3, 300)}
             </div>
             `}
         </div>
