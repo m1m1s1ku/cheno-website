@@ -13,7 +13,7 @@ import { ArticleMinimal } from './expos';
 import { navigate } from '../core/routing/routing';
 
 class Single extends Page {
-    public static readonly is: string = 'ui-expo';
+    public static readonly is: string = 'ui-exposition';
 
     public static readonly hasRouting: boolean = true;
 

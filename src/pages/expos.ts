@@ -297,7 +297,7 @@ class Expos extends Page {
             <div class="card-grid">
                 ${repeat(this.articles, article => html`
                 <a id=${article.id} class="card hide" @click=${() => {
-                    navigate('expo/'+article.slug);
+                    navigate('exposition/'+article.slug);
                 }}>
                     <div class="card__background" style="background-image: url(${article.featuredImage.sourceUrl})"></div>
                     <div class="card__content">

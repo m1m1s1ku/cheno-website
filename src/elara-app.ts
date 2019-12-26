@@ -69,7 +69,7 @@ export class ElaraApp extends Root {
 			await this.load('page/'+req.params.page);
 		});
 
-		this.router.path('/expo/:slug', async (req) => {
+		this.router.path('/exposition/:slug', async (req) => {
 			await this.load('expo/'+req.params.slug);
 		});
 
