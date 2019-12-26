@@ -40,7 +40,7 @@ class Home extends Page {
     @query('#main-progress') protected progress!: LinearProgress;
     @queryAll('.loader') protected loaders!: NodeListOf<HTMLDivElement>;
 
-    @property({type: Boolean, reflect: false})
+    @property({type: Boolean, reflect: true})
     public loaded = false;
     @property({type: Array, reflect: false})
     public categories: ReadonlyArray<WPCategory> = [];
@@ -76,10 +76,7 @@ class Home extends Page {
             .text-input__loading--line {
                 background-color: var(--elara-placeholder-background, rgba(165, 165, 165, .5));
                 transition: all .3s;
-                margin-top: 5em;
-                margin-bottom: 5em;
-                margin-left: auto; 
-                margin-right: 10%;
+                margin: 5em auto 10% 5em;
             }
             `
         ];
