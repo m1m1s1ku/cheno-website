@@ -1,5 +1,5 @@
 import { html, TemplateResult } from 'lit-html';
-import { property, PropertyValues, query } from 'lit-element';
+import { property, PropertyValues, query, css, queryAll } from 'lit-element';
 
 import Page from '../core/strategies/Page';
 import { repeat } from 'lit-html/directives/repeat';
@@ -38,6 +38,7 @@ class Home extends Page {
     @query('#previewed') protected _previewed!: IronImageElement;
     @query('#pause') protected pause!: HTMLElement;
     @query('#main-progress') protected progress!: LinearProgress;
+    @queryAll('.loader') protected loaders!: NodeListOf<HTMLDivElement>;
 
     @property({type: Boolean, reflect: false})
     public loaded = false;
@@ -65,7 +66,74 @@ class Home extends Page {
     public static get styles(){
         return [
             ... super.styles,
-            HomeStyling
+            HomeStyling,
+            css`
+            .text-input__loading {
+                height: 214px;
+                border-radius: 4px;
+                width: 100%;
+              }
+              .text-input__loading--line {
+                height: 10px;
+                margin: 10px;
+                -webkit-animation: pulse 1s infinite ease-in-out;
+                        animation: pulse 1s infinite ease-in-out;
+              }
+              .text-input__loading div:nth-child(1) {
+                width: 150px;
+              }
+              .text-input__loading div:nth-child(5) {
+                width: 150px;
+              }
+              .text-input__loading div:nth-child(9) {
+                width: 150px;
+              }
+              .text-input__loading div:nth-child(2) {
+                width: 250px;
+              }
+              .text-input__loading div:nth-child(6) {
+                width: 250px;
+              }
+              .text-input__loading div:nth-child(10) {
+                width: 250px;
+              }
+              .text-input__loading div:nth-child(3) {
+                width: 50px;
+              }
+              .text-input__loading div:nth-child(7) {
+                width: 50px;
+              }
+              .text-input__loading div:nth-child(4) {
+                width: 100px;
+              }
+              .text-input__loading div:nth-child(8) {
+                width: 100px;
+              }
+              
+              @-webkit-keyframes pulse {
+                0% {
+                  background-color: rgba(165, 165, 165, 0.1);
+                }
+                50% {
+                  background-color: rgba(165, 165, 165, 0.3);
+                }
+                100% {
+                  background-color: rgba(165, 165, 165, 0.1);
+                }
+              }
+              
+              @keyframes pulse {
+                0% {
+                  background-color: rgba(165, 165, 165, 0.1);
+                }
+                50% {
+                  background-color: rgba(165, 165, 165, 0.3);
+                }
+                100% {
+                  background-color: rgba(165, 165, 165, 0.1);
+                }
+              }              
+            `
         ];
     }
     
@@ -162,9 +230,21 @@ class Home extends Page {
             await this._definePreviewed();
         }
 
-        this.loaded = true;
-        await this.updateComplete;
-        await this._setupWalk();
+
+        setTimeout( async() => {
+            for(const loader of Array.from(this.loaders)){
+                const fadeOut = fadeWith(300, false);
+                const animation = loader.animate(fadeOut.effect, fadeOut.options);
+                await animation.finished;
+                this.loaded = true;
+            }
+        }, 1000);
+    }
+
+    public async updated(){
+        if(this.loaded){
+            await this._setupWalk();
+        }
     }
 
     private async _onCatClick(idx: number){
@@ -188,6 +268,10 @@ class Home extends Page {
     }
 
     private async _fadeCurrent(){
+        if(!this._previewed){
+            return;
+        }
+
         if(this._currentAnimation){
             this._currentAnimation.cancel();
         }
@@ -294,9 +378,27 @@ class Home extends Page {
         }
     }
 
+    private get loadingPlaceholder(){
+        return html`
+        <div class='loader text-input__loading'>
+            <div class='text-input__loading--line'></div>
+            <div class='text-input__loading--line'></div>
+            <div class='text-input__loading--line'></div>
+            <div class='text-input__loading--line'></div>
+            <div class='text-input__loading--line'></div>
+            <div class='text-input__loading--line'></div>
+            <div class='text-input__loading--line'></div>
+            <div class='text-input__loading--line'></div>
+            <div class='text-input__loading--line'></div>
+            <div class='text-input__loading--line'></div>
+        </div>
+        `;
+    }
+
     public render(): void | TemplateResult {
         return html`
         <div class="home-container">
+            ${this.loaded ? html`
             ${!this._focused ? html`<div class="series">
                 <nav>
                     <ul>
@@ -316,7 +418,6 @@ class Home extends Page {
                 </div>
             </div>
             `}
-
             <div class="preview">
                 <iron-image id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade @click=${this._onSingle}></iron-image>
                 <div class="unfold">
@@ -334,6 +435,16 @@ class Home extends Page {
                     <mwc-linear-progress id="main-progress" progress=${this.sculptureIndex / this.sculptureMax} buffer=${this.selected / this._catMax}></mwc-linear-progress>
                 </div>
             </div>
+            ` : html`
+            <div class="series">
+                <div class="single-container">
+                    ${this.loadingPlaceholder}
+                </div>
+            </div>
+            <div class="preview">
+                ${this.loadingPlaceholder}
+            </div>
+            `}
         </div>
         `;
     }
