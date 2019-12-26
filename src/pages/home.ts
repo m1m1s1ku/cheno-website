@@ -401,7 +401,7 @@ class Home extends Page {
             ` : html`
             <div class="series">
                 <div class="single-container">
-                    ${this.loadingPlaceholder(20, null, 10)}
+                    ${this.loadingPlaceholder(10, null, 10)}
                 </div>
             </div>
             <div class="preview">
