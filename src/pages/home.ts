@@ -87,8 +87,7 @@ class Home extends Page {
             })
         );
 
-        const events = scheduled(pause$, animationFrameScheduler);
-        return events.pipe(
+        return scheduled(pause$, animationFrameScheduler).pipe(
             debounceTime(300),
             startWith(null as Event),
             switchMap((paused) => {                    
@@ -106,19 +105,14 @@ class Home extends Page {
             takeUntil(this._stop),
             switchMap(async() => {                               
                 if(this._canNext()){
-                    await this._onNextSculpture();
-                } else {
-                    let next = this.selected;
-                    
-                    if(this.selected == this._catMax){
-                        next = 0;
-                    } else {
-                        this.selected++;
-                        next = this.selected;
-                    }
-
-                    await this._onCatClick(next);
+                    await this._onNextSculpture();                
+                    return;
                 }
+
+                this.selected++;
+
+                const next = this.selected == (this._catMax-1) ? 0 : this.selected;
+                await this._onCatClick(next);
             })
         ).toPromise();
     }
