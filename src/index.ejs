@@ -173,6 +173,13 @@
     <elara-app></elara-app>
     <script src="https://browser.sentry-cdn.com/5.10.2/bundle.min.js" integrity="sha384-ssBfXiBvlVC7bdA/VX03S88B5MwXQWdnpJRbUYFPgswlOBwETwTp6F3SMUNpo9M9" crossorigin="anonymous"></script>
     <script>
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    const oldEdge = agent.indexOf("edge") !== -1
+    
+    if(oldEdge){
+      throw new Error('Please upgrade your browser.');
+    }
+
     // Load GFonts the async way (cached by ServiceWorker)
     WebFontConfig = {
       google: { families: [ 
