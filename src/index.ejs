@@ -197,7 +197,7 @@
       Sentry.init({ 'dsn': 'https://8b03983c61b541c780aacedeb557fafe@sentry.io/1866364' });
 
       // Check that service workers are registered
-      if ('serviceWorker' in navigator) {
+      if ('serviceWorker' in navigator && location.host !== 'localhost:3000') {
         // Use the window load event to keep the page load performant
         navigator.serviceWorker.register('<%= htmlWebpackPlugin.options.pathname %>/elara-worker.js');
       }

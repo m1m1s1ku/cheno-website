@@ -342,20 +342,13 @@ class Home extends Page {
             return Math.floor(Math.random() * (max - min) ) + min;
         }
 
-        const random = () => rand(0, 300); // returns a random integer from 1 to 100
-
+        const random = () => rand(0, window.innerWidth / 2.3);
+        const arr = new Array(20);
         return html`
         <div class='loader text-input__loading'>
-            <div class='text-input__loading--line' style="width: ${random()}px"></div>
-            <div class='text-input__loading--line' style="width: ${random()}px"></div>
-            <div class='text-input__loading--line' style="width: ${random()}px"></div>
-            <div class='text-input__loading--line' style="width: ${random()}px"></div>
-            <div class='text-input__loading--line' style="width: ${random()}px"></div>
-            <div class='text-input__loading--line' style="width: ${random()}px"></div>
-            <div class='text-input__loading--line' style="width: ${random()}px"></div>
-            <div class='text-input__loading--line' style="width: ${random()}px"></div>
-            <div class='text-input__loading--line' style="width: ${random()}px"></div>
-            <div class='text-input__loading--line' style="width: ${random()}px"></div>
+            ${repeat(arr, () => html`
+                <div class='text-input__loading--line' .style="width: ${random()}px"></div>
+            `)}
         </div>
         `;
     }
