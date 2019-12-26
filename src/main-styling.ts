@@ -46,6 +46,8 @@ footer {
     color: var(--elara-font-color);
     mix-blend-mode: soft-light;
     z-index: 999;
+    user-select: none;
+    pointer-events: none;
 }
 
 .logo {
