@@ -14,6 +14,10 @@ function reload(){
 }
 
 function makeGenericHandler(error = null){
+  if(error && error.message === 'Expected identifier, string or number'){
+    return null;
+  }
+
   const handler = document.createElement('div');
   handler.id = handler.className = 'handler';
   handler.innerHTML = `
@@ -25,7 +29,7 @@ function makeGenericHandler(error = null){
         ${error.continue == true ? '<button class="continue" onclick="dismiss()">Pas grave, je continue.</button>' : ''}
         <button class="reload" onclick="reload()" raised toggles>Rafraîchir</button>
       </div>
-    ` : ``}
+    ` : ''}
   </div>
   `;
   return handler;
@@ -64,7 +68,10 @@ function _onDomLoaded(){
  */
 function _onGenericError(event) {
   const willThrow = event instanceof ErrorEvent ? event.error : event.detail;
-  document.body.appendChild(makeGenericHandler(willThrow));
+  const handler = makeGenericHandler(willThrow);
+  if(handler){
+    document.body.appendChild(handler);  
+  }
 }
 
 function _onUnload(){

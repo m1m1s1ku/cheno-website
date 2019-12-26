@@ -174,7 +174,7 @@
     <script src="https://browser.sentry-cdn.com/5.10.2/bundle.min.js" integrity="sha384-ssBfXiBvlVC7bdA/VX03S88B5MwXQWdnpJRbUYFPgswlOBwETwTp6F3SMUNpo9M9" crossorigin="anonymous"></script>
     <script>
     const userAgent = window.navigator.userAgent.toLowerCase();
-    const oldEdge = agent.indexOf("edge") !== -1
+    const oldEdge = userAgent.indexOf("edge") !== -1
     
     if(oldEdge){
       throw new Error('Please upgrade your browser.');
@@ -182,7 +182,7 @@
 
     // Load GFonts the async way (cached by ServiceWorker)
     WebFontConfig = {
-      google: { families: [ 
+      'google': { 'families': [ 
         'Andika:400,700',
         'Comfortaa:400,700',
         'Material+Icons&display=swap'
@@ -201,7 +201,7 @@
     loadGFonts();
 
     window.addEventListener('load', () => {
-      Sentry.init({ dsn: 'https://8b03983c61b541c780aacedeb557fafe@sentry.io/1866364' });
+      Sentry.init({ 'dsn': 'https://8b03983c61b541c780aacedeb557fafe@sentry.io/1866364' });
 
       // Check that service workers are registered
       if ('serviceWorker' in navigator) {
