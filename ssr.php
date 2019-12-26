@@ -12,8 +12,16 @@
     }
 
     function ogFor($title, $url, $description, $image){
+        if(empty($title)){
+            $title = 'Cheno';
+        }
+
         if(empty($description)){
             $description = 'Artiste sculpteur sur Fer | Nice';
+        }
+
+        if(empty($image)){
+            $image = 'https://base.cheno.fr/wp-content/uploads/2019/12/logo-300x139.png';
         }
 
         return <<<EOD
