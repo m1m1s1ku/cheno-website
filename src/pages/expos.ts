@@ -197,7 +197,7 @@ class Expos extends Page {
                         place
                         date_expo
                         featuredImage {
-                          sourceUrl(size: LARGE)
+                          sourceUrl(size: MEDIUM_LARGE)
                           title(format: RAW)
                         }
                       }

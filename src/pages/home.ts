@@ -136,7 +136,7 @@ class Home extends Page {
                         sculptures(where: {orderby: {field: MODIFIED, order: DESC}}) {
                           nodes {
                             featuredImage {
-                              sourceUrl(size: LARGE)
+                              sourceUrl(size: MEDIUM_LARGE)
                             }
                             content(format: RENDERED)
                             title(format: RENDERED)

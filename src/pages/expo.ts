@@ -63,7 +63,7 @@ class Single extends Page {
         const post = first;
 
         if(!document.title){
-            document.title = post.title + ' | ' + Constants.title;
+            document.title = decodeHTML(post.title) + ' | ' + Constants.title;
         }
         this.article = post;
         if(post.featuredImage && post.featuredImage.sourceUrl){

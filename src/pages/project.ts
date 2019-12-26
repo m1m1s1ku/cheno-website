@@ -7,7 +7,7 @@ import { css, property } from 'lit-element';
 import Page from '../core/strategies/Page';
 import Constants from '../constants';
 
-import { Utils, onImageContainerClicked } from '../core/ui/ui';
+import { Utils, onImageContainerClicked, decodeHTML } from '../core/ui/ui';
 import { fadeWith } from '../core/animations';
 import { wrap } from '../core/errors/errors';
 
@@ -116,7 +116,7 @@ class Project extends Page {
         this.gallery = links;
         this.loaded = true;
         if(!document.title){
-            document.title = this.project.title + ' | ' + Constants.title;
+            document.title = decodeHTML(this.project.title) + ' | ' + Constants.title;
         }
         if(Utils.animationsReduced()){
             return;
