@@ -70,7 +70,7 @@ export class ElaraApp extends Root {
 		});
 
 		this.router.path('/exposition/:slug', async (req) => {
-			await this.load('expo/'+req.params.slug);
+			await this.load('exposition/'+req.params.slug);
 		});
 
 		this.router.path('/**', async (req) => {
