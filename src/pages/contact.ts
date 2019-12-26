@@ -208,7 +208,7 @@ class ContactController extends Page {
                 <h2>Besoin d'une présentation ?</h2>
                 <p>Des visites dans le "Jardin des Sculptures" sont possibles sur simple demande, n'hésitez pas !</p>
                 <h3>Un rendu papier ?</h3>
-                <mwc-button class="book" disabled raised label="Book numérique" icon="picture_as_pdf"></mwc-button>
+                <mwc-button class="book" disabled raised label="Book" icon="picture_as_pdf"></mwc-button>
                 <p class="ecology-smile">(à n'imprimer que si nécessaire ! <mwc-icon>tag_faces</mwc-icon>)</p>
                 <h3>Réseaux sociaux</h3>
                 <div class="social-menu">

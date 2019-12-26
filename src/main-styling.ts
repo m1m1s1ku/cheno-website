@@ -14,8 +14,7 @@ export const MainStyling = css`
     position: relative;
     display : block;
     width: 100%;
-    min-height: 100%;  
-    padding-bottom: 6rem;
+    min-height: 100%;
 }
 
 .content.hidden {

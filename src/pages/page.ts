@@ -160,6 +160,7 @@ class PageController extends Page {
             }
 
             blockquote {
+                position: relative;
                 font-family: var(--elara-font-display);
                 font-size: 30px;
                 font-style: italic;
@@ -170,6 +171,13 @@ class PageController extends Page {
                 /* text-align: center; */
                 color: rgba(0, 0, 0, 0.68);
                 padding: 0 0 0 50px;
+            }
+
+            blockquote cite {
+                display: block;
+                font-size: 20px;
+                text-align: right;
+                color: var(--elara-font-color);
             }
 
             code {
