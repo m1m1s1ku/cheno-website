@@ -62,6 +62,7 @@ class Home extends Page {
     private _currentAnimation: Animation;
     private _enforcePauseSub: BehaviorSubject<boolean>;
     private _stop: Subject<unknown>;
+    private _setup = false;
 
     public static get styles(){
         return [
@@ -242,7 +243,8 @@ class Home extends Page {
     }
 
     public async updated(){
-        if(this.loaded){
+        if(this.loaded && !this._setup){
+            this._setup = true;
             await this._setupWalk();
         }
     }
