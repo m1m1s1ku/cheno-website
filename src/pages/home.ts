@@ -70,70 +70,27 @@ class Home extends Page {
             HomeStyling,
             css`
             .text-input__loading {
-                height: 214px;
-                border-radius: 4px;
+                height: 340px;
                 width: 100%;
-              }
-              .text-input__loading--line {
+            }
+
+            .text-input__loading--line {
                 height: 10px;
                 margin: 10px;
-                -webkit-animation: pulse 1s infinite ease-in-out;
-                        animation: pulse 1s infinite ease-in-out;
-              }
-              .text-input__loading div:nth-child(1) {
-                width: 150px;
-              }
-              .text-input__loading div:nth-child(5) {
-                width: 150px;
-              }
-              .text-input__loading div:nth-child(9) {
-                width: 150px;
-              }
-              .text-input__loading div:nth-child(2) {
-                width: 250px;
-              }
-              .text-input__loading div:nth-child(6) {
-                width: 250px;
-              }
-              .text-input__loading div:nth-child(10) {
-                width: 250px;
-              }
-              .text-input__loading div:nth-child(3) {
-                width: 50px;
-              }
-              .text-input__loading div:nth-child(7) {
-                width: 50px;
-              }
-              .text-input__loading div:nth-child(4) {
-                width: 100px;
-              }
-              .text-input__loading div:nth-child(8) {
-                width: 100px;
-              }
-              
-              @-webkit-keyframes pulse {
+                animation: pulse 1s infinite ease-in-out;
+            }
+    
+            @keyframes pulse {
                 0% {
-                  background-color: rgba(165, 165, 165, 0.1);
+                    background-color: rgba(165, 165, 165, 0.1);
                 }
                 50% {
-                  background-color: rgba(165, 165, 165, 0.3);
+                    background-color: rgba(165, 165, 165, 0.3);
                 }
                 100% {
-                  background-color: rgba(165, 165, 165, 0.1);
+                    background-color: rgba(165, 165, 165, 0.1);
                 }
-              }
-              
-              @keyframes pulse {
-                0% {
-                  background-color: rgba(165, 165, 165, 0.1);
-                }
-                50% {
-                  background-color: rgba(165, 165, 165, 0.3);
-                }
-                100% {
-                  background-color: rgba(165, 165, 165, 0.1);
-                }
-              }              
+            }              
             `
         ];
     }
@@ -381,18 +338,24 @@ class Home extends Page {
     }
 
     private get loadingPlaceholder(){
+        function rand(min: number, max: number): number {
+            return Math.floor(Math.random() * (max - min) ) + min;
+        }
+
+        const random = () => rand(0, 300); // returns a random integer from 1 to 100
+
         return html`
         <div class='loader text-input__loading'>
-            <div class='text-input__loading--line'></div>
-            <div class='text-input__loading--line'></div>
-            <div class='text-input__loading--line'></div>
-            <div class='text-input__loading--line'></div>
-            <div class='text-input__loading--line'></div>
-            <div class='text-input__loading--line'></div>
-            <div class='text-input__loading--line'></div>
-            <div class='text-input__loading--line'></div>
-            <div class='text-input__loading--line'></div>
-            <div class='text-input__loading--line'></div>
+            <div class='text-input__loading--line' style="width: ${random()}px"></div>
+            <div class='text-input__loading--line' style="width: ${random()}px"></div>
+            <div class='text-input__loading--line' style="width: ${random()}px"></div>
+            <div class='text-input__loading--line' style="width: ${random()}px"></div>
+            <div class='text-input__loading--line' style="width: ${random()}px"></div>
+            <div class='text-input__loading--line' style="width: ${random()}px"></div>
+            <div class='text-input__loading--line' style="width: ${random()}px"></div>
+            <div class='text-input__loading--line' style="width: ${random()}px"></div>
+            <div class='text-input__loading--line' style="width: ${random()}px"></div>
+            <div class='text-input__loading--line' style="width: ${random()}px"></div>
         </div>
         `;
     }
