@@ -74,8 +74,8 @@ class Home extends Page {
             }
 
             .text-input__loading--line {
-                margin-top: 1em;
-                margin-bottom: 1em;
+                margin-top: 2em;
+                margin-bottom: 2em;
                 margin-left: auto; 
                 margin-right: 10%;
                 animation: pulse 1s infinite ease-in-out;
