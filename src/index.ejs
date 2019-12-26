@@ -157,10 +157,10 @@
     </style>
     <!-- {{SSRPayload}} -->
     <noscript>JavaScript is needed to use this website.</noscript>
-    <script src="<%= htmlWebpackPlugin.options.pathname %>/boot.js"></script>
-    <script src="<%= htmlWebpackPlugin.options.pathname %>/vendor/webcomponents-loader.js"></script>
-    <script src="<%= htmlWebpackPlugin.options.pathname %>/vendor/web-animations-next-lite.min.js"></script>
-    <script src="<%= htmlWebpackPlugin.options.pathname %>/vendor/custom-elements-es5-adapter.js"></script>
+    <script defer src="<%= htmlWebpackPlugin.options.pathname %>/boot.js"></script>
+    <script defer src="<%= htmlWebpackPlugin.options.pathname %>/vendor/webcomponents-loader.js"></script>
+    <script defer src="<%= htmlWebpackPlugin.options.pathname %>/vendor/web-animations-next-lite.min.js"></script>
+    <script defer src="<%= htmlWebpackPlugin.options.pathname %>/vendor/custom-elements-es5-adapter.js"></script>
   </head>
   <body>
     <elara-app></elara-app>
