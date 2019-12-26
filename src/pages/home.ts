@@ -13,6 +13,7 @@ import { Utils, decodeHTML, slugify } from '../core/ui/ui';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import { HomeStyling } from './home-styles';
 import { LinearProgress } from '@material/mwc-linear-progress';
+import { IronImageElement } from '@polymer/iron-image';
 
 enum SwitchingState {
     willPrev = 'prev',
@@ -34,6 +35,7 @@ class Home extends Page {
 
     @query('.series') protected series!: HTMLElement;
     @query('#unfold') protected unfold!: HTMLElement;
+    @query('#previewed') protected _previewed!: IronImageElement;
     @query('#pause') protected pause!: HTMLElement;
     @query('#main-progress') protected progress!: LinearProgress;
 
@@ -169,6 +171,7 @@ class Home extends Page {
         this.selected = idx;
         this.sculptureIndex = 1;
         this.sculptureMax = this.categories[idx].sculptures.nodes.length;
+        
         await this._definePreviewed();
 
         const catItem = this.shadowRoot.querySelector('.series ul li.serie-'+idx+'');
@@ -189,16 +192,16 @@ class Home extends Page {
             this._currentAnimation.cancel();
         }
 
-        let animation = pulseWith(300);
-        this._currentAnimation = this._previewed.animate(animation.effect, animation.options);
-        if(this._focused){
-            animation = fadeWith(300, true);
-            this.shadowRoot.querySelector('.series').animate(animation.effect, animation.options);
-        }
-    }
+        const animate = () => {
+            let animation = pulseWith(300);
+            this._currentAnimation = this._previewed.animate(animation.effect, animation.options);
+            if(this._focused){
+                animation = fadeWith(300, true);
+                this.series.animate(animation.effect, animation.options);
+            }
+        };
 
-    private get _previewed(){
-        return this.shadowRoot.querySelector('#previewed');
+        animate();
     }
 
     private get _catMax(){
