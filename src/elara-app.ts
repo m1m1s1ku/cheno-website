@@ -249,7 +249,7 @@ export class ElaraApp extends Root {
 				</span>
 				<button aria-label="Menu" class="menu" @click=${this._toggleMenu}>${HamburgerIcon}</button>
 				<div class="main-menu">
-					<dark-mode-toggle id="dark-mode" appearance="toggle"></dark-mode-toggle>
+					<dark-mode-toggle permanent id="dark-mode" appearance="toggle"></dark-mode-toggle>
 					<nav>
 						<ul>
 						${repeat(this._menuItems, this._menuItem)}
