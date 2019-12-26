@@ -47,11 +47,11 @@ export class ElaraApp extends Root {
 	@property({type: String, reflect: false, noAccessor: true})
 	public logo: string;
 
-	public scheme: 'dark' | 'light' = 'light';
+	public router: crayon.Router;
+	public theme: 'dark' | 'light' = 'light';
 
 	private _subscriptions: Subscription;
-
-	public router: crayon.Router;
+	private _onSchemeChangeListener: (e: CustomEvent<{colorScheme: 'dark' | 'light'}>) => void;
 
 	public constructor(){
 		super(); 
@@ -87,19 +87,30 @@ export class ElaraApp extends Root {
 			this.load(event.data.replace('/', ''));
 		}));
 
-		document.addEventListener('colorschemechange', this._onSchemeChange.bind(this));
-
+		this._onSchemeChangeListener = this._onSchemeChange.bind(this);
 		this.hasElaraRouting = true;
 	}
 
-	private _onSchemeChange(e: CustomEvent<{colorScheme: 'dark' | 'light'}>){
-		this.scheme = e.detail.colorScheme;
+	public connectedCallback(){
+		super.connectedCallback();
+		document.addEventListener('colorschemechange', this._onSchemeChangeListener);
+	}
 
-		if(this.scheme === 'dark'){
+	public disconnectedCallback(){
+		super.disconnectedCallback();
+		document.removeEventListener('colorschemechange', this._onSchemeChangeListener);
+	}
+
+	private _onSchemeChange(e: CustomEvent<{colorScheme: 'dark' | 'light'}>){
+		this.theme = e.detail.colorScheme;
+
+		if(this.theme === 'dark'){
+			document.documentElement.style.setProperty('--elara-placeholder-background', 'rgba(165,165,165,.5)');
 			document.documentElement.style.setProperty('--elara-background-color', '#373737');
 			document.documentElement.style.setProperty('--elara-font-color', '#f0f0f0');
 			document.documentElement.style.setProperty('--elara-font-hover', '#9e9e9e');
 		} else {
+			document.documentElement.style.setProperty('--elara-placeholder-background', 'rgba(67, 84, 128, 0.5)');
 			document.documentElement.style.removeProperty('--elara-background-color');
 			document.documentElement.style.removeProperty('--elara-font-color');
 			document.documentElement.style.removeProperty('--elara-font-hover');
@@ -107,7 +118,7 @@ export class ElaraApp extends Root {
 
 		requestAnimationFrame(() => {
 			this.logoPath.classList.add('write');
-			if(this.scheme === 'dark'){
+			if(this.theme === 'dark'){
 				this.logoPath.querySelector('path').style.stroke = 'white';
 			} else {
 				this.logoPath.querySelector('path').style.stroke = 'black';
@@ -115,7 +126,7 @@ export class ElaraApp extends Root {
 
 
 			const switchSVG = () => {
-				if(this.scheme === 'dark'){
+				if(this.theme === 'dark'){
 					this.logoPath.querySelector('path').style.fill = 'white';
 				} else {
 					this.logoPath.querySelector('path').style.fill = 'black';

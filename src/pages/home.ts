@@ -74,24 +74,12 @@ class Home extends Page {
             }
 
             .text-input__loading--line {
-                transition: width .3s;
+                background-color: var(--elara-placeholder-background, rgba(165, 165, 165, .5));
+                transition: all .3s;
                 margin-top: 5em;
                 margin-bottom: 5em;
                 margin-left: auto; 
                 margin-right: 10%;
-                animation: pulse 1s infinite ease-in-out;
-            }
-            
-            @keyframes pulse {
-                0% {
-                    background-color: rgba(165, 165, 165, 0.1);
-                }
-                50% {
-                    background-color: rgba(165, 165, 165, 0.3);
-                }
-                100% {
-                    background-color: rgba(165, 165, 165, 0.1);
-                }
             }
             `
         ];
@@ -196,8 +184,9 @@ class Home extends Page {
                 const fadeOut = fadeWith(300, false);
                 const animation = loader.animate(fadeOut.effect, fadeOut.options);
                 await animation.finished;
-                this.loaded = true;
             }
+            
+            this.loaded = true;
         }, 1000);
     }
 
