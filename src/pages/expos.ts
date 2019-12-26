@@ -46,20 +46,14 @@ class Expos extends Page {
             css`
             .expos {
                 --text-light: rgba(255,255,255,0.9);
+                --mdc-tab-text-transform: normal;
                 --spacing-s: 8px;
                 --spacing-l: 24px;
                 --spacing-xl: 64px;
-                --width-container: 100vw;
-                --mdc-tab-text-transform: normal;
 
-                padding: var(--spacing-xl) var(--spacing-l);
-                align-items: flex-start;
-                display: flex;
-                min-height: 100%;
-                justify-content: center;
-                flex-direction: column;
-
-                margin-top: 3em;
+                height: 100%;
+                width: 100%;
+                color: var(--elara-font-color);
             }
 
             .title-search {
@@ -145,7 +139,6 @@ class Expos extends Page {
                 grid-column-gap: var(--spacing-l);
                 grid-row-gap: var(--spacing-l);
                 margin-top: 2em;
-                max-width: var(--width-container);
                 width: 100%;
                 transition: filter .3s;
             }
@@ -168,6 +161,12 @@ class Expos extends Page {
 
             .periods {
                 width: 100%;
+            }
+
+            .expositions-grid {
+                padding: 0em 3em;
+                margin-top: 7em;
+                width: 90vw;
             }
             `
         ];
@@ -267,6 +266,7 @@ class Expos extends Page {
     public render(): void | TemplateResult {
         return html`
         <div class="expos" role="main">
+            <div class="expositions-grid">
             <div class="title-search">
                 <h1>Expositions</h1>
                 <mwc-textfield label="Recherche" @input=${(event: CustomEvent) => {
@@ -312,6 +312,7 @@ class Expos extends Page {
             ${this.loaded && this.articles.length === 0 ? html`
                 <p>Aucune exposition à afficher</p>
             ` : html``}
+            </div>
         </div>
         `;
     }

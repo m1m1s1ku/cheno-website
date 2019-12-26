@@ -11,11 +11,11 @@ export const MainStyling = css`
 
     opacity: 1;
     margin: 0;
-    height: 100%;
     position: relative;
-    display : table;
+    display : block;
     width: 100%;
-    min-height: 100%;
+    min-height: 100%;  
+    padding-bottom: 6rem;
 }
 
 .content.hidden {
@@ -40,6 +40,9 @@ header {
 }
 
 footer {
+    position: relative;    
+    clear: both;
+    bottom: 0;
     margin: 30px;
     color: var(--elara-font-color);
     mix-blend-mode: soft-light;

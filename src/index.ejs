@@ -50,7 +50,7 @@
         --paper-font-common-base: {
             font-family: var(--elara-font-primary);
         };
-        --mdc-theme-primary: var(--elara-primary);
+        --mdc-theme-primary: var(--elara-font-color);
         --mdc-theme-secondary: var(--elara-secondary);
         --mdc-linear-progress-buffer-color: var(--elara-secondary);
       }
@@ -62,10 +62,15 @@
       }
 
       html {
-        height: 100%;
+        height: 100%;  
+        box-sizing: border-box;
       }
 
-      * { box-sizing: border-box; }
+      *,
+      *:before,
+      *:after {
+        box-sizing: inherit;
+      }
 
       body {
         padding: 0;
