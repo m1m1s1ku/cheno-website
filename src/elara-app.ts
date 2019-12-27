@@ -4,10 +4,6 @@ import crayon from 'crayon';
 
 import Root from './core/strategies/Root';
 
-import './pages/index';
-import './atoms/not-found';
-import './atoms/placeholder';
-
 import Constants from './constants';
 import { wrap } from './core/errors/errors';
 
@@ -17,7 +13,9 @@ import { navigate } from './core/routing/routing';
 import { MainStyling } from './main-styling';
 import { SVGLogo, HamburgerIcon } from './icons';
 
-// Polyfills
+import './pages/index';
+import './atoms/index';
+
 import(/* webpackChunkName: "polyfill" */'./polyfill');
 
 interface WPLink {
