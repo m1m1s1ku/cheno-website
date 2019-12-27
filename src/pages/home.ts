@@ -1,5 +1,5 @@
 import { html, TemplateResult } from 'lit-html';
-import { property, PropertyValues, query, css, queryAll } from 'lit-element';
+import { property, PropertyValues, query, queryAll } from 'lit-element';
 
 import Page from '../core/strategies/Page';
 import { repeat } from 'lit-html/directives/repeat';
@@ -38,7 +38,7 @@ class Home extends Page {
     @query('#previewed') protected _previewed!: IronImageElement;
     @query('#pause') protected pause!: HTMLElement;
     @query('#main-progress') protected progress!: LinearProgress;
-    @queryAll('.loader') protected loaders!: NodeListOf<HTMLDivElement>;
+    @queryAll('ui-placeholder') protected loaders!: NodeListOf<HTMLElement>;
 
     @property({type: Boolean, reflect: true})
     public loaded = false;
@@ -67,18 +67,7 @@ class Home extends Page {
     public static get styles(){
         return [
             ... super.styles,
-            HomeStyling,
-            css`
-            .text-input__loading {
-                width: 100%;
-            }
-
-            .text-input__loading--line {
-                background-color: var(--elara-placeholder-background, rgba(165, 165, 165, .5));
-                transition: all .3s;
-                margin: 5em auto 10% 5em;
-            }
-            `
+            HomeStyling
         ];
     }
     
@@ -325,25 +314,6 @@ class Home extends Page {
         }
     }
 
-    private loadingPlaceholder(bars: number, definedWidth: number = null, definedHeight: number = null){
-        function rand(min: number, max: number): number {
-            return Math.floor(Math.random() * (max - min) ) + min;
-        }
-
-        const fakeArr = new Array(bars);
-
-        const randomHeight = () => definedHeight ? definedHeight : rand(100, window.innerHeight / (bars * 2));
-        const randomWidth = () => definedWidth ? definedWidth : rand(0, window.innerWidth / 2.5);
-
-        return html`
-        <div class='loader text-input__loading'>
-            ${repeat(fakeArr, () => html`
-                <div class='text-input__loading--line picture' .style="width: ${randomWidth()}px; height: ${randomHeight()}px"></div>
-            `)}
-        </div>
-        `;
-    }
-
     public render(): void | TemplateResult {
         return html`
         <div class="home-container">
@@ -387,11 +357,11 @@ class Home extends Page {
             ` : html`
             <div class="series">
                 <div class="single-container">
-                    ${this.loadingPlaceholder(10, null, 10)}
+                    <ui-placeholder max="10" width="null" height="10"></ui-placeholder>
                 </div>
             </div>
             <div class="preview">
-                ${this.loadingPlaceholder(1, window.innerWidth / 3, 300)}
+                <ui-placeholder max="1" width=${window.innerWidth / 3} height="300"></ui-placeholder>
             </div>
             `}
         </div>

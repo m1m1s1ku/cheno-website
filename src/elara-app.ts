@@ -6,6 +6,7 @@ import Root from './core/strategies/Root';
 
 import './pages/index';
 import './atoms/not-found';
+import './atoms/placeholder';
 
 import Constants from './constants';
 import { wrap } from './core/errors/errors';
