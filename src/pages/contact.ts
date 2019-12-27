@@ -1,5 +1,5 @@
 import { html, TemplateResult } from 'lit-html';
-import { css, query } from 'lit-element';
+import { css, query, customElement } from 'lit-element';
 
 import Page from '../core/strategies/Page';
 import { navigate } from '../core/routing/routing';
@@ -7,7 +7,8 @@ import { TextField } from '@material/mwc-textfield';
 import { TextArea } from '@material/mwc-textarea';
 import { Button } from '@material/mwc-button';
 
-class ContactController extends Page {
+@customElement('ui-contact')
+export class ContactController extends Page {
     public static readonly is: string = 'ui-contact';
 
     @query('.simple #name') protected name!: TextField;
@@ -224,4 +225,3 @@ class ContactController extends Page {
         `;
     }
 }
-customElements.define(ContactController.is, ContactController);

@@ -1,4 +1,4 @@
-import { html, CSSResult, property, SVGTemplateResult, query } from 'lit-element';
+import { html, CSSResult, property, SVGTemplateResult, query, customElement } from 'lit-element';
 
 import crayon from 'crayon';
 
@@ -25,6 +25,7 @@ interface WPLink {
 	icon?: SVGTemplateResult;
 }
 
+@customElement('elara-app')
 export class ElaraApp extends Root {
 	public static readonly is: string = 'elara-app';
 
@@ -280,5 +281,3 @@ export class ElaraApp extends Root {
 		`;
 	}
 }
-
-customElements.define(ElaraApp.is, ElaraApp);

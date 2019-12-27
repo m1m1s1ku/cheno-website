@@ -1,5 +1,5 @@
 import { html, TemplateResult } from 'lit-html';
-import { property, PropertyValues, query, queryAll } from 'lit-element';
+import { property, PropertyValues, query, queryAll, customElement } from 'lit-element';
 
 import Page from '../core/strategies/Page';
 import { repeat } from 'lit-html/directives/repeat';
@@ -30,7 +30,8 @@ interface Sculpture {
     title: string;
 };
 
-class Home extends Page {
+@customElement('ui-home')
+export class Home extends Page {
     public static readonly is: string = 'ui-home';
 
     @query('.series') protected series!: HTMLElement;
@@ -368,4 +369,3 @@ class Home extends Page {
         `;
     }
 }
-customElements.define(Home.is, Home);

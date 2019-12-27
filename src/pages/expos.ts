@@ -1,6 +1,6 @@
 import { html, TemplateResult } from 'lit-html';
 import { repeat } from 'lit-html/directives/repeat';
-import { css, property, query, queryAll } from 'lit-element';
+import { css, property, query, queryAll, customElement } from 'lit-element';
 
 import Page from '../core/strategies/Page';
 import { navigate } from '../core/routing/routing';
@@ -23,7 +23,8 @@ export interface ArticleMinimal {
     title: string;
 };
 
-class Expos extends Page {
+@customElement('ui-expos')
+export class Expos extends Page {
     public static readonly is: string = 'ui-expos';
 
     @property({type: Array, reflect: false})
@@ -319,4 +320,3 @@ class Expos extends Page {
         `;
     }
 }
-customElements.define(Expos.is, Expos);

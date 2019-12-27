@@ -1,6 +1,6 @@
 import { html, TemplateResult } from 'lit-html';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
-import { css, property } from 'lit-element';
+import { css, property, customElement } from 'lit-element';
 
 import Page from '../core/strategies/Page';
 import Constants from '../constants';
@@ -18,7 +18,8 @@ export interface ProjectMinimal {
     };
 };
 
-class PageController extends Page {
+@customElement('ui-page')
+export class PageController extends Page {
     public static readonly is: string = 'ui-page';
 
     public static readonly hasRouting: boolean = true;
@@ -260,4 +261,3 @@ class PageController extends Page {
         return this.shadowRoot.querySelector('#page');
     }
 }
-customElements.define(PageController.is, PageController);

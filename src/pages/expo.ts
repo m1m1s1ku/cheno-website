@@ -1,6 +1,6 @@
 import { html, TemplateResult } from 'lit-html';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
-import { css, property } from 'lit-element';
+import { css, property, customElement } from 'lit-element';
 
 import Page from '../core/strategies/Page';
 import Constants from '../constants';
@@ -11,7 +11,8 @@ import { wrap } from '../core/errors/errors';
 import { ArticleMinimal } from './expos';
 import { navigate } from '../core/routing/routing';
 
-class Single extends Page {
+@customElement('ui-exposition')
+export class Single extends Page {
     public static readonly is: string = 'ui-exposition';
 
     public static readonly hasRouting: boolean = true;
@@ -152,4 +153,3 @@ class Single extends Page {
         return this.shadowRoot.querySelector('#single');
     }
 }
-customElements.define(Single.is, Single);
