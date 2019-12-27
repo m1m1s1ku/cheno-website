@@ -18,7 +18,7 @@ import { MainStyling } from './main-styling';
 import { SVGLogo, HamburgerIcon } from './icons';
 
 // Polyfills
-import('./polyfill');
+import(/* webpackChunkName: "polyfill" */'./polyfill');
 
 interface WPLink {
 	id: string; label: string; url: string;
