@@ -81,7 +81,6 @@ export class Home extends Page {
     private _setupWalk(){
         this._stop = new Subject();
         this._enforcePauseSub = new BehaviorSubject<boolean>(false);
-
         const pause$ = combineLatest([this._enforcePauseSub, fromEvent(this.pause, 'click')]).pipe(
             map(([enforced, _event]) => {
                 if(enforced || this.pause.innerText === 'play_arrow'){
@@ -145,12 +144,24 @@ export class Home extends Page {
                         slug
                       }
                     }
-                  }
-                  `})})
-            .then(res => res.json()).catch(_ => this.dispatchEvent(wrap(_)));
+                  }`})}).then(res => res.json()).catch(_ => this.dispatchEvent(wrap(_)));
 
         this.categories = requestR.data.categories.nodes;
 
+        await this._restore();
+
+        setTimeout( async() => {
+            for(const loader of Array.from(this.loaders)){
+                const fadeOut = fadeWith(300, false);
+                const animation = loader.animate(fadeOut.effect, fadeOut.options);
+                await animation.finished;
+            }
+            
+            this.loaded = true;
+        }, 1000);
+    }
+
+    private async _restore(){
         const catSculpture = location.pathname.split('/').filter((val) => val !== '' && val !== 'home');
         this.selected = this.categories.findIndex(category => category.slug === catSculpture[0]);
 
@@ -164,17 +175,6 @@ export class Home extends Page {
             this.sculptureMax = this.categories[this.selected].sculptures.nodes.length;
             await this._definePreviewed();
         }
-
-
-        setTimeout( async() => {
-            for(const loader of Array.from(this.loaders)){
-                const fadeOut = fadeWith(300, false);
-                const animation = loader.animate(fadeOut.effect, fadeOut.options);
-                await animation.finished;
-            }
-            
-            this.loaded = true;
-        }, 1000);
     }
 
     public async updated(){
@@ -358,7 +358,7 @@ export class Home extends Page {
             ` : html`
             <div class="series">
                 <div class="single-container">
-                    <ui-placeholder max="10" width="null" height="10"></ui-placeholder>
+                    <ui-placeholder max="10" height="10"></ui-placeholder>
                 </div>
             </div>
             <div class="preview">

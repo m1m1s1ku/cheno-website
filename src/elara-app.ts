@@ -213,9 +213,9 @@ export class ElaraApp extends Root {
 	public get bootstrap(){		
 		return Promise.all([
 			this._setup(),
-			import('./polymer'),
-			import('./mwc'),
-			import('./labs')
+			import(/* webpackChunkName: "polymer" */'./polymer'),
+			import(/* webpackChunkName: "mwc" */'./mwc'),
+			import(/* webpackChunkName: "labs" */'./labs')
 		]);
 	}
 
