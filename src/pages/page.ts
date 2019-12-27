@@ -7,8 +7,16 @@ import Constants from '../constants';
 
 import { Utils, onImageContainerClicked } from '../core/ui/ui';
 import { fadeWith } from '../core/animations';
-import { ProjectMinimal } from './project';
 import { wrap } from '../core/errors/errors';
+
+export interface ProjectMinimal {
+    title: string;
+    content: string;
+    excerpt: string;
+    featuredImage: {
+        sourceUrl: string;
+    };
+};
 
 class PageController extends Page {
     public static readonly is: string = 'ui-page';
