@@ -46,12 +46,16 @@ export class Placeholder extends PureElement {
         return next > 0 ? next : 30;
     }
 
+    private _refresh(){
+        requestAnimationFrame(() => {
+            this.requestUpdate();
+        });
+    }
+
     public firstUpdated(){
         setTimeout(() => {
-            requestAnimationFrame(() => {
-                this.requestUpdate();
-            });
-        }, 1000);
+            this._refresh();
+        }, 500);
     }
 
 	public render(): TemplateResult { 
