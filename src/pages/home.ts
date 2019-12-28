@@ -234,7 +234,7 @@ export class Home extends Page {
     }
 
     private _canNext(){
-        return this.sculptureIndex+1 <= this.sculptureMax;
+        return this.sculptureIndex <= this.sculptureMax;
     }
 
     private get sculpture(){
