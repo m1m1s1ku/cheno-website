@@ -64,6 +64,7 @@ export class Home extends Page {
     private _enforcePauseSub: BehaviorSubject<boolean>;
     private _stop: Subject<unknown>;
     private _setup = false;
+    private _resetSub: Subject<unknown>;
 
     public static get styles(){
         return [
@@ -81,6 +82,8 @@ export class Home extends Page {
     private _setupWalk(){
         this._stop = new Subject();
         this._enforcePauseSub = new BehaviorSubject<boolean>(false);
+        this._resetSub = new Subject();
+
         const pause$ = combineLatest([this._enforcePauseSub, fromEvent(this.pause, 'click')]).pipe(
             map(([enforced, _event]) => {
                 if(enforced || this.pause.innerText === 'play_arrow'){
@@ -88,6 +91,13 @@ export class Home extends Page {
                 }
 
                 return false;
+            })
+        );
+
+        const reset$ = this._resetSub.pipe(
+            startWith(undefined),
+            switchMap(() => {
+                return timer(3500, 3500);
             })
         );
 
@@ -104,7 +114,7 @@ export class Home extends Page {
 
                 if(paused) return EMPTY;
 
-                return timer(3500, 3500);
+                return reset$;
             }),
             takeUntil(this._stop),
             switchMap(async() => {                               
@@ -202,6 +212,7 @@ export class Home extends Page {
         }
 
         await this._fadeCurrent();
+        this._resetSub.next();
     }
 
     private async _fadeCurrent(){
