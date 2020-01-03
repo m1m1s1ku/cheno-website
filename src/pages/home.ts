@@ -99,7 +99,7 @@ export class Home extends Page {
             })
         );
 
-        const reset$ = this._resetSub.pipe(
+        const resetOrWait$ = this._resetSub.pipe(
             startWith(undefined),
             switchMap(() => {
                 return timer(3500, 3500);
@@ -119,7 +119,7 @@ export class Home extends Page {
 
                 if(paused) return EMPTY;
 
-                return reset$;
+                return resetOrWait$;
             }),
             switchMap(async() => {                               
                 if(this._canNext()){
