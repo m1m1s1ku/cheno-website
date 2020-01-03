@@ -7,8 +7,8 @@ import Constants from '../constants';
 import { wrap } from '../core/errors/errors';
 import { WPCategory } from '../interfaces';
 import { pulseWith, fadeWith } from '../core/animations';
-import { timer, BehaviorSubject, scheduled, animationFrameScheduler, Subject, EMPTY, fromEvent, combineLatest } from 'rxjs';
-import { switchMap, takeUntil, startWith, debounceTime, map } from 'rxjs/operators';
+import { timer, BehaviorSubject, scheduled, animationFrameScheduler, Subject, EMPTY, fromEvent, combineLatest, Subscription } from 'rxjs';
+import { switchMap, startWith, debounceTime, map } from 'rxjs/operators';
 import { Utils, decodeHTML, slugify } from '../core/ui/ui';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import { HomeStyling } from './home-styles';
@@ -62,9 +62,9 @@ export class Home extends Page {
     /* Non-updating values */
     private _currentAnimation: Animation;
     private _enforcePauseSub: BehaviorSubject<boolean>;
-    private _stop: Subject<unknown>;
     private _setup = false;
     private _resetSub: Subject<unknown>;
+    private _subs: Subscription;
 
     public static get styles(){
         return [
@@ -72,15 +72,20 @@ export class Home extends Page {
             HomeStyling
         ];
     }
+
+    public connectedCallback(){
+        super.connectedCallback();
+        this._subs = new Subscription();
+    }
     
     public disconnectedCallback(){
         super.disconnectedCallback();
-        this._stop.next(true);
-        this._stop.complete();
+
+        this._subs.unsubscribe();
+        this._subs = null;
     }
 
     private _setupWalk(){
-        this._stop = new Subject();
         this._enforcePauseSub = new BehaviorSubject<boolean>(false);
         this._resetSub = new Subject();
 
@@ -116,7 +121,6 @@ export class Home extends Page {
 
                 return reset$;
             }),
-            takeUntil(this._stop),
             switchMap(async() => {                               
                 if(this._canNext()){
                     await this._onNextSculpture();                
@@ -128,7 +132,7 @@ export class Home extends Page {
                 const next = this.selected == (this._catMax-1) ? 0 : this.selected;
                 await this._onCatClick(next);
             })
-        ).toPromise();
+        );
     }
 
     public async firstUpdated(_changedProperties: PropertyValues){
@@ -190,7 +194,7 @@ export class Home extends Page {
     public async updated(){
         if(this.loaded && !this._setup){
             this._setup = true;
-            await this._setupWalk();
+            this._subs.add(this._setupWalk().subscribe());
         }
     }
 
