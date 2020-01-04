@@ -51,6 +51,7 @@ export class Expos extends Page {
                 --spacing-s: 8px;
                 --spacing-l: 24px;
                 --spacing-xl: 64px;
+                --mdc-tab-text-label-color-default: var(--elara-font-color);
 
                 height: 100%;
                 width: 100%;
