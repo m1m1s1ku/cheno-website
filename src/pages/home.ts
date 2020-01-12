@@ -89,9 +89,9 @@ export class Home extends Page {
         this._enforcePauseSub = new BehaviorSubject<boolean>(false);
         this._resetSub = new Subject();
 
-        const pause$ = combineLatest([this._enforcePauseSub, fromEvent(this.pause, 'click')]).pipe(
+        const pause$ = combineLatest([this._enforcePauseSub, fromEvent(this.pause, 'click').pipe(startWith(null as Event))]).pipe(
             map(([enforced, _event]) => {
-                if(enforced || this.pause.innerText === 'play_arrow'){
+                if(enforced || this.pause.innerText === 'pause'){
                     return true;
                 }
 
@@ -108,9 +108,8 @@ export class Home extends Page {
 
         return scheduled(pause$, animationFrameScheduler).pipe(
             debounceTime(300),
-            startWith(null as Event),
             switchMap((paused) => {                    
-                this.pause.innerText = paused ? 'pause' : 'play_arrow';
+                this.pause.innerText = paused ? 'play_arrow' : 'pause';
                 if(paused){
                     this.progress.close();
                 } else {
@@ -312,13 +311,14 @@ export class Home extends Page {
         await this._move(SwitchingState.willNext);
     }
 
-    private async _onSingle(){
+    private async _onSingle(){        
         const config = fadeWith(300, false);
         const animation = this.series.animate(config.effect, config.options);
         await animation.finished;
 
         const willFocus = this._focused !== this.categories[this.selected].sculptures.nodes[this.sculpture];
-        
+        this._enforcePauseSub.next(willFocus);
+
         if(willFocus){
             this.unfold.innerText = 'minimize';
             this._focused = this.categories[this.selected].sculptures.nodes[this.sculpture];
