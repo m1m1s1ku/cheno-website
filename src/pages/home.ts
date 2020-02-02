@@ -200,7 +200,10 @@ export class Home extends Page {
     }
 
     private async _onCatClick(idx: number){
-        this.gridToggle.innerText = 'view_carousel';
+        if(this.gridToggle){
+            this.gridToggle.innerText = 'view_carousel';
+        }
+
         this.selected = idx;
         this.sculptureIndex = 1;
         this.sculptureMax = this.categories[idx].sculptures.nodes.length;
@@ -286,7 +289,9 @@ export class Home extends Page {
     }
 
     private async _onPrevSculpture(_e?: Event){
-        this.gridToggle.innerText = 'view_carousel';
+        if(this.gridToggle){
+            this.gridToggle.innerText = 'view_carousel';
+        }
 
         if(this.sculptureIndex === 1 && this.selected > 0){
             this.selected--;
@@ -300,7 +305,9 @@ export class Home extends Page {
     }
 
     private async _onNextSculpture(_e?: Event){
-        this.gridToggle.innerText = 'view_carousel';
+        if(this.gridToggle){
+            this.gridToggle.innerText = 'view_carousel';
+        }
 
         if(this.sculptureIndex === this.sculptureMax){
             if(this.selected+1 <= this._catMax){
