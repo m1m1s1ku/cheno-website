@@ -196,15 +196,4 @@ svg.logo path {
         stroke-dashoffset: 0;
     }
 }
-
-footer .switch dark-mode-toggle {
-    display: inline-block;
-}
-
-#dark-mode {
-    display: inline;
-    position: absolute;
-    right: 0;
-    bottom: 100px;
-}
 `;

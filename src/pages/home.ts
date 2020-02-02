@@ -35,10 +35,10 @@ export class Home extends Page {
     public static readonly is: string = 'ui-home';
 
     @query('.series') protected series!: HTMLElement;
-    @query('#unfold') protected unfold!: HTMLElement;
     @query('#previewed') protected _previewed!: IronImageElement;
     @query('#pause') protected pause!: HTMLElement;
     @query('#main-progress') protected progress!: LinearProgress;
+    @query('#toggle-grid') protected gridToggle!: HTMLElement;
     @queryAll('ui-placeholder') protected loaders!: NodeListOf<HTMLElement>;
 
     @property({type: Boolean, reflect: true})
@@ -46,7 +46,7 @@ export class Home extends Page {
     @property({type: Array, reflect: false})
     public categories: ReadonlyArray<WPCategory> = [];
     @property({type: String, reflect: false})
-    public previewing: string;
+    public previewing: string | string[];
     @property({type: Number, reflect: false})
     public selected = 0;
     @property({type: Number, reflect: false})
@@ -58,6 +58,8 @@ export class Home extends Page {
     public serieProgress = 0;
     @property({type: Object, reflect: false})
     private _focused: Sculpture;
+    @property({type: String, reflect: false})
+    public viewMode: 'single' | 'multi' = 'single';
 
     /* Non-updating values */
     private _currentAnimation: Animation;
@@ -65,7 +67,7 @@ export class Home extends Page {
     private _setup = false;
     private _resetSub: Subject<unknown>;
     private _subs: Subscription;
-
+    
     public static get styles(){
         return [
             ... super.styles,
@@ -198,6 +200,7 @@ export class Home extends Page {
     }
 
     private async _onCatClick(idx: number){
+        this.gridToggle.innerText = 'view_carousel';
         this.selected = idx;
         this.sculptureIndex = 1;
         this.sculptureMax = this.categories[idx].sculptures.nodes.length;
@@ -320,11 +323,9 @@ export class Home extends Page {
         this._enforcePauseSub.next(willFocus);
 
         if(willFocus){
-            this.unfold.innerText = 'minimize';
             this._focused = this.categories[this.selected].sculptures.nodes[this.sculpture];
             history.pushState({}, this._focused.title, 'home/' + this.categories[this.selected].slug + '/' + slugify(this._focused.title, '-'));
         } else {
-            this.unfold.innerText = 'maximize';
             this._focused = null;
             history.pushState({}, this.categories[this.selected].name, 'home/' + this.categories[this.selected].slug);
         }
@@ -353,12 +354,41 @@ export class Home extends Page {
                 </div>
             </div>
             `}
-            <div class="preview">
-                <iron-image id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade="true" @click=${this._onSingle}></iron-image>
-                <div class="unfold">
-                    <mwc-icon id="unfold" @click=${this._onSingle}>maximize</mwc-icon>
-                </div>
+            <div class="${Array.isArray(this.previewing) ? 'masonry' : 'preview'}">
+                ${Array.isArray(this.previewing) ? html`
+                    ${repeat(this.previewing, (previewed, idx) => html`
+                        <iron-image class="item" src=${previewed} sizing="contain" fade="true" @click=${() => this._show(idx)}></iron-image>
+                    `)}
+                ` : html`
+                    <iron-image id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade="true" @click=${this._onSingle}></iron-image>
+                `}
                 <div class="count">
+                    <mwc-icon id="toggle-grid" @click=${async () => {
+                        let isMultiview;
+                        if(this.gridToggle.innerText === 'view_carousel'){
+                            isMultiview = false;
+                        } else {
+                            isMultiview = true;
+                        }
+
+                        if(!isMultiview){
+                            const config = fadeWith(300, false);
+                            const animation = this.series.animate(config.effect, config.options);
+                            await animation.finished;
+
+                            const images = this.categories[this.selected].sculptures.nodes.map(node => node.featuredImage.sourceUrl);
+                            this.previewing = images;
+                            this._focused = null;
+                            this._enforcePauseSub.next(true);
+                            this.gridToggle.innerText = 'view_module';
+                            this.viewMode = 'multi';
+                            window.scrollTo({top: 0, behavior: 'smooth'});
+                        } else {
+                            this.previewing = this.categories[this.selected].sculptures.nodes[this.sculpture].featuredImage.sourceUrl;
+                            this.gridToggle.innerText = 'view_carousel';
+                            this.viewMode = 'single';
+                        }
+                    }}>view_carousel</mwc-icon>
                     <mwc-icon class="${this.selected === 0 && this.sculptureIndex === 1 ? 'disabled' : ''}" @click=${this._onPrevSculpture}>chevron_left</mwc-icon>
                     <div class="pagination"><span class="current">${this.sculptureIndex}</span> / <span class="total">${this.sculptureMax}</span></div> 
                     <mwc-icon @click=${this._onNextSculpture}>chevron_right</mwc-icon>
@@ -382,5 +412,17 @@ export class Home extends Page {
             `}
         </div>
         `;
+    }
+
+    private async _show(sculpture: number){
+        const config = fadeWith(300, false);
+        const animation = this.series.animate(config.effect, config.options);
+        await animation.finished;
+        
+        this.sculptureIndex = sculpture+1;
+        this.gridToggle.innerText = 'view_carousel';
+        this.previewing = this.categories[this.selected].sculptures.nodes[sculpture].featuredImage.sourceUrl;
+        this._focused = this.categories[this.selected].sculptures.nodes[sculpture];
+        history.pushState({}, this._focused.title, 'home/' + this.categories[this.selected].slug + '/' + slugify(this._focused.title, '-'));
     }
 }

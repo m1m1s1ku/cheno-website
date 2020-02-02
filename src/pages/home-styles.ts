@@ -82,7 +82,7 @@ export const HomeStyling = css`
    right: 0;
 }
 
-.preview .count, .preview .unfold  {
+.count  {
     position: absolute;
     right: 10px;
     bottom: 30px;
@@ -92,37 +92,36 @@ export const HomeStyling = css`
     line-height: 1.4em;
 }
 
-.preview .unfold {
-    left: 10px;
-    justify-content: flex-start;
+.masonry .count {
+    bottom: -50px;
 }
 
-.preview .unfold mwc-icon, .preview .count mwc-icon {
+.unfold mwc-icon, .count mwc-icon {
     opacity: .5;
     cursor: pointer;
     transition: opacity .3s linear;
 }
 
-.preview .count mwc-icon.disabled {
+.count mwc-icon.disabled {
     opacity: 0 !important;
     cursor: default;
 }
 
-.preview .unfold mwc-icon:hover, .preview .count mwc-icon:hover {
+.unfold mwc-icon:hover, .count mwc-icon:hover {
     opacity: 1;
 }
 
-.preview .count .pagination {
+.count .pagination {
     display: inline;
 }
 
-.preview .progress {
+.progress {
     position: absolute;
     bottom: 0;
     width: 50vw;
 }
 
-.preview .progress mwc-linear {
+.progress mwc-linear {
     width: 50vw;
 }
 
@@ -137,5 +136,19 @@ export const HomeStyling = css`
     background-size: 100% 0.1em;
     background-position: 25px 88%;
     transition: all 0.25s ease-out;
+}
+
+.masonry {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-gap: 3px;
+    grid-auto-rows: minmax(180px, auto);
+    grid-auto-flow: dense;
+    padding: 10px;
+    margin-top: 80px;
+}
+
+.masonry .item {
+    cursor: pointer;
 }
 `;
