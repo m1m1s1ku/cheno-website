@@ -195,7 +195,9 @@ export class Home extends Page {
     public async updated(){
         if(this.loaded && !this._setup){
             this._setup = true;
-            this._subs.add(this._setupWalk().subscribe());
+            if(this._subs){
+                this._subs.add(this._setupWalk().subscribe());
+            }
         }
     }
 
