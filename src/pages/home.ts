@@ -286,6 +286,8 @@ export class Home extends Page {
     }
 
     private async _onPrevSculpture(_e?: Event){
+        this.gridToggle.innerText = 'view_carousel';
+
         if(this.sculptureIndex === 1 && this.selected > 0){
             this.selected--;
             await this._onCatClick(this.selected);
@@ -298,6 +300,8 @@ export class Home extends Page {
     }
 
     private async _onNextSculpture(_e?: Event){
+        this.gridToggle.innerText = 'view_carousel';
+
         if(this.sculptureIndex === this.sculptureMax){
             if(this.selected+1 <= this._catMax){
                 this.selected++;
