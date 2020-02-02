@@ -303,7 +303,7 @@ export class Expos extends Page {
                 <a id=${article.id} class="card hide" @click=${() => {
                     navigate('exposition/'+article.slug);
                 }}>
-                    <div class="card__background" style="background-image: url(${article.featuredImage.sourceUrl})"></div>
+                    <div class="card__background" style="background-image: url(${article.featuredImage?.sourceUrl}); background-color: #333;"></div>
                     <div class="card__content">
                         <p class="card__place">${article.place}</p>
                         <h3 class="card__heading">${decodeHTML(article.title)}</h3>
