@@ -3,6 +3,7 @@ import { property } from 'lit-element';
 import Page from './Page';
 
 import { load } from '../bootstrap/bootstrap';
+import { helmetize } from '../routing/routing';
 /**
  * Root strategy
  *
@@ -32,6 +33,9 @@ export default class Root extends Page {
 		
 	public async load(route: string){
 		this.route = route;
+		
+		await helmetize(route);
+		
 		return await load(route, this._content);
 	}
 		

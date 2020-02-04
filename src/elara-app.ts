@@ -79,12 +79,13 @@ export class ElaraApp extends Root {
 			await this.load(req.pathname.replace('/', ''));
 		});
 
-		this._subscriptions.add(this.router.events.subscribe(event => {
+		this._subscriptions.add(this.router.events.subscribe(async event => {
 			if (event.type !== crayon.RouterEventType.SameRouteAbort) {
 				return;
 			}
 
-			this.load(event.data.replace('/', ''));
+			const route = event.data.replace('/', '');
+			await this.load(route);
 		}));
 
 		this._onSchemeChangeListener = this._onSchemeChange.bind(this);
