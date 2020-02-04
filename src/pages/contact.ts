@@ -182,13 +182,14 @@ export class ContactController extends Page {
                             formData.set('message', this.message.value);
                             const headers = new Headers();
                             headers.append('Accept', 'application/json');
-                            /*const sending = await fetch('https://formspree.io/mdoaggpz',{
+                            
+                            const sending = await fetch('https://formspree.io/mdoaggpz',{
                                 method: 'POST',
                                 body: formData,
                                 headers
-                            }).then(res => res.json());*/
+                            }).then(res => res.json());
 
-                            const sending = {ok: true, error: null};
+                            // const sending = {ok: true, error: null};
 
                             if(sending.ok){
                                 this.name.disabled = true;
