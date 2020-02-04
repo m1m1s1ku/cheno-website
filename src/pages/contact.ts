@@ -6,11 +6,13 @@ import { navigate } from '../core/routing/routing';
 import { TextField } from '@material/mwc-textfield';
 import { TextArea } from '@material/mwc-textarea';
 import { Button } from '@material/mwc-button';
+import { pulseWith } from '../core/animations';
 
 @customElement('ui-contact')
 export class ContactController extends Page {
     public static readonly is: string = 'ui-contact';
 
+    @query('#helper') protected helper!: HTMLTitleElement;
     @query('.simple #name') protected name!: TextField;
     @query('.simple #email') protected email!: TextField;
     @query('.simple #phone') protected phone!: TextField;
@@ -115,7 +117,9 @@ export class ContactController extends Page {
         <div id="contact" class="contact" role="main">
             <div class="side">
                 <h2>Remplissez juste, le formulaire.</h2>
-                <h4 class="helper">Réponse rapide, c'est promis !</h4>
+                <h4 id="helper" class="helper">
+                    Réponse rapide, c'est promis !
+                </h4>
                 <form class="simple" @input=${(e: KeyboardEvent) => {
                     const field = e.target as TextField;
                     if(field.validity.customError){
@@ -178,11 +182,13 @@ export class ContactController extends Page {
                             formData.set('message', this.message.value);
                             const headers = new Headers();
                             headers.append('Accept', 'application/json');
-                            const sending = await fetch('https://formspree.io/mdoaggpz',{
+                            /*const sending = await fetch('https://formspree.io/mdoaggpz',{
                                 method: 'POST',
                                 body: formData,
                                 headers
-                            }).then(res => res.json());
+                            }).then(res => res.json());*/
+
+                            const sending = {ok: true, error: null};
 
                             if(sending.ok){
                                 this.name.disabled = true;
@@ -190,6 +196,13 @@ export class ContactController extends Page {
                                 this.phone.disabled = true;
                                 this.message.disabled = true;
                                 this.send.disabled = true;
+
+                                this.helper.innerText = 'E-mail envoyé !';
+
+                                const fade = pulseWith(300);
+                                const pulse = this.helper.animate(fade.effect, fade.options);
+
+                                await pulse.finished;
                             } else {
                                 if(sending.error && sending.error.indexOf('_replyto') !== -1){
                                     this.email.setCustomValidity('E-mail invalide');
