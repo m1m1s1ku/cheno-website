@@ -404,44 +404,53 @@ export class ContactController extends Page {
                         });
 
                         try {
-                            /*
-                            sconst content = sculpture.content;
-                            const fake = document.createElement('p');
-                            fake.innerHTML = content as unknown as string;
-
-                            prevY = prevY - detailTitleSize - sculptureDimension.height - 20;
-                            const subSize = displayFont.widthOfTextAtSize(fake.innerText, 12);
-
-                            if(subSize > width){
-                                const content = fake.innerText.split(',');
-                                for(const line of content){
-                                    page.drawText(line, {
-                                        x: padding,
-                                        y: prevY - detailTitleSize - padding,
-                                        size: 12,
-                                        font: helveticaFont
-                                    });
-                                    prevY -= detailTitleSize;
-                                }
-                                // debugger;
-                            } else {
-                                page.drawText(fake.innerText, {
-                                    x: padding,
-                                    y: prevY - detailTitleSize - padding,
-                                    size: 12,
-                                    font: helveticaFont
-                                });
-                            }
-                            */
-
                             if(sculptureImage){
+                                prevY = prevY - detailTitleSize - sculptureDimension.height - 20;
+
                                 page.drawImage(sculptureImage, {
                                     x: padding, 
                                     y: prevY,
                                     width: sculptureDimension.width,
                                     height: sculptureDimension.height,
                                 });
-                                prevY -= sculptureDimension.height - padding;
+                                
+                                let content = sculpture.content as unknown as string;
+                                const fake = document.createElement('p');
+                                fake.innerHTML = content;
+                                content = fake.innerText;
+                        
+                                const idealSplit = 80;
+                                const maxSplit = 90;
+                                const lines = [''];
+
+                                let ch: string;
+                                let i: number;
+
+                                let lineCounter = 0, lineIndex = 0;
+                    
+                                for (i = 0; i < content.length; i++) {
+                                    ch = content[i];
+                                    if ((lineCounter >= idealSplit && ch === ' ') || (lineCounter >= idealSplit && ch === '\n') || lineCounter >= maxSplit) {
+                                        ch = '';
+                                        lineCounter = -1;
+                                        lineIndex++;
+                                        lines.push('');
+                                    }
+                                    lines[lineIndex] += ch;
+                                    lineCounter++;
+                                }
+
+                                for(const line of lines){
+                                    page.drawText(line, {
+                                        x: padding,
+                                        y: prevY - padding,
+                                        size: 12,
+                                        font: helveticaFont
+                                    });
+                                    prevY = prevY-detailTitleSize;
+                                }
+
+                                prevY = prevY - sculptureDimension.height - padding;
                             }
                         } catch(err){
                             console.error(err);
