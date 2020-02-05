@@ -344,14 +344,16 @@ export class ContactController extends Page {
                     isSub = false;
 
                     const {width, height} = page.getSize();
-                    prevY = height - 100 - titleSize;
+                    prevY = height - padding - titleSize;
                     sculptureCountForPage = 0;
 
                     const categorySize = displayFont.widthOfTextAtSize(category.name, titleSize);
 
+                    prevY = prevY - padding;
+
                     page.drawText(category.name, {
                         x: width - categorySize - padding,
-                        y: prevY + titleSize + padding,
+                        y: prevY,
                         size: titleSize,
                         font: displayFont
                     });
@@ -369,7 +371,9 @@ export class ContactController extends Page {
 
                         const sculptureDimension = sculptureImage.scale(.35);
                         const neededHeight = sculptureDimension.height;
-                        const willFit = (prevY - neededHeight) > ((padding * 2) + footerTextSize);
+
+                        console.warn({needed: neededHeight, prev: prevY});
+                        const willFit = (prevY-neededHeight-100) > 50;
 
                         if(!willFit){
                             console.warn('sub-page, count :', sculptureCountForPage);
@@ -377,7 +381,7 @@ export class ContactController extends Page {
 
                             isSub = true;
                             page = doc.addPage();
-                            prevY = height - titleSize - 100;
+                            prevY = height - titleSize - padding;
                             sculptureCountForPage = 0;
                         }
 
@@ -388,7 +392,7 @@ export class ContactController extends Page {
 
                             page.drawText(category.name, {
                                 x: width - detailCatSize - padding,
-                                y: prevY + titleSize + padding,
+                                y: prevY,
                                 size: detailTitleSize,
                                 font: displayFont
                             });
@@ -396,6 +400,7 @@ export class ContactController extends Page {
                             isSub = false;
                         }
 
+                        prevY = prevY - detailTitleSize - padding - padding;
                         page.drawText(decodeHTML(sculpture.title), {
                             x: padding,
                             y: prevY,
@@ -405,7 +410,7 @@ export class ContactController extends Page {
 
                         try {
                             if(sculptureImage){
-                                prevY = prevY - detailTitleSize - sculptureDimension.height - 20;
+                                prevY = prevY - sculptureDimension.height - padding;
 
                                 page.drawImage(sculptureImage, {
                                     x: padding, 
@@ -441,16 +446,14 @@ export class ContactController extends Page {
                                 }
 
                                 for(const line of lines){
+                                    prevY = prevY-padding-12;
                                     page.drawText(line, {
                                         x: padding,
-                                        y: prevY - padding,
+                                        y: prevY,
                                         size: 12,
                                         font: helveticaFont
                                     });
-                                    prevY = prevY-padding-detailTitleSize;
                                 }
-
-                                prevY = prevY - sculptureDimension.height - padding;
                             }
                         } catch(err){
                             console.error(err);
