@@ -335,8 +335,6 @@ export class ContactController extends Page {
                 let prevY = null;
                 let isSub = false;
 
-                // let sculptureCountForPage = 0;
-
                 this.current = 0;
                 this.max = description.length - 1;
 
@@ -346,7 +344,6 @@ export class ContactController extends Page {
 
                     const {width, height} = page.getSize();
                     prevY = height - padding - titleSize;
-                    // sculptureCountForPage = 0;
 
                     const categorySize = displayFont.widthOfTextAtSize(category.name, titleSize);
 
@@ -373,20 +370,15 @@ export class ContactController extends Page {
                         let sculptureDimension = sculptureImage.scale(.35);
                         const neededHeight = sculptureDimension.height;
 
-                        // console.warn({needed: neededHeight, prev: prevY});
                         const willFit = (prevY-neededHeight-100) > 50;
 
                         if(!willFit){
-                            // console.warn('sub-page, count :', sculptureCountForPage);
                             maker.footer(page, category.name);
 
                             isSub = true;
                             page = doc.addPage();
                             prevY = height - titleSize - padding;
-                            // sculptureCountForPage = 0;
                         }
-
-                        // sculptureCountForPage++;
 
                         if(isSub){
                             const detailCatSize = displayFont.widthOfTextAtSize(category.name, detailTitleSize);
@@ -483,7 +475,6 @@ export class ContactController extends Page {
                     this.current++;
 
                     maker.footer(page, category.name);
-                    // break;
                 }
             },
             footer: (page: PDFPage, text = footerText) => {
