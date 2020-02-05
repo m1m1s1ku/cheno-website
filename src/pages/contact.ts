@@ -268,7 +268,8 @@ export class ContactController extends Page {
     private async _pagesMaker(doc: PDFDocument){
         const logoBytes = await fetch(location.origin + '/assets/images/logo.png').then(res => res.arrayBuffer());
 
-        const displayFontBytes = await fetch(location.origin + '/assets/fonts/andika.woff2').then(res => res.arrayBuffer());
+        const displayFontBytes = await fetch(location.origin + '/assets/fonts/andika.ttf').then(res => res.arrayBuffer());
+        const normalFontBytes = await fetch(location.origin + '/assets/fonts/comfortaa.ttf').then(res => res.arrayBuffer());
 
         doc.registerFontkit(fontkit);
 
@@ -281,6 +282,8 @@ export class ContactController extends Page {
 
         const footerText = 'Workbook | ' + currentYear;
         const displayFont = await doc.embedFont(displayFontBytes);
+        const normalFont = await doc.embedFont(normalFontBytes);
+        
         const helveticaFont = await doc.embedFont(StandardFonts.Helvetica);
 
         const logoImage = await doc.embedPng(logoBytes);
@@ -449,18 +452,25 @@ export class ContactController extends Page {
                                 lines = [].concat(...lines.map(line => line.split('\n')));
 
                                 // console.warn(lines);
+                                let current = 0;
                                 for(const line of lines){
                                     if(!line) continue;
 
                                     console.warn('writing', line, prevY - 12);
 
-                                    prevY = prevY - 12;
+                                    if(current !== 0){
+                                        prevY = prevY - 10;
+                                    } else {
+                                        prevY = prevY - padding - 10;
+                                    }
+
                                     page.drawText(line, {
                                         x: padding,
                                         y: prevY,
-                                        size: 12,
-                                        font: helveticaFont
+                                        size: 10,
+                                        font: normalFont
                                     });
+                                    current++;
                                 }
                             }
                         } catch(err){
