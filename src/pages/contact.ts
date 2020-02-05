@@ -1,5 +1,5 @@
 import { html, TemplateResult } from 'lit-html';
-import { css, query, customElement } from 'lit-element';
+import { css, query, customElement, property } from 'lit-element';
 
 import Page from '../core/strategies/Page';
 import { navigate } from '../core/routing/routing';
@@ -7,6 +7,11 @@ import { TextField } from '@material/mwc-textfield';
 import { TextArea } from '@material/mwc-textarea';
 import { Button } from '@material/mwc-button';
 import { pulseWith } from '../core/animations';
+
+import { PDFDocument, PDFPage } from 'pdf-lib';
+import fontkit from '@pdf-lib/fontkit';
+import Constants from '../constants';
+import { WPCategory } from '../interfaces';
 
 @customElement('ui-contact')
 export class ContactController extends Page {
@@ -18,6 +23,14 @@ export class ContactController extends Page {
     @query('.simple #phone') protected phone!: TextField;
     @query('.simple #message') protected message!: TextArea;
     @query('.simple #send') protected send!: Button;
+
+    @property({type: String, reflect: false})
+    private preview: string;
+
+    public async connectedCallback(){
+        super.connectedCallback();
+        await this._generate();
+    }
 
     public static get styles(){
         return [
@@ -223,7 +236,12 @@ export class ContactController extends Page {
                 <h2>Besoin d'une présentation ?</h2>
                 <p>Des visites dans le "Jardin des Sculptures" sont possibles sur simple demande, n'hésitez pas !</p>
                 <h3>Un rendu papier ?</h3>
-                <mwc-button class="book" disabled raised label="Book" icon="picture_as_pdf"></mwc-button>
+                <mwc-button class="book" raised label="Book" icon="picture_as_pdf" @click=${this._download}></mwc-button>
+                ${this.preview ? html`
+                <div class="preview">
+                    <iframe width="300" height="200" src="${this.preview}"></iframe>
+                </div>
+                ` : ''}
                 <p class="ecology-smile">(à n'imprimer que si nécessaire ! <mwc-icon>tag_faces</mwc-icon>)</p>
                 <h3>Réseaux sociaux</h3>
                 <div class="social-menu">
@@ -237,5 +255,161 @@ export class ContactController extends Page {
             </div>
         </div>
         `;
+    }
+
+    private async _pagesMaker(doc: PDFDocument){
+        const logoBytes = await fetch(location.origin + '/assets/images/logo.png').then(res => res.arrayBuffer());
+
+        const displayFontBytes = await fetch(location.origin + '/assets/fonts/andika.woff2').then(res => res.arrayBuffer());
+        const normalFontBytes = await fetch(location.origin + '/assets/fonts/andika.woff2').then(res => res.arrayBuffer());
+
+        doc.registerFontkit(fontkit);
+
+        const titleSize = 40;
+        const displayFont = await doc.embedFont(displayFontBytes);
+        const normalFont = await doc.embedFont(normalFontBytes);
+
+        const currentYear = new Date().getFullYear();
+        const period = `${currentYear - 1} - ${currentYear}`;
+
+        const logoImage = await doc.embedPng(logoBytes);
+
+        const padding = 30;
+
+        return {
+            meta: () => {
+                doc.setTitle('Cheno | Book');
+                doc.setAuthor('Cheno');
+                doc.setSubject('Work');
+                doc.setKeywords(['sculpteur', 'fer', 'récupération']);
+                doc.setProducer('Cheno-website');
+                doc.setCreator('Léonard Cherouvrier');
+                doc.setCreationDate(new Date());
+                doc.setModificationDate(new Date());
+        
+                doc.registerFontkit(fontkit);
+            },
+            first: async (page: PDFPage) => {
+                const height = page.getHeight();
+                const logoDims = logoImage.scale(.75);
+        
+                page.drawImage(logoImage, {
+                    x: 20,
+                    y: height - logoDims.height - padding,
+                    width: logoDims.width,
+                    height: logoDims.height,
+                });
+        
+                page.drawText('Work book', {
+                    x: padding,
+                    y: height - logoDims.height - 150,
+                    size: 40,
+                    font: displayFont
+                });
+        
+                page.drawText(period, {
+                    x: 50,
+                    y: height - logoDims.height - 225,
+                    size: 25,
+                    font: displayFont
+                });
+            },
+            series: async (description: ReadonlyArray<WPCategory>, maker) => {
+                let index = 0;
+                for(const category of description){
+                    const pair = index % 2 === 0;
+                    const page = doc.addPage();
+                    const {width, height} = page.getSize();
+
+                    const categorySize = displayFont.widthOfTextAtSize(category.name, titleSize);
+
+                    page.drawText(category.name, {
+                        x: pair ? width - categorySize - padding : padding,
+                        y: height - 100,
+                        size: titleSize,
+                        font: displayFont
+                    });
+
+                    maker.footer(page);
+                    
+                    index++;
+                    // break;
+                }
+            },
+            footer: (page: PDFPage, withText = true) => {
+                const logoDims = logoImage.scale(.25);
+
+                const footerText = 'Workbook | ' + period;
+                const footerTextSize = 13;
+
+                const {width} = page.getSize();
+
+                page.drawImage(logoImage, {
+                    x: width - logoDims.width - padding,
+                    y: 20,
+                    width: logoDims.width,
+                    height: logoDims.height,
+                });
+
+                if(withText){
+                    page.drawText(footerText, {
+                        x: padding,
+                        y: 28,
+                        size: footerTextSize,
+                        font: normalFont
+                    });
+                }
+            }
+        };
+    }
+
+    private async _generate(){
+        const doc = await PDFDocument.create();
+        const maker = await this._pagesMaker(doc);
+        maker.meta();
+
+        const page = doc.addPage();
+        await maker.first(page);
+        maker.footer(page, false);
+
+        const requestR = await fetch(Constants.graphql, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                query: `{
+                    categories {
+                        nodes {
+                        sculptures(where: {orderby: {field: MODIFIED, order: DESC}}) {
+                            nodes {
+                            featuredImage {
+                                sourceUrl(size: MEDIUM_LARGE)
+                            }
+                            content(format: RENDERED)
+                            title(format: RENDERED)
+                            }
+                        }
+                        name
+                        slug
+                        }
+                    }
+                    }`})}).then(res => res.json());
+
+        const categories = requestR.data.categories.nodes;
+
+        await maker.series(categories, maker);
+
+        const pdfBytes = await doc.save();
+        const blob = new Blob([pdfBytes], {type: 'application/pdf' });
+
+        const bookURL = window.URL.createObjectURL(blob);
+        this.preview = bookURL;
+    }
+
+    private _download(){
+        const a = document.createElement('a');
+        a.href = this.preview;
+        a.download = 'Cheno-book.pdf';
+        document.body.appendChild(a);
+        a.click();
     }
 }

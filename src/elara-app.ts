@@ -214,7 +214,7 @@ export class ElaraApp extends Root {
 			this._setup(),
 			import(/* webpackChunkName: "polymer" */'./polymer'),
 			import(/* webpackChunkName: "mwc" */'./mwc'),
-			import(/* webpackChunkName: "labs" */'./labs')
+			import(/* webpackChunkName: "labs" */'./labs'),
 		]);
 	}
 
