@@ -360,7 +360,7 @@ export class ContactController extends Page {
 
                     for(const sculpture of category.sculptures.nodes){
                         const extension =  sculpture.featuredImage.sourceUrl.substr(sculpture.featuredImage.sourceUrl.lastIndexOf('.') + 1);
-                        const image = 'https://corsunblock.herokuapp.com/' + sculpture.featuredImage.sourceUrl;
+                        const image = sculpture.featuredImage.sourceUrl;
                         const imageBytes = await fetch(image).then(res => res.arrayBuffer());
                         let sculptureImage = null;
                         if(extension == 'jpg' || extension == 'jpeg'){
@@ -390,7 +390,7 @@ export class ContactController extends Page {
                         if(isSub){
                             const detailCatSize = displayFont.widthOfTextAtSize(category.name, detailTitleSize);
 
-                            page.drawText(category.name, {
+                            page.drawText('- ' + category.name, {
                                 x: width - detailCatSize - padding,
                                 y: prevY,
                                 size: detailTitleSize,
@@ -424,9 +424,9 @@ export class ContactController extends Page {
                                 fake.innerHTML = content;
                                 content = fake.innerText;
                         
-                                const idealSplit = 80;
+                                // const idealSplit = 30;
                                 const maxSplit = 90;
-                                const lines = [''];
+                                let lines = [''];
 
                                 let ch: string;
                                 let i: number;
@@ -435,18 +435,26 @@ export class ContactController extends Page {
                     
                                 for (i = 0; i < content.length; i++) {
                                     ch = content[i];
-                                    if ((lineCounter >= idealSplit && ch === ' ') || (lineCounter >= idealSplit && ch === '\n') || lineCounter >= maxSplit) {
+                                    if ((ch === ' ' || ch === '\n' || ch === ',')  && lineCounter >= maxSplit) {
                                         ch = '';
                                         lineCounter = -1;
                                         lineIndex++;
                                         lines.push('');
                                     }
+
                                     lines[lineIndex] += ch;
                                     lineCounter++;
                                 }
 
+                                lines = [].concat(...lines.map(line => line.split('\n')));
+
+                                // console.warn(lines);
                                 for(const line of lines){
-                                    prevY = prevY-padding-12;
+                                    if(!line) continue;
+
+                                    console.warn('writing', line, prevY - 12);
+
+                                    prevY = prevY - 12;
                                     page.drawText(line, {
                                         x: padding,
                                         y: prevY,
@@ -491,6 +499,7 @@ export class ContactController extends Page {
     }
 
     private async _generate(){
+        console.time('Generator');
         const doc = await PDFDocument.create();
         const maker = await this._pagesMaker(doc);
         maker.meta();
@@ -530,6 +539,7 @@ export class ContactController extends Page {
 
         const bookURL = window.URL.createObjectURL(blob);
         this.preview = bookURL;
+        console.timeEnd('Generator');
     }
 
     private _download(){
