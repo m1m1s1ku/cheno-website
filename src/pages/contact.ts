@@ -8,7 +8,7 @@ import { TextArea } from '@material/mwc-textarea';
 import { Button } from '@material/mwc-button';
 import { pulseWith } from '../core/animations';
 
-import { PDFDocument, PDFPage } from 'pdf-lib';
+import { PDFDocument, PDFPage, StandardFonts } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import Constants from '../constants';
 import { WPCategory } from '../interfaces';
@@ -26,6 +26,12 @@ export class ContactController extends Page {
 
     @property({type: String, reflect: false})
     private preview: string;
+
+    @property({type: Number, reflect: false})
+    private current = 0;
+
+    @property({type: Number, reflect: false})
+    private max = 0;
 
     public async connectedCallback(){
         super.connectedCallback();
@@ -236,12 +242,13 @@ export class ContactController extends Page {
                 <h2>Besoin d'une présentation ?</h2>
                 <p>Des visites dans le "Jardin des Sculptures" sont possibles sur simple demande, n'hésitez pas !</p>
                 <h3>Un rendu papier ?</h3>
-                <mwc-button class="book" raised label="Book" icon="picture_as_pdf" @click=${this._download}></mwc-button>
                 ${this.preview ? html`
                 <div class="preview">
-                    <iframe width="300" height="200" src="${this.preview}"></iframe>
+                    <iframe width="300" height="300" src="${this.preview}"></iframe>
                 </div>
-                ` : ''}
+                <mwc-button class="book" raised label="Book" icon="picture_as_pdf" @click=${this._download}></mwc-button>
+                ` : html`${this.max !== 0 ? html`<div style="width: 100%">Génération en cours ... <mwc-linear-progress progress=${this.current / this.max}></mwc-linear-progress></div>
+                ` : html`Génération  démarée`}`}
                 <p class="ecology-smile">(à n'imprimer que si nécessaire ! <mwc-icon>tag_faces</mwc-icon>)</p>
                 <h3>Réseaux sociaux</h3>
                 <div class="social-menu">
@@ -261,16 +268,19 @@ export class ContactController extends Page {
         const logoBytes = await fetch(location.origin + '/assets/images/logo.png').then(res => res.arrayBuffer());
 
         const displayFontBytes = await fetch(location.origin + '/assets/fonts/andika.woff2').then(res => res.arrayBuffer());
-        const normalFontBytes = await fetch(location.origin + '/assets/fonts/andika.woff2').then(res => res.arrayBuffer());
 
         doc.registerFontkit(fontkit);
 
         const titleSize = 40;
-        const displayFont = await doc.embedFont(displayFontBytes);
-        const normalFont = await doc.embedFont(normalFontBytes);
+        const detailTitleSize = 20;
+        const footerTextSize = 13;
 
         const currentYear = new Date().getFullYear();
         const period = `${currentYear - 1} - ${currentYear}`;
+
+        const footerText = 'Workbook | ' + currentYear;
+        const displayFont = await doc.embedFont(displayFontBytes);
+        const helveticaFont = await doc.embedFont(StandardFonts.Helvetica);
 
         const logoImage = await doc.embedPng(logoBytes);
 
@@ -300,47 +310,131 @@ export class ContactController extends Page {
                     height: logoDims.height,
                 });
         
-                page.drawText('Work book', {
-                    x: padding,
+                const subject = 'Workbook';
+                const subjectSize = 40;
+
+                const subjectWidth = displayFont.widthOfTextAtSize(subject, subjectSize);
+                page.drawText(subject, {
+                    x: 30,
                     y: height - logoDims.height - 150,
-                    size: 40,
+                    size: subjectSize,
                     font: displayFont
                 });
         
                 page.drawText(period, {
-                    x: 50,
+                    x: 30 + subjectWidth,
                     y: height - logoDims.height - 225,
                     size: 25,
                     font: displayFont
                 });
             },
             series: async (description: ReadonlyArray<WPCategory>, maker) => {
-                let index = 0;
+                let page = null;
+                let prevY = null;
+                let isSub = false;
+
+                let sculptureCountForPage = 0;
+
+                this.current = 0;
+                this.max = description.length - 1;
+
                 for(const category of description){
-                    const pair = index % 2 === 0;
-                    const page = doc.addPage();
+                    page = doc.addPage();
+                    isSub = false;
+
                     const {width, height} = page.getSize();
+                    prevY = height - 100 - titleSize;
+                    sculptureCountForPage = 0;
 
                     const categorySize = displayFont.widthOfTextAtSize(category.name, titleSize);
 
                     page.drawText(category.name, {
-                        x: pair ? width - categorySize - padding : padding,
-                        y: height - 100,
+                        x: width - categorySize - padding,
+                        y: prevY + titleSize + padding,
                         size: titleSize,
                         font: displayFont
                     });
 
-                    maker.footer(page);
-                    
-                    index++;
+                    for(const sculpture of category.sculptures.nodes){
+                        const extension =  sculpture.featuredImage.sourceUrl.substr(sculpture.featuredImage.sourceUrl.lastIndexOf('.') + 1);
+                        const image = 'http://corsunblock.herokuapp.com/' + sculpture.featuredImage.sourceUrl;
+                        const imageBytes = await fetch(image).then(res => res.arrayBuffer());
+                        let sculptureImage = null;
+                        if(extension == 'jpg' || extension == 'jpeg'){
+                            sculptureImage = await doc.embedJpg(imageBytes);
+                        } else {
+                            sculptureImage = await doc.embedPng(imageBytes);
+                        }
+                        const sculptureDimension = sculptureImage.scale(.30);
+
+                        const neededHeight = sculptureDimension.height;
+
+                        console.warn(neededHeight, height / 2);
+                        if(neededHeight >= (height /2)){
+                            console.warn('will be alone?');
+                        }
+                        const willFit = (prevY - neededHeight) > ((padding * 2) + footerTextSize);
+
+                        if(!willFit){
+                            console.warn('adding sub-page, count :', sculptureCountForPage);
+                            maker.footer(page, category.name);
+
+                            isSub = true;
+                            page = doc.addPage();
+                            prevY = height - titleSize - 100;
+                            sculptureCountForPage = 0;
+                        }
+
+                        sculptureCountForPage++;
+
+                        if(isSub){
+                            const detailCatSize = displayFont.widthOfTextAtSize(category.name, detailTitleSize);
+
+                            page.drawText(category.name, {
+                                x: width - detailCatSize - padding,
+                                y: prevY + titleSize + padding,
+                                size: detailTitleSize,
+                                font: displayFont
+                            });
+                            
+                            isSub = false;
+                        }
+
+                        page.drawText(sculpture.title, {
+                            x: padding,
+                            y: prevY,
+                            size: detailTitleSize,
+                            font: displayFont
+                        });
+
+                        try {
+                            // const content = sculpture.content;
+
+                            prevY = prevY - detailTitleSize - sculptureDimension.height;
+
+                            if(sculptureImage){
+                                page.drawImage(sculptureImage, {
+                                    x: padding, 
+                                    y: prevY,
+                                    width: sculptureDimension.width,
+                                    height: sculptureDimension.height,
+                                });
+                                prevY -= sculptureDimension.height - padding;
+
+                            }
+                        } catch(err){
+                            console.error(err);
+                        }
+                    }
+
+                    this.current++;
+
+                    maker.footer(page, category.name);
                     // break;
                 }
             },
-            footer: (page: PDFPage, withText = true) => {
+            footer: (page: PDFPage, text = footerText) => {
                 const logoDims = logoImage.scale(.25);
-
-                const footerText = 'Workbook | ' + period;
-                const footerTextSize = 13;
 
                 const {width} = page.getSize();
 
@@ -351,12 +445,12 @@ export class ContactController extends Page {
                     height: logoDims.height,
                 });
 
-                if(withText){
-                    page.drawText(footerText, {
+                if(text){
+                    page.drawText(doc.getPageCount() - 1 + ' | ' + text, {
                         x: padding,
                         y: 28,
                         size: footerTextSize,
-                        font: normalFont
+                        font: helveticaFont
                     });
                 }
             }
@@ -370,7 +464,7 @@ export class ContactController extends Page {
 
         const page = doc.addPage();
         await maker.first(page);
-        maker.footer(page, false);
+        maker.footer(page, null);
 
         const requestR = await fetch(Constants.graphql, {
             method: 'POST',
