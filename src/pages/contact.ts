@@ -8,7 +8,7 @@ import { TextArea } from '@material/mwc-textarea';
 import { Button } from '@material/mwc-button';
 import { pulseWith } from '../core/animations';
 
-import { PDFDocument, PDFPage, StandardFonts } from 'pdf-lib';
+import { PDFDocument, PDFPage } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import Constants from '../constants';
 import { WPCategory } from '../interfaces';
@@ -283,9 +283,7 @@ export class ContactController extends Page {
         const footerText = 'Workbook | ' + currentYear;
         const displayFont = await doc.embedFont(displayFontBytes);
         const normalFont = await doc.embedFont(normalFontBytes);
-        
-        const helveticaFont = await doc.embedFont(StandardFonts.Helvetica);
-
+    
         const logoImage = await doc.embedPng(logoBytes);
 
         const padding = 30;
@@ -337,7 +335,7 @@ export class ContactController extends Page {
                 let prevY = null;
                 let isSub = false;
 
-                let sculptureCountForPage = 0;
+                // let sculptureCountForPage = 0;
 
                 this.current = 0;
                 this.max = description.length - 1;
@@ -348,7 +346,7 @@ export class ContactController extends Page {
 
                     const {width, height} = page.getSize();
                     prevY = height - padding - titleSize;
-                    sculptureCountForPage = 0;
+                    // sculptureCountForPage = 0;
 
                     const categorySize = displayFont.widthOfTextAtSize(category.name, titleSize);
 
@@ -372,23 +370,23 @@ export class ContactController extends Page {
                             sculptureImage = await doc.embedPng(imageBytes);
                         }
 
-                        const sculptureDimension = sculptureImage.scale(.35);
+                        let sculptureDimension = sculptureImage.scale(.35);
                         const neededHeight = sculptureDimension.height;
 
-                        console.warn({needed: neededHeight, prev: prevY});
+                        // console.warn({needed: neededHeight, prev: prevY});
                         const willFit = (prevY-neededHeight-100) > 50;
 
                         if(!willFit){
-                            console.warn('sub-page, count :', sculptureCountForPage);
+                            // console.warn('sub-page, count :', sculptureCountForPage);
                             maker.footer(page, category.name);
 
                             isSub = true;
                             page = doc.addPage();
                             prevY = height - titleSize - padding;
-                            sculptureCountForPage = 0;
+                            // sculptureCountForPage = 0;
                         }
 
-                        sculptureCountForPage++;
+                        // sculptureCountForPage++;
 
                         if(isSub){
                             const detailCatSize = displayFont.widthOfTextAtSize(category.name, detailTitleSize);
@@ -413,7 +411,15 @@ export class ContactController extends Page {
 
                         try {
                             if(sculptureImage){
+                                const cachePrevY = prevY;
                                 prevY = prevY - sculptureDimension.height - padding;
+
+                                if(prevY < 0){
+                                    console.warn(sculpture.title, 'will overflow, reducing');
+                                    sculptureDimension = sculptureImage.scale(.20);
+
+                                    prevY = cachePrevY -sculptureDimension.height - padding;
+                                }
 
                                 page.drawImage(sculptureImage, {
                                     x: padding, 
@@ -427,7 +433,6 @@ export class ContactController extends Page {
                                 fake.innerHTML = content;
                                 content = fake.innerText;
                         
-                                // const idealSplit = 30;
                                 const maxSplit = 90;
                                 let lines = [''];
 
@@ -451,12 +456,9 @@ export class ContactController extends Page {
 
                                 lines = [].concat(...lines.map(line => line.split('\n')));
 
-                                // console.warn(lines);
                                 let current = 0;
                                 for(const line of lines){
                                     if(!line) continue;
-
-                                    console.warn('writing', line, prevY - 12);
 
                                     if(current !== 0){
                                         prevY = prevY - 10;
@@ -501,7 +503,7 @@ export class ContactController extends Page {
                         x: padding,
                         y: 28,
                         size: footerTextSize,
-                        font: helveticaFont
+                        font: normalFont
                     });
                 }
             }
