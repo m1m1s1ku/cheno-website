@@ -406,7 +406,9 @@ export class ContactController extends Page {
                                 const cachePrevY = prevY;
                                 prevY = prevY - sculptureDimension.height - padding;
 
-                                if(prevY < 0){
+                                const lines = maker.split(sculpture.content);
+
+                                if(prevY - padding - (lines.length * 10) < 0){
                                     console.warn(sculpture.title, 'will overflow, reducing');
                                     sculptureDimension = sculptureImage.scale(.20);
 
@@ -420,33 +422,6 @@ export class ContactController extends Page {
                                     height: sculptureDimension.height,
                                 });
                                 
-                                let content = sculpture.content as unknown as string;
-                                const fake = document.createElement('p');
-                                fake.innerHTML = content;
-                                content = fake.innerText;
-                        
-                                const maxSplit = 90;
-                                let lines = [''];
-
-                                let ch: string;
-                                let i: number;
-
-                                let lineCounter = 0, lineIndex = 0;
-                    
-                                for (i = 0; i < content.length; i++) {
-                                    ch = content[i];
-                                    if ((ch === ' ' || ch === '\n' || ch === ',')  && lineCounter >= maxSplit) {
-                                        ch = '';
-                                        lineCounter = -1;
-                                        lineIndex++;
-                                        lines.push('');
-                                    }
-
-                                    lines[lineIndex] += ch;
-                                    lineCounter++;
-                                }
-
-                                lines = [].concat(...lines.map(line => line.split('\n')));
 
                                 let current = 0;
                                 for(const line of lines){
@@ -497,6 +472,34 @@ export class ContactController extends Page {
                         font: normalFont
                     });
                 }
+            },
+            split(content: string){
+                const fake = document.createElement('p');
+                fake.innerHTML = content;
+                content = fake.innerText;
+        
+                const maxSplit = 90;
+                const lines = [''];
+
+                let ch: string;
+                let i: number;
+
+                let lineCounter = 0, lineIndex = 0;
+    
+                for (i = 0; i < content.length; i++) {
+                    ch = content[i];
+                    if ((ch === ' ' || ch === '\n' || ch === ',')  && lineCounter >= maxSplit) {
+                        ch = '';
+                        lineCounter = -1;
+                        lineIndex++;
+                        lines.push('');
+                    }
+
+                    lines[lineIndex] += ch;
+                    lineCounter++;
+                }
+
+                return [].concat(...lines.map(line => line.split('\n')));
             }
         };
     }
