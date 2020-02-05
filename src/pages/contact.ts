@@ -12,6 +12,7 @@ import { PDFDocument, PDFPage, StandardFonts } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import Constants from '../constants';
 import { WPCategory } from '../interfaces';
+import { decodeHTML } from '../core/ui/ui';
 
 @customElement('ui-contact')
 export class ContactController extends Page {
@@ -310,7 +311,7 @@ export class ContactController extends Page {
                     height: logoDims.height,
                 });
         
-                const subject = 'Workbook';
+                const subject = 'Workbook -';
                 const subjectSize = 40;
 
                 const subjectWidth = displayFont.widthOfTextAtSize(subject, subjectSize);
@@ -321,7 +322,7 @@ export class ContactController extends Page {
                     font: displayFont
                 });
         
-                page.drawText(period, {
+                page.drawText('- ' + period, {
                     x: 30 + subjectWidth,
                     y: height - logoDims.height - 225,
                     size: 25,
@@ -357,7 +358,7 @@ export class ContactController extends Page {
 
                     for(const sculpture of category.sculptures.nodes){
                         const extension =  sculpture.featuredImage.sourceUrl.substr(sculpture.featuredImage.sourceUrl.lastIndexOf('.') + 1);
-                        const image = 'http://corsunblock.herokuapp.com/' + sculpture.featuredImage.sourceUrl;
+                        const image = 'https://corsunblock.herokuapp.com/' + sculpture.featuredImage.sourceUrl;
                         const imageBytes = await fetch(image).then(res => res.arrayBuffer());
                         let sculptureImage = null;
                         if(extension == 'jpg' || extension == 'jpeg'){
@@ -365,18 +366,13 @@ export class ContactController extends Page {
                         } else {
                             sculptureImage = await doc.embedPng(imageBytes);
                         }
-                        const sculptureDimension = sculptureImage.scale(.30);
 
+                        const sculptureDimension = sculptureImage.scale(.35);
                         const neededHeight = sculptureDimension.height;
-
-                        console.warn(neededHeight, height / 2);
-                        if(neededHeight >= (height /2)){
-                            console.warn('will be alone?');
-                        }
                         const willFit = (prevY - neededHeight) > ((padding * 2) + footerTextSize);
 
                         if(!willFit){
-                            console.warn('adding sub-page, count :', sculptureCountForPage);
+                            console.warn('sub-page, count :', sculptureCountForPage);
                             maker.footer(page, category.name);
 
                             isSub = true;
@@ -400,7 +396,7 @@ export class ContactController extends Page {
                             isSub = false;
                         }
 
-                        page.drawText(sculpture.title, {
+                        page.drawText(decodeHTML(sculpture.title), {
                             x: padding,
                             y: prevY,
                             size: detailTitleSize,
@@ -408,9 +404,35 @@ export class ContactController extends Page {
                         });
 
                         try {
-                            // const content = sculpture.content;
+                            /*
+                            sconst content = sculpture.content;
+                            const fake = document.createElement('p');
+                            fake.innerHTML = content as unknown as string;
 
-                            prevY = prevY - detailTitleSize - sculptureDimension.height;
+                            prevY = prevY - detailTitleSize - sculptureDimension.height - 20;
+                            const subSize = displayFont.widthOfTextAtSize(fake.innerText, 12);
+
+                            if(subSize > width){
+                                const content = fake.innerText.split(',');
+                                for(const line of content){
+                                    page.drawText(line, {
+                                        x: padding,
+                                        y: prevY - detailTitleSize - padding,
+                                        size: 12,
+                                        font: helveticaFont
+                                    });
+                                    prevY -= detailTitleSize;
+                                }
+                                // debugger;
+                            } else {
+                                page.drawText(fake.innerText, {
+                                    x: padding,
+                                    y: prevY - detailTitleSize - padding,
+                                    size: 12,
+                                    font: helveticaFont
+                                });
+                            }
+                            */
 
                             if(sculptureImage){
                                 page.drawImage(sculptureImage, {
@@ -420,7 +442,6 @@ export class ContactController extends Page {
                                     height: sculptureDimension.height,
                                 });
                                 prevY -= sculptureDimension.height - padding;
-
                             }
                         } catch(err){
                             console.error(err);
