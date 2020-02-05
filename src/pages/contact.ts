@@ -447,7 +447,7 @@ export class ContactController extends Page {
                                         size: 12,
                                         font: helveticaFont
                                     });
-                                    prevY = prevY-detailTitleSize;
+                                    prevY = prevY-padding-detailTitleSize;
                                 }
 
                                 prevY = prevY - sculptureDimension.height - padding;
