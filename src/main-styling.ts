@@ -39,7 +39,7 @@ header {
 }
 
 footer {
-    position: relative;    
+    position: fixed;    
     clear: both;
     bottom: 0;
     margin: 30px;
