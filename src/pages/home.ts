@@ -144,7 +144,7 @@ export class Home extends Page {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 query: `{
-                    categories {
+                    categories(first: 500) {
                       nodes {
                         sculptures(where: {orderby: {field: MODIFIED, order: DESC}}) {
                           nodes {
@@ -161,7 +161,7 @@ export class Home extends Page {
                     }
                   }`})}).then(res => res.json()).catch(_ => this.dispatchEvent(wrap(_)));
 
-        this.categories = requestR.data.categories.nodes;
+        this.categories = requestR.data.categories.nodes.filter(cat => cat.slug !== 'non-classe');
 
         await this._restore();
 
