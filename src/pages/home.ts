@@ -67,6 +67,8 @@ export class Home extends Page {
     private _setup = false;
     private _resetSub: Subject<unknown>;
     private _subs: Subscription;
+
+    private _keyDownListener: (e: KeyboardEvent) => void;
     
     public static get styles(){
         return [
@@ -78,10 +80,14 @@ export class Home extends Page {
     public connectedCallback(){
         super.connectedCallback();
         this._subs = new Subscription();
+        this._keyDownListener = this._onKeyDown.bind(this);
+
+        window.addEventListener('keydown', this._keyDownListener);
     }
     
     public disconnectedCallback(){
         super.disconnectedCallback();
+        window.removeEventListener('keydown', this._keyDownListener);
 
         this._subs.unsubscribe();
         this._subs = null;
@@ -134,6 +140,29 @@ export class Home extends Page {
                 await this._onCatClick(next);
             })
         );
+    }
+
+    private async _onKeyDown(e: KeyboardEvent) {;
+        switch(e.keyCode){
+            // up arrow
+            case 38:
+                e.preventDefault();
+                await this._onCatClick(this.selected-1 < 0 ? this._catMax : this.selected-1);
+                break;
+            // down arrow
+            case 40:
+                e.preventDefault();
+                await this._onCatClick(this.selected == this._catMax ? 0 : this.selected+1);
+                break;
+            // left arrow
+            case 37:
+                await this._onPrevSculpture();
+                break;
+            // right arrow
+            case 39:
+                await this._onNextSculpture();
+                break;
+        }
     }
 
     public async firstUpdated(_changedProperties: PropertyValues){
