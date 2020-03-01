@@ -519,7 +519,7 @@ export class ContactController extends Page {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 query: `{
-                    categories {
+                    categories(first: 500) {
                         nodes {
                         sculptures(where: {orderby: {field: MODIFIED, order: DESC}}) {
                             nodes {
@@ -536,7 +536,7 @@ export class ContactController extends Page {
                     }
                     }`})}).then(res => res.json());
 
-        const categories = requestR.data.categories.nodes;
+        const categories = requestR.data.categories.nodes.filter(cat => cat.slug !== 'non-classe');
 
         await maker.series(categories, maker);
 
