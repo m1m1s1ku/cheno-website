@@ -9,7 +9,7 @@ import { WPCategory } from '../interfaces';
 import { pulseWith, fadeWith } from '../core/animations';
 import { timer, BehaviorSubject, scheduled, animationFrameScheduler, Subject, EMPTY, fromEvent, combineLatest, Subscription } from 'rxjs';
 import { switchMap, startWith, debounceTime, map } from 'rxjs/operators';
-import { Utils, decodeHTML, slugify } from '../core/ui/ui';
+import { Utils, decodeHTML, slugify, touchEvents } from '../core/ui/ui';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import { HomeStyling } from './home-styles';
 import { LinearProgress } from '@material/mwc-linear-progress';
@@ -69,6 +69,7 @@ export class Home extends Page {
     private _subs: Subscription;
 
     private _keyDownListener: (e: KeyboardEvent) => void;
+    private _touchListener: (e: TouchEvent) => void;
     
     public static get styles(){
         return [
@@ -82,11 +83,22 @@ export class Home extends Page {
         this._subs = new Subscription();
         this._keyDownListener = this._onKeyDown.bind(this);
 
+        this._touchListener = touchEvents(() => {
+            this._onNextSculpture();
+        }, () => {
+            this._onPrevSculpture();
+        });
+
+        window.addEventListener('touchstart', this._touchListener);
+        window.addEventListener('touchend', this._touchListener);
         window.addEventListener('keydown', this._keyDownListener);
     }
     
     public disconnectedCallback(){
         super.disconnectedCallback();
+
+        window.removeEventListener('touchstart', this._touchListener);
+        window.removeEventListener('touchend', this._touchListener);
         window.removeEventListener('keydown', this._keyDownListener);
 
         this._subs.unsubscribe();
