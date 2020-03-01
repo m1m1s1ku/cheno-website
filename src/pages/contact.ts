@@ -34,11 +34,6 @@ export class ContactController extends Page {
     @property({type: Number, reflect: false})
     private max = 0;
 
-    public async connectedCallback(){
-        super.connectedCallback();
-        await this._generate();
-    }
-
     public static get styles(){
         return [
             ... super.styles,
@@ -244,12 +239,11 @@ export class ContactController extends Page {
                 <p>Des visites dans le "Jardin des Sculptures" sont possibles sur simple demande, n'hésitez pas !</p>
                 <h3>Un rendu papier ?</h3>
                 ${this.preview ? html`
-                <div class="preview">
-                    <iframe width="300" height="300" src="${this.preview}"></iframe>
-                </div>
                 <mwc-button class="book" raised label="Book" icon="picture_as_pdf" @click=${this._download}></mwc-button>
                 ` : html`${this.max !== 0 ? html`<div style="width: 100%">Génération en cours ... <mwc-linear-progress progress=${this.current / this.max}></mwc-linear-progress></div>
-                ` : html`Génération  démarée`}`}
+                ` : html`
+                <mwc-button class="book" raised label="Générer le book" icon="picture_as_pdf" @click=${this._generate}></mwc-button>
+                `}`}
                 <p class="ecology-smile">(à n'imprimer que si nécessaire ! <mwc-icon>tag_faces</mwc-icon>)</p>
                 <h3>Réseaux sociaux</h3>
                 <div class="social-menu">
@@ -505,6 +499,12 @@ export class ContactController extends Page {
     }
 
     private async _generate(){
+        const haslink = document.querySelector('#book-url') as HTMLLinkElement;
+        if(haslink){
+            this.preview = haslink.href;
+            return;
+        }
+
         console.time('Generator');
         const doc = await PDFDocument.create();
         const maker = await this._pagesMaker(doc);
@@ -550,6 +550,7 @@ export class ContactController extends Page {
 
     private _download(){
         const a = document.createElement('a');
+        a.id = 'book-url';
         a.href = this.preview;
         a.download = 'Cheno-book.pdf';
         document.body.appendChild(a);
