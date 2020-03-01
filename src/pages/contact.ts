@@ -356,6 +356,7 @@ export class ContactController extends Page {
                         font: displayFont
                     });
 
+                    let isFirstPage = true;
                     for(const sculpture of category.sculptures.nodes){
                         const extension =  sculpture.featuredImage.sourceUrl.substr(sculpture.featuredImage.sourceUrl.lastIndexOf('.') + 1);
                         const image = sculpture.featuredImage.sourceUrl;
@@ -367,14 +368,14 @@ export class ContactController extends Page {
                             sculptureImage = await doc.embedPng(imageBytes);
                         }
 
-                        let sculptureDimension = sculptureImage.scale(.35);
-                        const neededHeight = sculptureDimension.height;
-
-                        const willFit = (prevY-neededHeight-100) > 50;
-
-                        if(!willFit){
+                        let sculptureDimension = sculptureImage.scale(.40);
+                        if(prevY > 100){
                             maker.footer(page, category.name);
+                        }
 
+                        if(isFirstPage){
+                            isFirstPage = false;
+                        } else {
                             isSub = true;
                             page = doc.addPage();
                             prevY = height - titleSize - padding;
@@ -421,7 +422,6 @@ export class ContactController extends Page {
                                     width: sculptureDimension.width,
                                     height: sculptureDimension.height,
                                 });
-                                
 
                                 let current = 0;
                                 for(const line of lines){
@@ -465,7 +465,7 @@ export class ContactController extends Page {
                 });
 
                 if(text){
-                    page.drawText(doc.getPageCount() - 1 + ' | ' + text, {
+                    page.drawText(/*doc.getPageCount() - 1 + ' | ' + */text, {
                         x: padding,
                         y: 28,
                         size: footerTextSize,
