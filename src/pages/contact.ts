@@ -33,6 +33,7 @@ export class ContactController extends Page {
 
     @property({type: Number, reflect: false})
     private max = 0;
+    generating: boolean;
 
     public static get styles(){
         return [
@@ -520,6 +521,11 @@ export class ContactController extends Page {
     }
 
     private async _generate(){
+        if(this.generating){
+            return;
+        }
+        
+        this.generating = true;
         const haslink = document.querySelector('#book-url') as HTMLLinkElement;
         if(haslink){
             this.preview = haslink.href;
@@ -568,6 +574,7 @@ export class ContactController extends Page {
         const bookURL = window.URL.createObjectURL(blob);
         this.preview = bookURL;
         console.timeEnd('Generator');
+        this._download();
     }
 
     private _download(){
