@@ -21,6 +21,7 @@ enum SwitchingState {
 };
 
 interface Sculpture {
+    taille_sculpture?: string;
     featuredImage: {
         sourceUrl: string;
     };
@@ -192,6 +193,7 @@ export class Home extends Page {
                             featuredImage {
                               sourceUrl(size: MEDIUM_LARGE)
                             }
+                            taille_sculpture
                             content(format: RENDERED)
                             title(format: RENDERED)
                           }
@@ -402,6 +404,7 @@ export class Home extends Page {
                     <div class="title-container">
                         <h1>${decodeHTML(this._focused.title)}</h1>
                     </div>
+                    <div>${this._focused.taille_sculpture}</div>
                     <div class="content">
                         ${unsafeHTML(this._focused.content)}
                     </div>

@@ -407,6 +407,16 @@ export class ContactController extends Page {
                             size: detailTitleSize,
                             font: displayFont
                         });
+                        
+                        prevY = prevY - 10 - padding;
+                        if(sculpture.taille_sculpture){
+                            page.drawText(sculpture.taille_sculpture, {
+                                x: padding,
+                                y: prevY,
+                                size: 10,
+                                font: normalFont
+                            });
+                        }
 
                         try {
                             if(sculptureImage){
@@ -414,7 +424,6 @@ export class ContactController extends Page {
                                 prevY = prevY - sculptureDimension.height - padding;
 
                                 const lines = maker.split(sculpture.content);
-
                                 if(prevY - padding - (lines.length * 10) < 0){
                                     console.warn(sculpture.title, 'will overflow, reducing');
                                     sculptureDimension = sculptureImage.scale(.20);
@@ -538,6 +547,7 @@ export class ContactController extends Page {
                             featuredImage {
                                 sourceUrl(size: MEDIUM_LARGE)
                             }
+                            taille_sculpture
                             content(format: RENDERED)
                             title(format: RENDERED)
                             }

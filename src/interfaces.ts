@@ -77,6 +77,7 @@ export interface WPCategory {
             featuredImage: {
                 sourceUrl: string;
             };
+            taille_sculpture: string;
             content: {
                 rendered: string;
             };
