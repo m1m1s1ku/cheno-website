@@ -159,11 +159,19 @@ export class Home extends Page {
         switch(e.keyCode){
             // up arrow
             case 38:
+                if(this._focused){
+                    return;
+                }
+
                 e.preventDefault();
                 await this._onCatClick(this.selected-1 < 0 ? this._catMax : this.selected-1);
                 break;
             // down arrow
             case 40:
+                if(this._focused){
+                    return;
+                }
+                
                 e.preventDefault();
                 await this._onCatClick(this.selected == this._catMax ? 0 : this.selected+1);
                 break;
