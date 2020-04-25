@@ -3,9 +3,8 @@ import { repeat } from 'lit-html/directives/repeat';
 import { property, query, queryAll, customElement } from 'lit-element';
 
 import Page from '../core/strategies/Page';
-
 import Constants from '../constants';
-import RafPool from 'raf-pool';
+
 import { fadeWith } from '../core/animations';
 import { decodeHTML, Elara } from '../core/elara';
 
@@ -33,8 +32,6 @@ export class Expos extends Page {
 
     @query('.card-grid') protected grid!: HTMLElement;
     @queryAll('.card') protected cards!: NodeListOf<HTMLElement>;
-
-    private rafPool: RafPool;
     @property({type: Object, reflect: false})
     private exposByYear: Map<number, ArticleMinimal[]> = new Map<number, ArticleMinimal[]>();
     private _year: number;
@@ -94,39 +91,32 @@ export class Expos extends Page {
         this.exposByYear = new Map([...exposByYear.entries()].sort((a, b) => b[0]-a[0]));
         await this.updateComplete;
 
-        this.rafPool = new RafPool();
-
         const canUpdate = function(entry: IntersectionObserverEntry){ return entry.intersectionRatio >= 0; };
 
         const update = (card: HTMLElement) => {
             return function() {
                 card.classList.remove('hide');
+                this._intersectionObserver.unobserve(card);
             };
         };
 
-        const setup = (pool: RafPool) => {
+        const setup = () => {
             return new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
                 for(const entry of entries){
                     if(!canUpdate(entry)) continue;
 
                     const target = entry.target as HTMLElement;
-                    pool.add(target.id, update(target));
+                    update(target);
 
-                    this._intersectionObserver.unobserve(target);
                 };
             });
         };
 
-        this._intersectionObserver = setup(this.rafPool);
+        this._intersectionObserver = setup();
         const cards = Array.from(this.cards);
         for(const card of cards){
             this._intersectionObserver.observe(card);
         }
-    }
-
-    public disconnectedCallback(){
-        super.disconnectedCallback();
-        this.rafPool.reset();
     }
 
     public search(value: string){

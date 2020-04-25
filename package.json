@@ -30,7 +30,6 @@
     "lit-element": "^2.3.1",
     "lit-html": "^1.2.1",
     "pdf-lib": "^1.4.1",
-    "raf-pool": "^0.1.4",
     "regenerator-runtime": "^0.13.5",
     "replace-in-file": "^6.0.0",
     "rxjs": "^6.5.5",
