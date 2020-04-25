@@ -327,7 +327,7 @@ export class Home extends Page {
                     </div>
                 </div>
                 <div class="progress">
-                    <mwc-linear-progress id="main-progress" progress=${this.sculptureIndex / this.sculptureMax} buffer=${this.selected / this._catMax}></mwc-linear-progress>
+                    <mwc-linear-progress id="main-progress" progress=${this.sculptureIndex / this.sculptureMax}></mwc-linear-progress>
                 </div>
             </div>
             ` : html`
