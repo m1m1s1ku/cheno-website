@@ -77,9 +77,13 @@ export default abstract class Root extends LitElement {
 		};
 	}
 		
-	public async load(route: string): Promise<void> {		
+	public async load(route: string): Promise<void> {
 		await this._helmetize(route);
-		return load(route, this._content);
+		await load(route, this._content);
+		const marker = document.querySelector('meta[name=helmetized]');
+		if(marker){
+			marker.parentElement.removeChild(marker);
+		}
 	}
 
 	protected async _helmetize(route: string){
@@ -88,10 +92,6 @@ export default abstract class Root extends LitElement {
 
 	private async _fetchHelmet(route: string){
 		const component = route.split('/')[0];
-
-		if(document.querySelector('meta[name=helmetized]')){
-			return;
-		}
 
 		let helmetReq = null;
 		if(component === 'page' || component  === 'exposition'){
@@ -106,10 +106,6 @@ export default abstract class Root extends LitElement {
 		// Nup. PHP helmet already define that correctly
 		if(helmet.title  === document.title || helmet.title.indexOf('404') !== -1){
 			return;
-		}
-
-		if(helmet.title.indexOf('Cheno') === -1){
-			helmet.title += ' | ' + defaultTitle;
 		}
 
 		document.title = helmet.title ? helmet.title : defaultTitle;
