@@ -6,6 +6,11 @@
             $uri .= '/';
         }
 
+        // Why..
+        if(strpos($uri, 'contact') !== false){
+            $uri = rtrim($uri, "/");
+        }
+
         $url = "https://base.cheno.fr" . $uri;
 
         $ch = curl_init();
