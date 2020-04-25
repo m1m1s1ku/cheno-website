@@ -19,14 +19,15 @@ export class Placeholder extends LitElement {
 
     public static get styles(): CSSResult {
         return css`
-        .container {
+        :root {
+            height: 100%;
             width: 100%;
         }
 
         .line {
             background-color: var(--elara-placeholder-background, rgba(165, 165, 165, .5));
             transition: width .3s;
-            margin: 5em auto 10% 5em;
+            margin: 0 4em 4em auto;
         }
         `;
     }
@@ -60,11 +61,9 @@ export class Placeholder extends LitElement {
 	public render(): TemplateResult { 
         const bars = new Array(this.max);
         return html`
-        <div class='container'>
-            ${repeat(bars, () => html`
-                <div class='line' .style="width: ${this._width()}px; height: ${this._height()}px"></div>
-            `)}
-        </div>
+        ${repeat(bars, () => html`
+            <div class='line' .style="width: ${this._width()}px; height: ${this._height()}px"></div>
+        `)}
         `;
     }
 }

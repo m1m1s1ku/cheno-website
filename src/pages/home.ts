@@ -447,7 +447,7 @@ export class Home extends Page {
             </div>
             ` : html`
             <div class="series">
-                <div class="single-container">
+                <div class="single-container loading">
                     <ui-placeholder max="10" height="10"></ui-placeholder>
                 </div>
             </div>
