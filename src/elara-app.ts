@@ -22,6 +22,7 @@ interface WPLink {
 
 @customElement('elara-app')
 export class ElaraApp extends Root {
+	// NOTE : Home is the only loadable, but we are not using a global loader on this website
 	public get loadables(): string[] {
 		return [];
 	}
