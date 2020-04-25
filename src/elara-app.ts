@@ -11,6 +11,7 @@ import { SVGLogo, HamburgerIcon } from './icons';
 
 import './pages/index';
 import './atoms/index';
+import { Home } from './pages/home';
 
 import(/* webpackChunkName: "polyfill" */'./polyfill');
 
@@ -30,6 +31,10 @@ export class ElaraApp extends Root {
 
 	public default = 'home';
 
+	@query('svg.logo') _logoPath!: SVGElement;
+	@query('.menu') _menu!: HTMLDivElement;
+	@query('.main-menu') _menuContainer!: HTMLDivElement;
+
 	@property({type: Array, reflect: false, noAccessor: true})
 	private _menuItems: ReadonlyArray<WPLink> = [];
 
@@ -37,7 +42,6 @@ export class ElaraApp extends Root {
 	public legalLinks: WPLink[] = [];
 	@property({type: Array, reflect: false, noAccessor: true})
 	public socialLinks: WPLink[] = [];
-	@query('svg.logo') logoPath!: SVGElement;	
 	@property({type: Boolean, reflect: true, noAccessor: true})
 	public loaded: boolean;
 
@@ -97,18 +101,18 @@ export class ElaraApp extends Root {
 		this.theme = enforce ? enforce : document.body.classList.contains('night') ? 'night' : 'day';
 
 		requestAnimationFrame(() => {
-			this.logoPath.classList.add('write');
+			this._logoPath.classList.add('write');
 			if(this.theme === 'night'){
-				this.logoPath.querySelector('path').style.stroke = 'white';
+				this._logoPath.querySelector('path').style.stroke = 'white';
 			} else {
-				this.logoPath.querySelector('path').style.stroke = 'black';
+				this._logoPath.querySelector('path').style.stroke = 'black';
 			}
 
 			const switchSVG = () => {
 				if(this.theme === 'night'){
-					this.logoPath.querySelector('path').style.fill = 'white';
+					this._logoPath.querySelector('path').style.fill = 'white';
 				} else {
-					this.logoPath.querySelector('path').style.fill = 'black';
+					this._logoPath.querySelector('path').style.fill = 'black';
 				}
 			};
 
@@ -194,13 +198,19 @@ export class ElaraApp extends Root {
 	}
 
 	private _toggleMenu(_event: Event){
-		this.querySelector('.main-menu').classList.toggle('visible');
-		this.querySelector('.menu').classList.toggle('active');
+		this._menuContainer.classList.toggle('visible');
+		this._menu.classList.toggle('active');
+
+		if(this._menu.classList.contains('active')){
+			if(this.shown instanceof Home){
+				this.shown.pause();
+			}
+		}
 	}
 
 	private _hideMenu(){
-		this.querySelector('.main-menu').classList.remove('visible');
-		this.querySelector('.menu').classList.remove('active');
+		this._menuContainer.classList.remove('visible');
+		this._menu.classList.remove('active');
 	}
 
 	private _menuItem(item: WPLink){

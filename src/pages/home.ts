@@ -35,7 +35,7 @@ export class Home extends Page {
 
     @query('.series') protected series!: HTMLElement;
     @query('#previewed') protected _previewed!: IronImageElement;
-    @query('#pause') protected pause!: HTMLElement;
+    @query('#pause') protected _pause!: HTMLElement;
     @query('#main-progress') protected progress!: LinearProgress;
     @query('#toggle-grid') protected gridToggle!: HTMLElement;
     @queryAll('ui-placeholder') protected loaders!: NodeListOf<HTMLElement>;
@@ -67,6 +67,10 @@ export class Home extends Page {
     private _resetSub: Subject<unknown>;
     private _subs: Subscription;
 
+    public pause(): void {
+        this._enforcePauseSub.next(true);
+    }
+
     private _keyDownListener: (e: KeyboardEvent) => void;
 
     public connectedCallback(){
@@ -90,9 +94,9 @@ export class Home extends Page {
         this._enforcePauseSub = new BehaviorSubject<boolean>(false);
         this._resetSub = new Subject();
 
-        const pause$ = combineLatest([this._enforcePauseSub, fromEvent(this.pause, 'click').pipe(startWith(null as Event))]).pipe(
+        const pause$ = combineLatest([this._enforcePauseSub, fromEvent(this._pause, 'click').pipe(startWith(null as Event))]).pipe(
             map(([enforced, _event]) => {
-                if(enforced || this.pause.innerText === 'pause'){
+                if(enforced || this._pause.innerText === 'pause'){
                     return true;
                 }
 
@@ -110,7 +114,7 @@ export class Home extends Page {
         return scheduled(pause$, animationFrameScheduler).pipe(
             debounceTime(300),
             switchMap((paused) => {                    
-                this.pause.innerText = paused ? 'play_arrow' : 'pause';
+                this._pause.innerText = paused ? 'play_arrow' : 'pause';
                 if(paused){
                     this.progress.close();
                 } else {
