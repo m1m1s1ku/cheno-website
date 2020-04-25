@@ -567,7 +567,6 @@
       /* Contact */
       .contact {
         display: grid;
-        margin-top: 4em;
 
         grid-template-columns: repeat(2, 1fr);
 
@@ -826,7 +825,6 @@
       throw new Error('Please upgrade your browser.');
     }
 
-    // Load GFonts the async way (cached by ServiceWorker)
     WebFontConfig = {
       'google': { 'families': [ 
         'Andika:400,700',
@@ -844,15 +842,17 @@
       s.parentNode.insertBefore(wf, s);
     };
 
-    loadGFonts();
-
     window.addEventListener('load', () => {
+      loadGFonts();
       Sentry.init({ 'dsn': 'https://8b03983c61b541c780aacedeb557fafe@sentry.io/1866364' });
 
-      // Check that service workers are registered
-      if ('serviceWorker' in navigator && location.host !== 'localhost:3000') {
-        // Use the window load event to keep the page load performant
-        navigator.serviceWorker.register('<%= htmlWebpackPlugin.options.pathname %>/elara-worker.js');
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(
+          function(registrations) {
+              for(let registration of registrations) {  
+                  registration.unregister();
+              }
+          });
       }
     });
     </script>

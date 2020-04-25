@@ -56,11 +56,6 @@ const polyfills = [
     flatten: true
   },
   {
-    from: resolve('./src/elara-worker.js'),
-    to: OUTPUT_PATH,
-    flatten: true
-  },
-  {
     from: resolve('./src/robots.txt'),
     to: OUTPUT_PATH,
     flatten: true

@@ -11,9 +11,6 @@ const distFolder = join(__dirname, 'dist');
 const configFile = join(distFolder, 'config.json');
 const htmlFile = join(distFolder, 'index.html');
 const htaccessFile = join(distFolder, '.htaccess');
-const serviceWorkerFile = join(distFolder, 'elara-worker.js');
-
-
 
 try {
     exec('git rev-parse --short HEAD', (_err, stdout) => {
@@ -43,16 +40,6 @@ try {
         options.to = '';
         replace.sync(options);
         console.log('replaced payload');
-
-        const oldName = 'elara-worker.js';
-        const newFileName = 'cheno-worker-'+rev+'.js';
-        renameSync(serviceWorkerFile, serviceWorkerFile.replace(oldName, newFileName));
-        console.log('renamed elara service worker to', newFileName);
-
-        options.from = oldName;
-        options.to = newFileName;
-        replace.sync(options);
-        console.log('replaced sw in html');
 
         const newFile = htmlFile.replace('.html', '.php');
         renameSync(htmlFile, newFile);
