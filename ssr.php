@@ -24,6 +24,8 @@
     function ogFor($title, $url, $description, $image){
         if(empty($title)){
             $title = 'Cheno';
+        } else {
+            $title .= ' | Cheno';
         }
 
         if(empty($description)){

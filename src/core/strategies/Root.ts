@@ -89,6 +89,11 @@ export default abstract class Root extends LitElement {
 	private async _fetchHelmet(route: string){
 		const component = route.split('/')[0];
 
+		// already set using ssr
+		if(document.title.indexOf('| Cheno') !== -1){
+			return;
+		}
+
 		let helmetReq = null;
 		if(component === 'page' || component  === 'exposition'){
 			helmetReq = await fetch(Constants.base + '/' + route);
@@ -99,11 +104,11 @@ export default abstract class Root extends LitElement {
 		const helmet = await helmetReq.json();
 		const defaultTitle = 'Cheno';
 
-		// Nup.
-		if(helmet.title.indexOf('404') !== -1){
+		// Nup. PHP helmet already define that correctly
+		if(helmet.title  === document.title || helmet.title.indexOf('404') !== -1){
 			return;
 		}
-
+		
 		if(helmet.title.indexOf('Cheno') === -1){
 			helmet.title += ' | ' + defaultTitle;
 		}
