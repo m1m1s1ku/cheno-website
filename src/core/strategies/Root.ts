@@ -89,6 +89,10 @@ export default abstract class Root extends LitElement {
 	private async _fetchHelmet(route: string){
 		const component = route.split('/')[0];
 
+		if(document.querySelector('meta[name=helmetized]')){
+			return;
+		}
+
 		let helmetReq = null;
 		if(component === 'page' || component  === 'exposition'){
 			helmetReq = await fetch(Constants.base + '/' + route);
