@@ -322,7 +322,7 @@ h3 {
 }
 
 img {
-    max-width: 300px;
+    object-fit: contain;
 }
 
 h1,
