@@ -75,10 +75,38 @@ export class Home extends Page {
 
     private _keyDownListener: (e: KeyboardEvent) => void;
 
-    public connectedCallback(){
+    public async connectedCallback(){
         super.connectedCallback();
         this._subs = new Subscription();
         this._keyDownListener = this._onKeyDown.bind(this);
+
+        const requestR = await fetch(Constants.graphql, {
+			method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                query: `{
+                    categories(first: 500) {
+                      nodes {
+                        sculptures(where: {orderby: {field: MODIFIED, order: DESC}}) {
+                          nodes {
+                            featuredImage {
+                              sourceUrl(size: MEDIUM_LARGE)
+                            }
+                            taille_sculpture
+                            content(format: RENDERED)
+                            title(format: RENDERED)
+                          }
+                        }
+                        name
+                        slug
+                      }
+                    }
+                  }`})}).then(res => res.json()).catch(_ => this.dispatchEvent(wrap(_)));
+
+        this.categories = requestR.data.categories.nodes.filter(cat => cat.slug !== 'non-classe');
+        await this._restore();
+
+        this.loaded = true;
 
         window.addEventListener('keydown', this._keyDownListener);
     }
@@ -175,41 +203,12 @@ export class Home extends Page {
     public async firstUpdated(_changedProperties: PropertyValues){
         super.firstUpdated(_changedProperties);
 
-        const requestR = await fetch(Constants.graphql, {
-			method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                query: `{
-                    categories(first: 500) {
-                      nodes {
-                        sculptures(where: {orderby: {field: MODIFIED, order: DESC}}) {
-                          nodes {
-                            featuredImage {
-                              sourceUrl(size: MEDIUM_LARGE)
-                            }
-                            taille_sculpture
-                            content(format: RENDERED)
-                            title(format: RENDERED)
-                          }
-                        }
-                        name
-                        slug
-                      }
-                    }
-                  }`})}).then(res => res.json()).catch(_ => this.dispatchEvent(wrap(_)));
-
-        this.categories = requestR.data.categories.nodes.filter(cat => cat.slug !== 'non-classe');
-
-        await this._restore();
-
         setTimeout(async() => {
             for(const loader of Array.from(this.loaders)){
                 const fadeOut = fadeWith(300, false);
                 const animation = loader.animate(fadeOut.effect, fadeOut.options);
                 await animation.finished;
             }
-            
-            this.loaded = true;
         }, 1000);
     }
 
