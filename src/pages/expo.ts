@@ -21,7 +21,7 @@ export class Single extends Page {
     public featured: string;
     private _toLoad: string;
 
-    @query('#page')
+    @query('#single')
     private _page: HTMLDivElement;
 
     public constructor(toLoad: string){

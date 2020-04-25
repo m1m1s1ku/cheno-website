@@ -213,29 +213,9 @@ export class ElaraApp extends Root {
 		]);
 	}
 
-	private _toggleMenu(event: Event){
+	private _toggleMenu(_event: Event){
 		this.querySelector('.main-menu').classList.toggle('visible');
-		const activated = this.querySelector('.menu').classList.toggle('active');
-		
-		if(activated){
-			// cancel first click event
-			event.preventDefault();
-			event.stopPropagation();
-			// then set escape listener
-			this._hideOnClickOutside();
-		}
-	}
-
-	private _hideOnClickOutside() {
-		const outsideClickListener = (event: Event) => {
-			if(event.target instanceof ElaraApp){
-				this.querySelector('.main-menu').classList.remove('visible');
-				this.querySelector('.menu').classList.remove('active');
-				document.removeEventListener('click', outsideClickListener);
-			}
-		};
-	
-		document.addEventListener('click', outsideClickListener);
+		this.querySelector('.menu').classList.toggle('active');
 	}
 
 	private _menuItem(item: WPLink){
