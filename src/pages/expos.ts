@@ -130,7 +130,7 @@ export class Expos extends Page {
                         }}></mwc-tab>`)}
                     <mwc-tab-bar>
                 </div>
-                ${!this.loaded ? html`<div class="loader"><paper-spinner active></paper-spinner></div>` : html``}
+                ${!this.loaded ? html`<div class="loader"><elara-spinner text="Chargement des expositions"></elara-spinner></div>` : html``}
                 <div class="card-grid">
                     ${repeat(this.articles, article => html`
                     <a id=${article.id} class="card hide" @click=${() => {
