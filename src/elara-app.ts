@@ -6,7 +6,6 @@ import Root from './core/strategies/Root';
 
 import Constants from './constants';
 
-import { Subscription } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat';
 import { SVGLogo, HamburgerIcon } from './icons';
 
@@ -52,16 +51,21 @@ export class ElaraApp extends Root {
 	public logo: string;
 
 	public theme: 'night' | 'day' = 'day';
-	private _subscriptions: Subscription;
 
 	public constructor(){
-		super(); 
-
-		this._subscriptions = new Subscription();
+		super();
 
 		this.router = crayon.create();
 		this.router.path('/', async () => {
 			await this.load('home');
+		});
+
+		this.router.path('home', async () => {
+			await this.load('home');
+		});
+
+		this.router.path('expos', async () => {
+			await this.load('expos');
 		});
 
 		this.router.path('/page/:page', async (req) => {
@@ -72,18 +76,23 @@ export class ElaraApp extends Root {
 			await this.load('exposition/'+req.params.slug);
 		});
 
-		this.router.path('/**', async (req) => {
+		this.router.path('**', async (req) => {
 			await this.load(req.pathname.replace('/', ''));
 		});
+	}
 
-		this._subscriptions.add(this.router.events.subscribe(async event => {
-			if (event.type !== crayon.RouterEventType.SameRouteAbort) {
-				return;
-			}
+	protected async _helmetize(event: crayon.RouterEvent){
+		console.warn('helmetizing ', event);
 
-			const route = event.data.replace('/', '');
-			await this.load(route);
-		}));
+		/* switch(route){
+			case 'home':
+			case 'exposition':
+			case 'page':
+			case 'expos':
+			case 'contact':
+		}
+		*/
+		debugger;
 	}
 
 	public connectedCallback(){

@@ -52,7 +52,6 @@ export function wrap(underlying: Error): CustomEvent<Error> {
 
 export async function load(route: string, content: HTMLElement) {
     const defaultTitle = 'Cheno';
-    
     const component = route.split('/')[0];
 
     const Component = customElements.get('ui-' + component);
