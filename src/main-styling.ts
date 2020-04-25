@@ -33,7 +33,7 @@ header {
     justify-content: space-between;
     align-items: flex-start;
 
-    z-index: 2;
+    z-index: 999;
     
     margin: 5px 30px;
 }
