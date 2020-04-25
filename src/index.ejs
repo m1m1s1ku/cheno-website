@@ -90,7 +90,7 @@
           position: relative;
           display : block;
           width: 100%;
-          min-height: 100%;
+          height: 100%;
       }
 
       .content.hidden {
@@ -772,7 +772,13 @@
       .article__header {
         display: flex;
         justify-content: space-between;
-        flex-direction: row;
+        flex-direction: column;
+      }
+
+      @media (min-width: 768px){
+        .article__header {
+          flex-direction: row;
+        }
       }
 
       .article__header h1 {
