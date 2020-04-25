@@ -108,7 +108,7 @@ export default abstract class Root extends LitElement {
 		const desc = helmet.description ? helmet.description : 'Artiste sculpteur sur Fer | Nice';
 		const descMeta = document.querySelector('meta[name=description]');
 		if(descMeta){
-			document.head.removeChild(descMeta);
+			descMeta.parentElement.removeChild(descMeta);
 		}
 
 		const newDesc = document.createElement('meta');

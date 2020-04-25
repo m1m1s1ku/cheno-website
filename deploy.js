@@ -35,11 +35,6 @@ try {
         options.to = '<?= ogFor($title, $url, $description, $image); ?>';
         replace.sync(options);
         console.log('replaced head');
-    
-        options.from = '<!-- {{SSRPayload}} -->';
-        options.to = '';
-        replace.sync(options);
-        console.log('replaced payload');
 
         const newFile = htmlFile.replace('.html', '.php');
         renameSync(htmlFile, newFile);
