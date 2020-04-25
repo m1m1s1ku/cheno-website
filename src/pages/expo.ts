@@ -96,7 +96,7 @@ export class Single extends Page {
 
                 ${this.featured ? html`
                 <div class="image-container">
-                    <iron-image style="width: 100vw; height: 400px;" sizing="contain" src="${this.featured}"></iron-image>
+                    <img style="width: 100vw; height: 400px;" sizing="contain" src="${this.featured}"></img>
                 </div>
                 ` : html``}
                 <div class="content">

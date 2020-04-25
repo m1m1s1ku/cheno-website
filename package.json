@@ -20,7 +20,6 @@
     "@material/mwc-tab-bar": "^0.14.1",
     "@material/mwc-textarea": "^0.14.1",
     "@material/mwc-textfield": "^0.14.1",
-    "@polymer/iron-image": "^3.0.2",
     "@pdf-lib/fontkit": "0.0.4",
     "@webcomponents/webcomponentsjs": "^2.4.3",
     "crayon": "^6.0.1",

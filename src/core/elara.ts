@@ -13,27 +13,6 @@ export interface LoadableElement extends UpdatableElement { loaded: boolean }
 
 export function Elara(){ return document.querySelector('elara-app'); }
 
-export function bootstrap(loadables: string[], host: HTMLElement) {
-    const loadPromises = [];
-    for(const element of loadables){
-        const load = new Promise((resolve) => {
-            const elem = host.querySelector(element) as LoadableElement;
-            const config = { attributes: true };
-            const observer = new MutationObserver((mutation) => {
-                if(!mutation.length){ return; }
-                if (mutation[0].type == 'attributes' && mutation[0].attributeName === 'loaded') {
-                    observer.disconnect();
-                    resolve();
-                }
-            });
-            observer.observe(elem, config);
-        });
-        loadPromises.push(load);
-    }
-    
-    return Promise.all(loadPromises);
-}
-
 class NetworkError extends Error {
     public underlyingError: Error;
 }

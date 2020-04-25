@@ -22,9 +22,18 @@ interface WPLink {
 
 @customElement('elara-app')
 export class ElaraApp extends Root {
-	// NOTE : Home is the only loadable, but we are not using a global loader on this website
-	public get loadables(): string[] {
-		return [];
+	/**
+	 * Bootstrap is launched by boot.js
+	 * Could contains any kind of promise who will be handled by global promise loader
+	 *
+	 * @readonly
+	 * @memberof ElaraApp
+	 */
+	public get bootstrap(){		
+		return Promise.all([
+			this._setup(),
+			import(/* webpackChunkName: "mwc" */'./mwc')
+		]);
 	}
 
 	public static readonly is: string = 'elara-app';
@@ -174,21 +183,6 @@ export class ElaraApp extends Root {
 		await this.router.load();
 
 		this.loaded = true;
-	}
-
-	/**
-	 * Bootstrap is launched by boot.js
-	 * Could contains any kind of promise who will be handled by global promise loader
-	 *
-	 * @readonly
-	 * @memberof ElaraApp
-	 */
-	public get bootstrap(){		
-		return Promise.all([
-			this._setup(),
-			import(/* webpackChunkName: "polymer" */'./polymer'),
-			import(/* webpackChunkName: "mwc" */'./mwc')
-		]);
 	}
 
 	private _toggleMenu(_event: Event){

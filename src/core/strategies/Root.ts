@@ -1,5 +1,5 @@
 import { property, LitElement, query } from 'lit-element';
-import { load, bootstrap } from '../elara';
+import { load } from '../elara';
 import crayon from 'crayon';
 import Constants from '../../constants';
 
@@ -12,7 +12,6 @@ import Constants from '../../constants';
  * @extends {LitElement}
  */
 export default abstract class Root extends LitElement {
-
 	@property({reflect: true, type: String})
 	public route: string;
 
@@ -24,12 +23,9 @@ export default abstract class Root extends LitElement {
 		LIGHT: '(prefers-color-scheme: light)',
 	};
 
-	public abstract get loadables(): string[];
 	public router: crayon.Router;
 
-	public get bootstrap(){
-		return bootstrap(this.loadables, this);
-	}
+	public abstract get bootstrap(): Promise<unknown>;
 
 	public async show(route: string): Promise<void> {
 		this.router.navigate(route);

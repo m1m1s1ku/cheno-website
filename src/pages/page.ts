@@ -94,7 +94,7 @@ export class PageController extends Page {
                 </div>
                 ${this.featured ? html`
                 <div class="image-container">
-                    <iron-image sizing="contain" src="${this.featured}"></iron-image>
+                    <img sizing="contain" src="${this.featured}"></img>
                 </div>
                 ` : html``}
             </div>

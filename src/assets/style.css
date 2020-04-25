@@ -294,7 +294,7 @@ li {
     justify-content: space-between;
 }
 
-.page iron-image {
+.page img {
     width: 25vw;
     height: 400px;
 }
@@ -316,7 +316,7 @@ h3 {
         text-align: center;
     }
 
-    .page iron-image {
+    .page img {
         width: 250px;
     }
 }

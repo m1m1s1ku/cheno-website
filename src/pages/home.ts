@@ -8,7 +8,6 @@ import { WPCategory } from '../interfaces';
 import { pulseWith, fadeWith } from '../core/animations';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import { LinearProgress } from '@material/mwc-linear-progress';
-import { IronImageElement } from '@polymer/iron-image';
 import { wrap, slugify, Utils, decodeHTML } from '../core/elara';
 
 enum SwitchingState {
@@ -32,7 +31,7 @@ export class Home extends Page {
     public static readonly is: string = 'ui-home';
 
     @query('.series') protected series!: HTMLElement;
-    @query('#previewed') protected _previewed!: IronImageElement;
+    @query('#previewed') protected _previewed!: HTMLImageElement;
     @query('#pause') protected _pause!: HTMLElement;
     @query('#main-progress') protected progress!: LinearProgress;
     @query('#toggle-grid') protected gridToggle!: HTMLElement;
@@ -322,7 +321,7 @@ export class Home extends Page {
             </div>
             `}
             <div class="preview">
-                <iron-image id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade="true" @click=${this._onSingle}></iron-image>
+                <img id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade="true" @click=${this._onSingle}></img>
                 <div class="count">
                     <div class="pagination">
                         <span class="current">${this.sculptureIndex}</span> / <span class="total">${this.sculptureMax}</span>
