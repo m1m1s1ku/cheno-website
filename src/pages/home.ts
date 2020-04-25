@@ -322,8 +322,8 @@ export class Home extends Page {
                         <span class="current">${this.sculptureIndex}</span> / <span class="total">${this.sculptureMax}</span>
                     </div> 
                     <div class="controls">
-                        <mwc-icon class="${this.selected === 0 && this.sculptureIndex === 1 ? 'disabled' : ''}" @click=${this._onPrevSculpture}>chevron_left</mwc-icon>
-                        <mwc-icon @click=${this._onNextSculpture}>chevron_right</mwc-icon>
+                        <mwc-icon-button class="${this.selected === 0 && this.sculptureIndex === 1 ? 'disabled' : ''}" @click=${this._onPrevSculpture} icon="chevron_left"></mwc-icon-button>
+                        <mwc-icon-button @click=${this._onNextSculpture} icon="chevron_right"></mwc-icon-button>
                     </div>
                 </div>
                 <div class="progress">
