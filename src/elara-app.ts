@@ -51,10 +51,8 @@ export class ElaraApp extends Root {
 	@property({type: String, reflect: false, noAccessor: true})
 	public logo: string;
 
-	public theme: 'dark' | 'light' = 'light';
-
+	public theme: 'night' | 'day' = 'day';
 	private _subscriptions: Subscription;
-	private _onSchemeChangeListener: (e: CustomEvent<{colorScheme: 'dark' | 'light'}>) => void;
 
 	public constructor(){
 		super(); 
@@ -90,24 +88,21 @@ export class ElaraApp extends Root {
 			const route = event.data.replace('/', '');
 			await this.load(route);
 		}));
-
-		this._onSchemeChangeListener = this._onSchemeChange.bind(this);
 	}
 
 	public connectedCallback(){
 		super.connectedCallback();
-		document.addEventListener('colorschemechange', this._onSchemeChangeListener);
+		this._defineColors();
 	}
 
 	public disconnectedCallback(){
 		super.disconnectedCallback();
-		document.removeEventListener('colorschemechange', this._onSchemeChangeListener);
 	}
 
-	private _onSchemeChange(e: CustomEvent<{colorScheme: 'dark' | 'light'}>){
-		this.theme = e.detail.colorScheme;
+	private _defineColors(){
+		this.theme = document.body.classList.contains('night') ? 'night' : 'day';
 
-		if(this.theme === 'dark'){
+		if(document.body.classList.contains('night')){
 			document.documentElement.style.setProperty('--mdc-theme-primary', 'var(--elara-font-color)');
 			document.documentElement.style.setProperty('--elara-placeholder-background', 'rgba(165,165,165,.5)');
 			document.documentElement.style.setProperty('--elara-background-color', '#373737');
@@ -123,7 +118,7 @@ export class ElaraApp extends Root {
 
 		requestAnimationFrame(() => {
 			this.logoPath.classList.add('write');
-			if(this.theme === 'dark'){
+			if(this.theme === 'night'){
 				this.logoPath.querySelector('path').style.stroke = 'white';
 			} else {
 				this.logoPath.querySelector('path').style.stroke = 'black';
@@ -131,7 +126,7 @@ export class ElaraApp extends Root {
 
 
 			const switchSVG = () => {
-				if(this.theme === 'dark'){
+				if(this.theme === 'night'){
 					this.logoPath.querySelector('path').style.fill = 'white';
 				} else {
 					this.logoPath.querySelector('path').style.fill = 'black';
