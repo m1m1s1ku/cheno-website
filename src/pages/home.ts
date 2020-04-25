@@ -121,12 +121,12 @@ export class Home extends Page {
     }
 
     private _setupWalk(){
-        this._enforcePauseSub = new BehaviorSubject<boolean>(false);
+        this._enforcePauseSub = new BehaviorSubject<boolean>(true);
         this._resetSub = new Subject();
 
         const pause$ = combineLatest([this._enforcePauseSub, fromEvent(this._pause, 'click').pipe(startWith(null as Event))]).pipe(
             map(([enforced, _event]) => {
-                if(enforced || this._pause.innerText === 'pause'){
+                if(enforced || this._pause.innerText === 'pause_arrow'){
                     return true;
                 }
 
@@ -415,7 +415,7 @@ export class Home extends Page {
                         <mwc-icon @click=${this._onNextSculpture}>chevron_right</mwc-icon>
                         <mwc-icon id="pause" @click=${() => {
                             this._enforcePauseSub.next(!this._enforcePauseSub.getValue());
-                        }}>play_arrow</mwc-icon>
+                        }}>pause</mwc-icon>
                     </div>
                 </div>
                 <div class="progress">
