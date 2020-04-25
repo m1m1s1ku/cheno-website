@@ -818,6 +818,7 @@
     <elara-app></elara-app>
     <script src="https://browser.sentry-cdn.com/5.10.2/bundle.min.js" integrity="sha384-ssBfXiBvlVC7bdA/VX03S88B5MwXQWdnpJRbUYFPgswlOBwETwTp6F3SMUNpo9M9" crossorigin="anonymous"></script>
     <script>
+    // @ts-check
     const userAgent = window.navigator.userAgent.toLowerCase();
     const oldEdge = userAgent.indexOf("edge") !== -1
     
@@ -825,6 +826,7 @@
       throw new Error('Please upgrade your browser.');
     }
 
+    // @ts-ignore
     WebFontConfig = {
       'google': { 'families': [ 
         'Andika:400,700',
@@ -837,14 +839,18 @@
       const wf = document.createElement('script');
       wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
       wf.type = 'text/javascript';
-      wf.async = 'true';
+      wf.async = true;
       const s = document.getElementsByTagName('script')[0];
       s.parentNode.insertBefore(wf, s);
     };
 
     window.addEventListener('load', async () => {
       loadGFonts();
-      Sentry.init({ 'dsn': 'https://8b03983c61b541c780aacedeb557fafe@sentry.io/1866364' });
+
+      if(location.host !== 'localhost:3000'){
+        // @ts-ignore
+        Sentry.init({ 'dsn': 'https://8b03983c61b541c780aacedeb557fafe@sentry.io/1866364' });
+      }
 
       if ('serviceWorker' in navigator) {
         const registrations = await navigator.serviceWorker.getRegistrations();
