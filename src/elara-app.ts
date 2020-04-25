@@ -56,31 +56,28 @@ export class ElaraApp extends Root {
 		super();
 
 		this.router = crayon.create();
-		this.router.path('/', async () => {
-			await this.load('home');
-		});
-
-		this.router.path('home', async () => {
-			await this.load('home');
-		});
-
-		this.router.path('expos', async () => {
-			await this.load('expos');
-		});
-
-		this.router.path('/page/:page', async (req) => {
-			await this.load('page/'+req.params.page);
-		});
-
-		this.router.path('/exposition/:slug', async (req) => {
-			await this.load('exposition/'+req.params.slug);
-		});
-
-		this.router.path('**', async (req) => {
-			await this.load(req.pathname.replace('/', ''));
-		});
+		this.router.path('/', this._routerLoad('home'));
+		this.router.path('home', this._routerLoad('home'));
+		this.router.path('expos', this._routerLoad('expos'));
+		this.router.path('/page/:page', this._routerLoad('page', 'page'));
+		this.router.path('/exposition/:slug', this._routerLoad('exposition', 'slug'));
+		this.router.path('**', this._routerLoad(null));
 	}
-	
+
+	private _routerLoad(path: string, param?: string): crayon.handlerFunc {
+		return (ctx, _state, _app) => {
+			if(!path){
+				return this.load(ctx.pathname.replace('/', ''));
+			}
+
+			if(param){
+				return this.load(path + '/' + ctx.params[param]);
+			}
+			
+			return this.load(path);
+		};
+	}
+
 	public connectedCallback(){
 		super.connectedCallback();
 		this._defineColors();
