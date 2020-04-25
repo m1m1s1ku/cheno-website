@@ -405,21 +405,19 @@ export class Home extends Page {
                 </div>
             </div>
             `}
-            <div class="${Array.isArray(this.previewing) ? 'masonry' : 'preview'}">
-                ${Array.isArray(this.previewing) ? html`
-                    ${repeat(this.previewing, (previewed, idx) => html`
-                        <iron-image class="item" src=${previewed} sizing="contain" fade="true" @click=${() => this._show(idx)}></iron-image>
-                    `)}
-                ` : html`
-                    <iron-image id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade="true" @click=${this._onSingle}></iron-image>
-                `}
+            <div class="preview">
+                <iron-image id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade="true" @click=${this._onSingle}></iron-image>
                 <div class="count">
-                    <mwc-icon class="${this.selected === 0 && this.sculptureIndex === 1 ? 'disabled' : ''}" @click=${this._onPrevSculpture}>chevron_left</mwc-icon>
-                    <div class="pagination"><span class="current">${this.sculptureIndex}</span> / <span class="total">${this.sculptureMax}</span></div> 
-                    <mwc-icon @click=${this._onNextSculpture}>chevron_right</mwc-icon>
-                    <mwc-icon id="pause" @click=${() => {
-                        this._enforcePauseSub.next(!this._enforcePauseSub.getValue());
-                    }}>play_arrow</mwc-icon>
+                    <div class="pagination">
+                        <span class="current">${this.sculptureIndex}</span> / <span class="total">${this.sculptureMax}</span>
+                    </div> 
+                    <div class="controls">
+                        <mwc-icon class="${this.selected === 0 && this.sculptureIndex === 1 ? 'disabled' : ''}" @click=${this._onPrevSculpture}>chevron_left</mwc-icon>
+                        <mwc-icon @click=${this._onNextSculpture}>chevron_right</mwc-icon>
+                        <mwc-icon id="pause" @click=${() => {
+                            this._enforcePauseSub.next(!this._enforcePauseSub.getValue());
+                        }}>play_arrow</mwc-icon>
+                    </div>
                 </div>
                 <div class="progress">
                     <mwc-linear-progress id="main-progress" progress=${this.sculptureIndex / this.sculptureMax} buffer=${this.selected / this._catMax}></mwc-linear-progress>
@@ -437,17 +435,5 @@ export class Home extends Page {
             `}
         </div>
         `;
-    }
-
-    private async _show(sculpture: number){
-        const config = fadeWith(300, false);
-        const animation = this.series.animate(config.effect, config.options);
-        await animation.finished;
-        
-        this.sculptureIndex = sculpture+1;
-        this.gridToggle.innerText = 'view_carousel';
-        this.previewing = this.categories[this.selected].sculptures.nodes[sculpture].featuredImage.sourceUrl;
-        this._focused = this.categories[this.selected].sculptures.nodes[sculpture];
-        history.pushState({}, this._focused.title, 'home/' + this.categories[this.selected].slug + '/' + slugify(this._focused.title, '-'));
     }
 }

@@ -337,13 +337,13 @@ a,
 }
 
 h1 {
-    font-size: 36px;
+    font-size: 24px;
     text-align: left;
     margin-bottom: 8px;
 }
 
 h2 {
-    font-size: 26px;
+    font-size: 20px;
     font-weight: 700;
     padding: 0;
     margin: 56px 0 -13px -1.883px;
@@ -352,12 +352,16 @@ h2 {
     letter-spacing: -0.45px;
 }
 
+h3 {
+    font-size: 18px;
+}
+
 p,
 i,
 a {
     margin-top: 21px;
     font-family: "Lora";
-    font-size: 21px;
+    font-size: 15px;
     letter-spacing: -0.03px;
     line-height: 1.58;
 }
@@ -515,19 +519,29 @@ mark,
     bottom: 30px;
     user-select: none;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     line-height: 1.4em;
+    width: 100%;
+    font-size: 1.2em;
 }
 
-.masonry .count {
-    bottom: -50px;
+.pagination {
+    margin-left: 10px;
 }
 
 .unfold mwc-icon,
 .count mwc-icon {
     opacity: .5;
+    font-size: 1.5em;
     cursor: pointer;
     transition: opacity .3s linear;
+}
+
+@media (min-width: 768px){
+    .unfold mwc-icon,
+    .count mwc-icon {
+        margin: 0 .5em;
+    }
 }
 
 .count mwc-icon.disabled {
@@ -538,10 +552,6 @@ mark,
 .unfold mwc-icon:hover,
 .count mwc-icon:hover {
     opacity: 1;
-}
-
-.count .pagination {
-    display: inline;
 }
 
 .progress {
@@ -565,20 +575,6 @@ mark,
     background-size: 100% 0.1em;
     background-position: 25px 88%;
     transition: all 0.25s ease-out;
-}
-
-.masonry {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    grid-gap: 3px;
-    grid-auto-rows: minmax(180px, auto);
-    grid-auto-flow: dense;
-    padding: 10px;
-    margin-top: 80px;
-}
-
-.masonry .item {
-    cursor: pointer;
 }
 
 /* Contact */
