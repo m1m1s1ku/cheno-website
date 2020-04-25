@@ -842,7 +842,7 @@
       s.parentNode.insertBefore(wf, s);
     };
 
-    window.addEventListener('load', () => {
+    window.addEventListener('load', async () => {
       loadGFonts();
       Sentry.init({ 'dsn': 'https://8b03983c61b541c780aacedeb557fafe@sentry.io/1866364' });
 
