@@ -116,14 +116,9 @@ export class ElaraApp extends Root {
 				}
 			};
 
-			if(this.loaded){
-				switchSVG();
-				return;
-			}
-
 			setTimeout(() => {
 				switchSVG();
-			}, 2000);
+			}, 300);
 		});
 	}
 
