@@ -109,7 +109,7 @@ export class Home extends Page {
         const resetOrWait$ = this._resetSub.pipe(
             startWith(undefined),
             switchMap(() => {
-                return timer(3500, 3500);
+                return timer(5000, 5000);
             })
         );
 
