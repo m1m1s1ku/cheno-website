@@ -1,5 +1,5 @@
 import { html, TemplateResult } from 'lit-html';
-import { css, query, customElement, property } from 'lit-element';
+import { query, customElement, property } from 'lit-element';
 
 import Page from '../core/strategies/Page';
 import { TextField } from '@material/mwc-textfield';
@@ -32,99 +32,9 @@ export class ContactController extends Page {
 
     @property({type: Number, reflect: false})
     private max = 0;
-    generating: boolean;
 
-    public static get styles(){
-        return [
-            css`
-            .contact {
-                display: grid;
-                margin-top: 4em;
-
-                grid-template-columns: repeat(2, 1fr);
-
-                padding: 2em;
-                padding-top: 6em;
-
-                --mdc-notched-outline-leading-width: 10px;
-                --mdc-notched-outline-trailing-border-radius: 0 10px 10px 0;
-                --mdc-radio-unchecked-color:  var(--elara-primary);
-                --mdc-theme-primary: var(--elara-primary);
-            }
-
-
-            mdc-formfield {
-                color: white;
-            }
-
-            form {
-                display: flex;
-                flex-direction: column;
-                width: auto;
-            }
-
-            form .field.send {
-                display: flex;
-                justify-content: flex-end;
-                padding: 0;
-            }
-
-            form .field > mwc-textfield,
-            form .field > mwc-textarea {
-                margin: 1em 0;
-                width: 100%;
-            }
-
-            form .field.send > mwc-button {
-                width: auto;
-            }
-
-            .side.layer {
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-                margin: 4em;
-                padding: 2em;
-                border-left: 1px solid #CCC;
-            }
-
-            .side.layer h3,
-            .side.layer p {
-                user-select: none;
-            }
-
-            @media (max-width: 485px){
-                .contact {
-                    display: block;
-                }
-            }
-
-            .book {
-                align-self: flex-end;
-            }
-
-            .ecology-smile {
-                display: flex;
-                align-items: center;
-            }
-
-            .side.layer svg, .side.layer mwc-icon {
-                display: inline-block;
-                width: 30px;
-                height: 30px;
-                cursor: pointer;
-                fill: var(--elara-font-color);
-            }
-
-            .helper {
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                justify-content: space-between;
-            }
-            `
-        ];
-    }
+    @property({type: Boolean, reflect: true})
+    public generating: boolean;
 
     private get _contactForm(){
         return html`
@@ -135,7 +45,7 @@ export class ContactController extends Page {
             this.email.reportValidity();
         }
 
-        const fields = Array.from(this.shadowRoot.querySelectorAll('.field mwc-textfield, .field mwc-textarea')) as TextField[];
+        const fields = Array.from(this.querySelectorAll('.field mwc-textfield, .field mwc-textarea')) as TextField[];
         this.send.disabled = fields.some(field => field.checkValidity() === false);
     }}>
         <div class="field">

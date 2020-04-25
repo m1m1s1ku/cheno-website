@@ -79,4 +79,8 @@ export default abstract class Root extends LitElement {
 	public async load(route: string): Promise<void> {		
 		return load(route, this._content);
 	}
+
+	public createRenderRoot(){
+        return this;
+    }
 }

@@ -1,6 +1,6 @@
 import { html, TemplateResult } from 'lit-html';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
-import { css, property, customElement } from 'lit-element';
+import { property, customElement, query } from 'lit-element';
 
 import Page from '../core/strategies/Page';
 import Constants from '../constants';
@@ -20,6 +20,9 @@ export class Single extends Page {
     @property({type: String, reflect: false})
     public featured: string;
     private _toLoad: string;
+
+    @query('#page')
+    private _page: HTMLDivElement;
 
     public constructor(toLoad: string){
         super();
@@ -76,44 +79,7 @@ export class Single extends Page {
         }
 
         const fade = fadeWith(300, true);
-        this.page.animate(fade.effect, fade.options);
-        
-    }
-
-    public static get styles(){
-        return [
-            css`
-            .single {
-                margin-top: 6em;
-                padding: 2em;
-                overflow: hidden;
-            }
-
-            .images {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .article__header {
-                display: flex;
-                justify-content: space-between;
-                flex-direction: row;
-            }
-
-            .article__header h1 {
-                display: flex;
-                align-items: center;
-                flex-direction: row;
-            }
-
-            .article__header h1 mwc-icon {
-                cursor: pointer;
-                font-size: 1.15em;
-            }
-            `
-        ];
+        this._page.animate(fade.effect, fade.options);
     }
 
     public render(): void | TemplateResult {
@@ -145,9 +111,5 @@ export class Single extends Page {
             ` : html``}
         </div>
         `;
-    }
-
-    private get page(){
-        return this.shadowRoot.querySelector('#single');
     }
 }

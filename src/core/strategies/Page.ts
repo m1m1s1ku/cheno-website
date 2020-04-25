@@ -14,4 +14,7 @@ export default class Page extends LitElement {
         };
     }
 
+    public createRenderRoot(){
+        return this;
+    }
 }

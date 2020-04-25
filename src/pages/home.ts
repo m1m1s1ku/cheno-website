@@ -9,7 +9,6 @@ import { pulseWith, fadeWith } from '../core/animations';
 import { timer, BehaviorSubject, scheduled, animationFrameScheduler, Subject, EMPTY, fromEvent, combineLatest, Subscription } from 'rxjs';
 import { switchMap, startWith, debounceTime, map } from 'rxjs/operators';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
-import { HomeStyling } from './home-styles';
 import { LinearProgress } from '@material/mwc-linear-progress';
 import { IronImageElement } from '@polymer/iron-image';
 import { wrap, slugify, Utils, decodeHTML } from '../core/elara';
@@ -69,29 +68,18 @@ export class Home extends Page {
     private _subs: Subscription;
 
     private _keyDownListener: (e: KeyboardEvent) => void;
-    private _touchListener: (e: TouchEvent) => void;
-    
-    public static get styles(){
-        return [
-            HomeStyling
-        ];
-    }
 
     public connectedCallback(){
         super.connectedCallback();
         this._subs = new Subscription();
         this._keyDownListener = this._onKeyDown.bind(this);
 
-        window.addEventListener('touchstart', this._touchListener);
-        window.addEventListener('touchend', this._touchListener);
         window.addEventListener('keydown', this._keyDownListener);
     }
     
     public disconnectedCallback(){
         super.disconnectedCallback();
 
-        window.removeEventListener('touchstart', this._touchListener);
-        window.removeEventListener('touchend', this._touchListener);
         window.removeEventListener('keydown', this._keyDownListener);
 
         this._subs.unsubscribe();
@@ -255,7 +243,7 @@ export class Home extends Page {
         
         await this._definePreviewed();
 
-        const catItem = this.shadowRoot.querySelector('.series ul li.serie-'+idx+'');
+        const catItem = this.querySelector('.series ul li.serie-'+idx+'');
         if(!catItem){
             return;
         }

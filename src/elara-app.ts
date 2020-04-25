@@ -1,4 +1,4 @@
-import { html, CSSResult, property, SVGTemplateResult, query, customElement } from 'lit-element';
+import { html, property, SVGTemplateResult, query, customElement } from 'lit-element';
 
 import crayon from 'crayon';
 
@@ -8,7 +8,6 @@ import Constants from './constants';
 
 import { Subscription } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat';
-import { MainStyling } from './main-styling';
 import { SVGLogo, HamburgerIcon } from './icons';
 
 import './pages/index';
@@ -214,13 +213,9 @@ export class ElaraApp extends Root {
 		]);
 	}
 
-	public static get styles(): CSSResult[] {
-		return [MainStyling];
-	}
-
 	private _toggleMenu(event: Event){
-		this.shadowRoot.querySelector('.main-menu').classList.toggle('visible');
-		const activated = this.shadowRoot.querySelector('.menu').classList.toggle('active');
+		this.querySelector('.main-menu').classList.toggle('visible');
+		const activated = this.querySelector('.menu').classList.toggle('active');
 		
 		if(activated){
 			// cancel first click event
@@ -234,8 +229,8 @@ export class ElaraApp extends Root {
 	private _hideOnClickOutside() {
 		const outsideClickListener = (event: Event) => {
 			if(event.target instanceof ElaraApp){
-				this.shadowRoot.querySelector('.main-menu').classList.remove('visible');
-				this.shadowRoot.querySelector('.menu').classList.remove('active');
+				this.querySelector('.main-menu').classList.remove('visible');
+				this.querySelector('.menu').classList.remove('active');
 				document.removeEventListener('click', outsideClickListener);
 			}
 		};
