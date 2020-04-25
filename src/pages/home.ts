@@ -408,32 +408,6 @@ export class Home extends Page {
                     <iron-image id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade="true" @click=${this._onSingle}></iron-image>
                 `}
                 <div class="count">
-                    <mwc-icon id="toggle-grid" @click=${async () => {
-                        let isMultiview;
-                        if(this.gridToggle.innerText === 'view_carousel'){
-                            isMultiview = false;
-                        } else {
-                            isMultiview = true;
-                        }
-
-                        if(!isMultiview){
-                            const config = fadeWith(300, false);
-                            const animation = this.series.animate(config.effect, config.options);
-                            await animation.finished;
-
-                            const images = this.categories[this.selected].sculptures.nodes.map(node => node.featuredImage.sourceUrl);
-                            this.previewing = images;
-                            this._focused = null;
-                            this._enforcePauseSub.next(true);
-                            this.gridToggle.innerText = 'view_module';
-                            this.viewMode = 'multi';
-                            window.scrollTo({top: 0, behavior: 'smooth'});
-                        } else {
-                            this.previewing = this.categories[this.selected].sculptures.nodes[this.sculpture].featuredImage.sourceUrl;
-                            this.gridToggle.innerText = 'view_carousel';
-                            this.viewMode = 'single';
-                        }
-                    }}>view_carousel</mwc-icon>
                     <mwc-icon class="${this.selected === 0 && this.sculptureIndex === 1 ? 'disabled' : ''}" @click=${this._onPrevSculpture}>chevron_left</mwc-icon>
                     <div class="pagination"><span class="current">${this.sculptureIndex}</span> / <span class="total">${this.sculptureMax}</span></div> 
                     <mwc-icon @click=${this._onNextSculpture}>chevron_right</mwc-icon>
