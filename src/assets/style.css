@@ -586,7 +586,10 @@ mark,
     transition: all 0.25s ease-out;
 }
 
-.controls mwc-icon {
+.controls {
+    user-select: none;
+}
+.controls * {
     user-select: none;
 }
 
