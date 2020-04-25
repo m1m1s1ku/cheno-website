@@ -121,7 +121,7 @@ const commonConfig = WebpackMerge([
 
 const developmentConfig = WebpackMerge([
   {
-    devtool: 'nosources-source-map',
+    devtool: 'eval-cheap-source-map',
     plugins: [
       new CopyWebpackPlugin(polyfills),
       new HtmlWebpackPlugin({
