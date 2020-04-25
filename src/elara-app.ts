@@ -80,21 +80,7 @@ export class ElaraApp extends Root {
 			await this.load(req.pathname.replace('/', ''));
 		});
 	}
-
-	protected async _helmetize(event: crayon.RouterEvent){
-		console.warn('helmetizing ', event);
-
-		/* switch(route){
-			case 'home':
-			case 'exposition':
-			case 'page':
-			case 'expos':
-			case 'contact':
-		}
-		*/
-		debugger;
-	}
-
+	
 	public connectedCallback(){
 		super.connectedCallback();
 		this._defineColors();

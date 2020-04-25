@@ -1,6 +1,7 @@
 import { property, LitElement, query } from 'lit-element';
 import { load, bootstrap } from '../elara';
 import crayon from 'crayon';
+import Constants from '../../constants';
 
 /**
  * Abtract <*-app> component strategy
@@ -77,7 +78,43 @@ export default abstract class Root extends LitElement {
 	}
 		
 	public async load(route: string): Promise<void> {		
+		await this._helmetize(route);
 		return load(route, this._content);
+	}
+
+	protected async _helmetize(route: string){
+		await this._fetchHelmet(route);
+	}
+
+	private async _fetchHelmet(route: string){
+		const component = route.split('/')[0];
+
+		let helmetReq = null;
+		if(component === 'page'){
+			helmetReq = await fetch(Constants.base + '/' + route);
+		} else {
+			helmetReq = await fetch(Constants.base + '/' + component);
+		}
+
+		const helmet = await helmetReq.json();
+		const defaultTitle = 'Cheno';
+
+		if(helmet.title.indexOf('Cheno') === -1){
+			helmet.title += ' | ' + defaultTitle;
+		}
+
+		document.title = helmet.title ? helmet.title : defaultTitle;
+
+		const desc = helmet.description ? helmet.description : 'Artiste sculpteur sur Fer | Nice';
+		const descMeta = document.querySelector('meta[name=description]');
+		if(descMeta){
+			document.head.removeChild(descMeta);
+		}
+
+		const newDesc = document.createElement('meta');
+		newDesc.name = 'description';
+		newDesc.content =  desc;
+		document.head.appendChild(newDesc);
 	}
 
 	public createRenderRoot(){
