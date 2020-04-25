@@ -1,12 +1,23 @@
 <?php
     function get(){
-        $url = "https://base.cheno.fr" . rtrim($_SERVER['REQUEST_URI'], '/');
+        $uri = $_SERVER['REQUEST_URI'];
+        $hasSlash = substr($uri,-1) === '/';
+        if(!$hasSlash){
+            $uri .= '/';
+        }
+
+        $url = "https://base.cheno.fr" . $uri;
+
         $ch = curl_init();
   
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_URL, $url);
   
         $response = curl_exec($ch);
+
+        echo "<div class='debug-ssr'>$url</div>";
+        echo "<div class='debug-ssr'>$response</div>";
+
         return json_decode($response);
     }
 
