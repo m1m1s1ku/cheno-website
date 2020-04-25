@@ -26,6 +26,16 @@ export function fadeWith(duration: number, enter: boolean): ElaraAnimation {
     };
 };
 
+export function animationsReduced(): boolean {
+    if(!window.matchMedia){
+        console.warn('Elara:: MatchMedia not supported.');
+
+        return false;
+    }
+
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 export default {
     pulseWith,
     fadeWith

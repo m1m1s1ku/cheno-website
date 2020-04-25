@@ -5,9 +5,7 @@ import { css, property, customElement } from 'lit-element';
 import Page from '../core/strategies/Page';
 import Constants from '../constants';
 
-import { Utils, onImageContainerClicked } from '../core/ui/ui';
 import { fadeWith } from '../core/animations';
-import { wrap } from '../core/errors/errors';
 
 export interface ProjectMinimal {
     title: string;
@@ -57,7 +55,7 @@ export class PageController extends Page {
             body: JSON.stringify({
                 query: pageQuery
             })
-        }).then(res => res.json()).then(res => res.data.pageBy).catch(_ => this.dispatchEvent(wrap(_))) as ProjectMinimal;
+        }).then(res => res.json()).then(res => res.data.pageBy) as ProjectMinimal;
 
         this.loaded = true;
 
@@ -74,16 +72,12 @@ export class PageController extends Page {
             this.featured = '';
         }
 
-        if(Utils.animationsReduced()){
-            return;
-        }
         const fade = fadeWith(300, true);
         this._page.animate(fade.effect, fade.options);
     }
 
     public static get styles(){
         return [
-            ... super.styles,
             css`
             .page {
                 padding: 2em;
@@ -247,7 +241,7 @@ export class PageController extends Page {
                     ${unsafeHTML(this.article.content)}
                 </div>
                 ${this.featured ? html`
-                <div class="image-container" @click=${onImageContainerClicked}>
+                <div class="image-container">
                     <iron-image sizing="contain" src="${this.featured}"></iron-image>
                 </div>
                 ` : html``}

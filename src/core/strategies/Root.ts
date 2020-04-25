@@ -1,45 +1,82 @@
-import { property } from 'lit-element';
+import { property, LitElement, query } from 'lit-element';
+import { load, bootstrap } from '../elara';
+import crayon from 'crayon';
 
-import Page from './Page';
-
-import { load } from '../bootstrap/bootstrap';
-import { helmetize } from '../routing/routing';
 /**
- * Root strategy
+ * Abtract <*-app> component strategy
  *
- * Should be used by the main-component of an app 
- * 
- * ```html
- * 	<elara-app></elara-app>
- * ```
  * @export
+ * @abstract
  * @class Root
- * @extends {Page}
+ * @extends {LitElement}
  */
-export default class Root extends Page {
-	public hasElaraRouting = true;
+export default abstract class Root extends LitElement {
+
 	@property({reflect: true, type: String})
 	public route: string;
+
+	@query('#content')
+	protected _content: HTMLDivElement;
+
+	private _queries = {
+		DARK: '(prefers-color-scheme: dark)',
+		LIGHT: '(prefers-color-scheme: light)',
+	};
+
+	public abstract get loadables(): string[];
+	public router: crayon.Router;
+
+	public get bootstrap(){
+		return bootstrap(this.loadables, this);
+	}
+
+	public async show(route: string): Promise<void> {
+		this.router.navigate(route);
+	}
+
+	public connectedCallback(){
+		super.connectedCallback();
+
+		if(window.matchMedia(this._queries.DARK).matches){
+			document.body.classList.add('night');
+		}
+
+		if(window.matchMedia(this._queries.LIGHT).matches){
+			document.body.classList.add('day');
+		}
+	}
+
+	public disconnectedCallback(){
+		super.disconnectedCallback();
+	}
 	
 	/**
-	 * Create the render root
+	 * Togglee dark|light (lightswitch)
+	 *
+	 * @returns
+	 * @memberof Root
 	 */
-	protected createRenderRoot(){
-		// @tool: make elara-app in light-dom
-		// return this;
+	public switchColors(){
+		const day = document.body.classList.contains('day');
+		const night = document.body.classList.contains('night');
 
-		return this.attachShadow({mode: 'open'});
+		if(day){
+			document.body.classList.remove('day');
+			document.body.classList.add('night');
+		}
+
+		if(night){
+			document.body.classList.remove('night');
+			document.body.classList.add('day');
+		}
+
+		return {
+			day,
+			night
+		};
 	}
 		
-	public async load(route: string){
-		this.route = route;
-		
-		await helmetize(route);
-		
-		return await load(route, this._content);
-	}
-		
-	protected get _content(): HTMLElement {
-		return this.shadowRoot.querySelector('main');
+	public async load(route: string): Promise<void> {		
+		return load(route, this._content);
 	}
 }

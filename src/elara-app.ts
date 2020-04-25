@@ -5,11 +5,9 @@ import crayon from 'crayon';
 import Root from './core/strategies/Root';
 
 import Constants from './constants';
-import { wrap } from './core/errors/errors';
 
 import { Subscription } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat';
-import { navigate } from './core/routing/routing';
 import { MainStyling } from './main-styling';
 import { SVGLogo, HamburgerIcon } from './icons';
 
@@ -25,6 +23,10 @@ interface WPLink {
 
 @customElement('elara-app')
 export class ElaraApp extends Root {
+	public get loadables(): string[] {
+		return [];
+	}
+
 	public static readonly is: string = 'elara-app';
 
 	public default = 'home';
@@ -36,7 +38,9 @@ export class ElaraApp extends Root {
 	public legalLinks: WPLink[] = [];
 	@property({type: Array, reflect: false, noAccessor: true})
 	public socialLinks: WPLink[] = [];
-	@query('svg.logo') logoPath!: SVGElement;
+	@query('svg.logo') logoPath!: SVGElement;	
+	@property({type: Boolean, reflect: true, noAccessor: true})
+	public loaded: boolean;
 
 	@property({type: Array, reflect: false, noAccessor: true})
 	public socialThumbs: {
@@ -47,7 +51,6 @@ export class ElaraApp extends Root {
 	@property({type: String, reflect: false, noAccessor: true})
 	public logo: string;
 
-	public router: crayon.Router;
 	public theme: 'dark' | 'light' = 'light';
 
 	private _subscriptions: Subscription;
@@ -89,7 +92,6 @@ export class ElaraApp extends Root {
 		}));
 
 		this._onSchemeChangeListener = this._onSchemeChange.bind(this);
-		this.hasElaraRouting = true;
 	}
 
 	public connectedCallback(){
@@ -184,7 +186,7 @@ export class ElaraApp extends Root {
                       }
 				  }`
             })
-		}).then(res => res.json()).catch(_ => this.dispatchEvent(wrap(_)));
+		}).then(res => res.json());
 
 		const colors = requestR.data.terrazzo;
 		this.logo = colors.logo;
@@ -213,8 +215,7 @@ export class ElaraApp extends Root {
 		return Promise.all([
 			this._setup(),
 			import(/* webpackChunkName: "polymer" */'./polymer'),
-			import(/* webpackChunkName: "mwc" */'./mwc'),
-			import(/* webpackChunkName: "labs" */'./labs'),
+			import(/* webpackChunkName: "mwc" */'./mwc')
 		]);
 	}
 
@@ -253,30 +254,36 @@ export class ElaraApp extends Root {
 				item.url = item.url.replace(Constants.base, '');
 			}
 
-			navigate(item.url);
+			this.router.navigate(item.url);
 		}}>${item.label}</h3></li>`;
 	}
 	
 	public render() {
+		const menu = this._menuItem.bind(this);
 		return html`
 			<header>
-				<span @click=${() => this.route !== Constants.defaults.route ? navigate('home') : null} class="drawing-logo">
+				<span @click=${() => this.route !== Constants.defaults.route ? this.router.navigate('home') : null} class="drawing-logo">
 					${SVGLogo}
 				</span>
 				<button aria-label="Menu" class="menu" @click=${this._toggleMenu}>${HamburgerIcon}</button>
 				<div class="main-menu">
 					<nav>
 						<ul>
-						${repeat(this._menuItems, this._menuItem)}
-						<li><dark-mode-toggle permanent id="dark-mode" appearance="toggle"></dark-mode-toggle></li>
+						${repeat(this._menuItems, menu)}
 						</ul>
 					</nav>
 				</div>
 			</header>
-			<main id="main" class="content"></main>
+			<main id="content" class="content"></main>
 			<footer>
 				<span class="copy">&copy; ${new Date().getFullYear()}. Cheno</span>
 			</footer>
 		`;
+	}
+}
+
+declare global {
+	interface HTMLElementTagNameMap {
+		'elara-app': ElaraApp;
 	}
 }

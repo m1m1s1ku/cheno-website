@@ -4,16 +4,15 @@ import { property, PropertyValues, query, queryAll, customElement } from 'lit-el
 import Page from '../core/strategies/Page';
 import { repeat } from 'lit-html/directives/repeat';
 import Constants from '../constants';
-import { wrap } from '../core/errors/errors';
 import { WPCategory } from '../interfaces';
 import { pulseWith, fadeWith } from '../core/animations';
 import { timer, BehaviorSubject, scheduled, animationFrameScheduler, Subject, EMPTY, fromEvent, combineLatest, Subscription } from 'rxjs';
 import { switchMap, startWith, debounceTime, map } from 'rxjs/operators';
-import { Utils, decodeHTML, slugify, touchEvents } from '../core/ui/ui';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import { HomeStyling } from './home-styles';
 import { LinearProgress } from '@material/mwc-linear-progress';
 import { IronImageElement } from '@polymer/iron-image';
+import { wrap, slugify, Utils, decodeHTML } from '../core/elara';
 
 enum SwitchingState {
     willPrev = 'prev',
@@ -74,7 +73,6 @@ export class Home extends Page {
     
     public static get styles(){
         return [
-            ... super.styles,
             HomeStyling
         ];
     }
@@ -83,12 +81,6 @@ export class Home extends Page {
         super.connectedCallback();
         this._subs = new Subscription();
         this._keyDownListener = this._onKeyDown.bind(this);
-
-        this._touchListener = touchEvents(() => {
-            this._onNextSculpture();
-        }, () => {
-            this._onPrevSculpture();
-        });
 
         window.addEventListener('touchstart', this._touchListener);
         window.addEventListener('touchend', this._touchListener);
