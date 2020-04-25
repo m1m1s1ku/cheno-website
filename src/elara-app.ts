@@ -253,9 +253,6 @@ export class ElaraApp extends Root {
 				</div>
 			</header>
 			<main id="content" class="content"></main>
-			<footer>
-				<span class="copy">&copy; ${new Date().getFullYear()}. Cheno</span>
-			</footer>
 		`;
 	}
 }
