@@ -177,9 +177,8 @@ export class ElaraApp extends Root {
 
 	public async firstUpdated(): Promise<void> {
 		await this.router.load();
-		setTimeout(() => {
-			this.loaded = true;
-		}, 2000);
+
+		this.loaded = true;
 	}
 
 	/**

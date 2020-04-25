@@ -202,7 +202,7 @@ export class Home extends Page {
 
         await this._restore();
 
-        setTimeout( async() => {
+        setTimeout(async() => {
             for(const loader of Array.from(this.loaders)){
                 const fadeOut = fadeWith(300, false);
                 const animation = loader.animate(fadeOut.effect, fadeOut.options);
