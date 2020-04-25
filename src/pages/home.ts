@@ -6,8 +6,6 @@ import { repeat } from 'lit-html/directives/repeat';
 import Constants from '../constants';
 import { WPCategory } from '../interfaces';
 import { pulseWith, fadeWith } from '../core/animations';
-import { timer, BehaviorSubject, scheduled, animationFrameScheduler, Subject, EMPTY, fromEvent, combineLatest, Subscription } from 'rxjs';
-import { switchMap, startWith, debounceTime, map } from 'rxjs/operators';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import { LinearProgress } from '@material/mwc-linear-progress';
 import { IronImageElement } from '@polymer/iron-image';
@@ -62,22 +60,11 @@ export class Home extends Page {
 
     /* Non-updating values */
     private _currentAnimation: Animation;
-    private _enforcePauseSub: BehaviorSubject<boolean>;
-    private _setup = false;
-    private _resetSub: Subject<unknown>;
-    private _subs: Subscription;
-
-    public pause(): void {
-        if(this._enforcePauseSub){
-            this._enforcePauseSub.next(true);
-        }
-    }
 
     private _keyDownListener: (e: KeyboardEvent) => void;
 
     public async connectedCallback(){
         super.connectedCallback();
-        this._subs = new Subscription();
         this._keyDownListener = this._onKeyDown.bind(this);
 
         const requestR = await fetch(Constants.graphql, {
@@ -115,58 +102,6 @@ export class Home extends Page {
         super.disconnectedCallback();
 
         window.removeEventListener('keydown', this._keyDownListener);
-
-        this._subs.unsubscribe();
-        this._subs = null;
-    }
-
-    private _setupWalk(){
-        this._enforcePauseSub = new BehaviorSubject<boolean>(true);
-        this._resetSub = new Subject();
-
-        const pause$ = combineLatest([this._enforcePauseSub, fromEvent(this._pause, 'click').pipe(startWith(null as Event))]).pipe(
-            map(([enforced, _event]) => {
-                if(enforced || this._pause.innerText === 'pause_arrow'){
-                    return true;
-                }
-
-                return false;
-            })
-        );
-
-        const resetOrWait$ = this._resetSub.pipe(
-            startWith(undefined),
-            switchMap(() => {
-                return timer(5000, 5000);
-            })
-        );
-
-        return scheduled(pause$, animationFrameScheduler).pipe(
-            debounceTime(300),
-            switchMap((paused) => {                    
-                this._pause.innerText = paused ? 'play_arrow' : 'pause';
-                if(paused){
-                    this.progress.close();
-                } else {
-                    this.progress.open();
-                }
-
-                if(paused) return EMPTY;
-
-                return resetOrWait$;
-            }),
-            switchMap(async() => {                               
-                if(this._canNext()){
-                    await this._onNextSculpture();                
-                    return;
-                }
-
-                this.selected++;
-
-                const next = this.selected == (this._catMax-1) ? 0 : this.selected;
-                await this._onCatClick(next);
-            })
-        );
     }
 
     private async _onKeyDown(e: KeyboardEvent) {;
@@ -202,14 +137,7 @@ export class Home extends Page {
 
     public async firstUpdated(_changedProperties: PropertyValues){
         super.firstUpdated(_changedProperties);
-
-        setTimeout(async() => {
-            for(const loader of Array.from(this.loaders)){
-                const fadeOut = fadeWith(300, false);
-                const animation = loader.animate(fadeOut.effect, fadeOut.options);
-                await animation.finished;
-            }
-        }, 1000);
+        this.progress.close();
     }
 
     private async _restore(){
@@ -225,15 +153,6 @@ export class Home extends Page {
             this.sculptureIndex = sculptIndex === -1 ? 1 : sculptIndex + 1;
             this.sculptureMax = this.categories[this.selected].sculptures.nodes.length;
             await this._definePreviewed();
-        }
-    }
-
-    public async updated(){
-        if(this.loaded && !this._setup){
-            this._setup = true;
-            if(this._subs){
-                this._subs.add(this._setupWalk().subscribe());
-            }
         }
     }
 
@@ -259,7 +178,6 @@ export class Home extends Page {
         }
 
         await this._fadeCurrent();
-        this._resetSub.next();
     }
 
     private async _fadeCurrent(){
@@ -369,7 +287,6 @@ export class Home extends Page {
         await animation.finished;
 
         const willFocus = this._focused !== this.categories[this.selected].sculptures.nodes[this.sculpture];
-        this._enforcePauseSub.next(willFocus);
 
         if(willFocus){
             this._focused = this.categories[this.selected].sculptures.nodes[this.sculpture];
@@ -413,9 +330,6 @@ export class Home extends Page {
                     <div class="controls">
                         <mwc-icon class="${this.selected === 0 && this.sculptureIndex === 1 ? 'disabled' : ''}" @click=${this._onPrevSculpture}>chevron_left</mwc-icon>
                         <mwc-icon @click=${this._onNextSculpture}>chevron_right</mwc-icon>
-                        <mwc-icon id="pause" @click=${() => {
-                            this._enforcePauseSub.next(!this._enforcePauseSub.getValue());
-                        }}>pause</mwc-icon>
                     </div>
                 </div>
                 <div class="progress">

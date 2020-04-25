@@ -197,7 +197,7 @@ export class ElaraApp extends Root {
 
 		if(this._menu.classList.contains('active')){
 			if(this.shown instanceof Home){
-				this.shown.pause();
+				// this.shown.pause();
 			}
 		}
 	}
