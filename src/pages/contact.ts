@@ -157,7 +157,7 @@ export class ContactController extends Page {
         return html`
         <div id="contact" class="contact" role="main">
             <div class="side">
-                <h2>Remplissez juste, le formulaire.</h2>
+                <h2>Contact</h2>
                 <h4 id="helper" class="helper">
                     Réponse rapide, c'est promis !
                 </h4>
