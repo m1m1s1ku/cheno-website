@@ -90,7 +90,7 @@ export default abstract class Root extends LitElement {
 		const component = route.split('/')[0];
 
 		let helmetReq = null;
-		if(component === 'page'){
+		if(component === 'page' || component  === 'exposition'){
 			helmetReq = await fetch(Constants.base + '/' + route);
 		} else {
 			helmetReq = await fetch(Constants.base + '/' + component);
@@ -98,6 +98,11 @@ export default abstract class Root extends LitElement {
 
 		const helmet = await helmetReq.json();
 		const defaultTitle = 'Cheno';
+
+		// Nup.
+		if(helmet.title.indexOf('404') !== -1){
+			return;
+		}
 
 		if(helmet.title.indexOf('Cheno') === -1){
 			helmet.title += ' | ' + defaultTitle;
