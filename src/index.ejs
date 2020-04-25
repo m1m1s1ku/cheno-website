@@ -13,8 +13,8 @@
 
     <link rel="manifest" href="<%= htmlWebpackPlugin.options.pathname %>/assets/manifest.json">
     <link rel="shortcut icon" href="<%= htmlWebpackPlugin.options.pathname %>/favicon.ico">
-    <link rel="preconnect" href="https://base.cheno.fr">
     <link rel="stylesheet" type="text/css" href="<%= htmlWebpackPlugin.options.pathname %>/assets/style.css">
+    <link rel="preconnect" href="https://base.cheno.fr">
   </head>
   <body>
     <elara-app></elara-app>
@@ -23,7 +23,6 @@
     <script src="<%= htmlWebpackPlugin.options.pathname %>/vendor/webcomponents-loader.js" defer></script>
     <script src="<%= htmlWebpackPlugin.options.pathname %>/vendor/web-animations-next-lite.min.js" defer></script>
     <script src="<%= htmlWebpackPlugin.options.pathname %>/vendor/custom-elements-es5-adapter.js" defer></script>
-    <script src="https://browser.sentry-cdn.com/5.10.2/bundle.min.js" integrity="sha384-ssBfXiBvlVC7bdA/VX03S88B5MwXQWdnpJRbUYFPgswlOBwETwTp6F3SMUNpo9M9" crossorigin="anonymous"></script>
     <script>
     // @ts-check
     const userAgent = window.navigator.userAgent.toLowerCase();
@@ -33,32 +32,7 @@
       throw new Error('Please upgrade your browser.');
     }
 
-    // @ts-ignore
-    WebFontConfig = {
-      'google': { 'families': [ 
-        'Andika:400,700',
-        'Comfortaa:400,700',
-        'Material+Icons&display=swap'
-        ] }
-    };
-    
-    const loadGFonts = function(){
-      const wf = document.createElement('script');
-      wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
-      wf.type = 'text/javascript';
-      wf.async = true;
-      const s = document.getElementsByTagName('script')[0];
-      s.parentNode.insertBefore(wf, s);
-    };
-
     window.addEventListener('load', async () => {
-      loadGFonts();
-
-      if(location.host !== 'localhost:3000'){
-        // @ts-ignore
-        Sentry.init({ 'dsn': 'https://8b03983c61b541c780aacedeb557fafe@sentry.io/1866364' });
-      }
-
       if ('serviceWorker' in navigator) {
         const registrations = await navigator.serviceWorker.getRegistrations();
         for(let registration of registrations) {  
@@ -70,5 +44,49 @@
       }
     });
     </script>
+    <style>
+
+    .material-icons {
+      font-family: 'Material Icons';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 24px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+    }
+
+    @font-face {
+      font-family: 'Andika';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: local('Andika Regular'), local('Andika-Regular'), url('./assets/fonts/andika.woff2') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+
+    @font-face {
+      font-family: 'Comfortaa';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url('./assets/fonts/comfortaa.woff2') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+
+    @font-face {
+      font-family: 'Material Icons';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url('./assets/fonts/material.woff2') format('woff2');
+    }
+    </style>
   </body>
 </html>
