@@ -7,7 +7,7 @@
         }
 
         // Why..
-        if(strpos($uri, 'contact') !== false){
+        if(strpos($uri, 'contact') !== false || strpos($uri, 'expos') !== false){
             $uri = rtrim($uri, "/");
         }
 
