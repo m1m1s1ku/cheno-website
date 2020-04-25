@@ -847,12 +847,13 @@
       Sentry.init({ 'dsn': 'https://8b03983c61b541c780aacedeb557fafe@sentry.io/1866364' });
 
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(
-          function(registrations) {
-              for(let registration of registrations) {  
-                  registration.unregister();
-              }
-          });
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for(let registration of registrations) {  
+            const unregistered = await registration.unregister();
+            if(unregistered){
+              location.reload();
+            }
+        }
       }
     });
     </script>
