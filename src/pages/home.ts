@@ -1,5 +1,5 @@
 import { html, TemplateResult } from 'lit-html';
-import { property, PropertyValues, query, queryAll, customElement } from 'lit-element';
+import { property, query, queryAll, customElement } from 'lit-element';
 
 import Page from '../core/strategies/Page';
 import { repeat } from 'lit-html/directives/repeat';
@@ -132,11 +132,6 @@ export class Home extends Page {
                 await this._onNextSculpture();
                 break;
         }
-    }
-
-    public async firstUpdated(_changedProperties: PropertyValues){
-        super.firstUpdated(_changedProperties);
-        this.progress.close();
     }
 
     private async _restore(){
