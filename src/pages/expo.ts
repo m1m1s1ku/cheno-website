@@ -87,9 +87,9 @@ export class Single extends Page {
             ${this.article ? html`
             <article>
                 <div class="article__header">
-                    <h1><mwc-icon @click=${() => {
+                    <h1 @click=${() => {
                         Elara().router.navigate('expos');
-                    }}>chevron_left</mwc-icon> ${decodeHTML(this.article.title)}</h1>
+                    }}><mwc-icon>chevron_left</mwc-icon> ${decodeHTML(this.article.title)}</h1>
                     <p class="place">${this.article.place}</p>
                 </div>
                 <p class="date">${this.article.date_expo}</p>
