@@ -46,18 +46,6 @@ export class Placeholder extends LitElement {
         return next > 0 ? next : 30;
     }
 
-    private _refresh(){
-        requestAnimationFrame(() => {
-            this.requestUpdate();
-        });
-    }
-
-    public firstUpdated(){
-        setTimeout(() => {
-            this._refresh();
-        }, 500);
-    }
-
 	public render(): TemplateResult { 
         const bars = new Array(this.max);
         return html`

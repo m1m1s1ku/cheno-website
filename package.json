@@ -23,13 +23,11 @@
     "@polymer/iron-image": "^3.0.2",
     "@pdf-lib/fontkit": "0.0.4",
     "@webcomponents/webcomponentsjs": "^2.4.3",
-    "core-js": "^3.6.5",
     "crayon": "^6.0.1",
     "intersection-observer": "^0.10.0",
     "lit-element": "^2.3.1",
     "lit-html": "^1.2.1",
     "pdf-lib": "^1.4.1",
-    "regenerator-runtime": "^0.13.5",
     "replace-in-file": "^6.0.0",
     "rxjs": "^6.5.5",
     "web-animations-js": "^2.3.2"
