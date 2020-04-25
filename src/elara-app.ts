@@ -219,6 +219,11 @@ export class ElaraApp extends Root {
 		this.querySelector('.menu').classList.toggle('active');
 	}
 
+	private _hideMenu(){
+		this.querySelector('.main-menu').classList.remove('visible');
+		this.querySelector('.menu').classList.remove('active');
+	}
+
 	private _menuItem(item: WPLink){
 		return html`<li><h3 @click=${() => {
 			if(item.url.indexOf(Constants.base) !== -1){
@@ -226,11 +231,13 @@ export class ElaraApp extends Root {
 			}
 
 			this.router.navigate(item.url);
+			this._hideMenu();
 		}}>${item.label}</h3></li>`;
 	}
 	
 	public render() {
 		const menu = this._menuItem.bind(this);
+
 		return html`
 			<header>
 				<span @click=${() => this.route !== Constants.defaults.route ? this.router.navigate('home') : null} class="drawing-logo">
