@@ -447,6 +447,7 @@ mark,
 }
 
 .series ul li {
+    user-select: none;
     list-style: none;
     line-height: 3em;
     margin-right: 3em;
@@ -583,6 +584,10 @@ mark,
     background-size: 100% 0.1em;
     background-position: 25px 88%;
     transition: all 0.25s ease-out;
+}
+
+.controls mwc-icon {
+    user-select: none;
 }
 
 /* Contact */
