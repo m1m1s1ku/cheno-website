@@ -68,7 +68,9 @@ export class Home extends Page {
     private _subs: Subscription;
 
     public pause(): void {
-        this._enforcePauseSub.next(true);
+        if(this._enforcePauseSub){
+            this._enforcePauseSub.next(true);
+        }
     }
 
     private _keyDownListener: (e: KeyboardEvent) => void;
