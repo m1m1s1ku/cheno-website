@@ -15,8 +15,8 @@
   
         $response = curl_exec($ch);
 
-        echo "<div class='debug-ssr'>$url</div>";
-        echo "<div class='debug-ssr'>$response</div>";
+        echo "<meta class='debug-ssr' content='$url' />";
+        echo "<meta class='debug-ssr' content='$response' />";
 
         return json_decode($response);
     }
