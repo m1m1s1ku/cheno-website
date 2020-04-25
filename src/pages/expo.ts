@@ -61,12 +61,10 @@ export class Single extends Page {
         }).then(res => res.json()).then(res => res.data.expositionBy).catch(_ => this.dispatchEvent(wrap(_))) as ArticleMinimal;
 
         this.loaded = true;
-
-        const post = first;
         
-        this.article = post;
-        if(post.featuredImage && post.featuredImage.sourceUrl){
-            this.featured = post.featuredImage.sourceUrl;
+        this.article = first;
+        if(first.featuredImage && first.featuredImage.sourceUrl){
+            this.featured = first.featuredImage.sourceUrl;
         } else {
             this.featured = '';
         }

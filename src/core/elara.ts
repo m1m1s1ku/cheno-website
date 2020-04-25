@@ -63,7 +63,7 @@ export async function load(route: string, content: HTMLElement) {
     const loaded = Component ? new Component(route) : new NotFound(route);
 
     if(!document.title){
-        document.title = defaultTitle
+        document.title = defaultTitle;
     }
 
     for(const child of Array.from(content.children)){
