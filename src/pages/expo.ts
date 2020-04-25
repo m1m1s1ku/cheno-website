@@ -82,7 +82,7 @@ export class Single extends Page {
         <div id="single" class="single" role="main">
             ${!this.loaded ? html`
             <div class="loading">
-                <elara-spinner text="Chargement des expositions"></elara-spinner>
+                <elara-spinner text="Chargement de l'exposition"></elara-spinner>
             </div>` : html``}
             ${this.article ? html`
             <article>

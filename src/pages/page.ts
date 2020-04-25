@@ -84,7 +84,7 @@ export class PageController extends Page {
         <div id="page" class="page" role="main">
             ${!this.loaded ? html`
             <div class="loading">
-                <elara-spinner text="Chargement des expositions"></elara-spinner>
+                <elara-spinner text="Chargement de la page"></elara-spinner>
             </div>` : html``}
             ${this.article ? html`
             <div class="cols">
