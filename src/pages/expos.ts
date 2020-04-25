@@ -3,12 +3,11 @@ import { repeat } from 'lit-html/directives/repeat';
 import { css, property, query, queryAll, customElement } from 'lit-element';
 
 import Page from '../core/strategies/Page';
-import { navigate } from '../core/routing/routing';
 
 import Constants from '../constants';
-import { decodeHTML } from '../core/ui/ui';
 import RafPool from 'raf-pool';
 import { fadeWith } from '../core/animations';
+import { decodeHTML, Elara } from '../core/elara';
 
 export interface ArticleMinimal {
     content: string;
@@ -43,7 +42,6 @@ export class Expos extends Page {
 
     public static get styles(){
         return [
-            ... super.styles,
             css`
             .expos {
                 --text-light: rgba(255,255,255,0.9);
@@ -301,7 +299,7 @@ export class Expos extends Page {
             <div class="card-grid">
                 ${repeat(this.articles, article => html`
                 <a id=${article.id} class="card hide" @click=${() => {
-                    navigate('exposition/'+article.slug);
+                    Elara().router.navigate('exposition/'+article.slug);
                 }}>
                     <div class="card__background" style="background-image: url(${article.featuredImage?.sourceUrl}); background-color: #333;"></div>
                     <div class="card__content">

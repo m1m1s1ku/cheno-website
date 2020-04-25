@@ -1,16 +1,8 @@
-import { html, TemplateResult } from 'lit-html';
-import { property, css, CSSResult } from 'lit-element';
+import { property, css, CSSResult, customElement, html, LitElement } from 'lit-element';
+import { Elara } from '../core/elara';
 
-import PureElement from '../core/strategies/Element';
-
-import './tree';
-
-import Constants from '../constants';
-import { navigate } from '../core/routing/routing';
-
-class NotFound extends PureElement {
-    public static readonly is: string = 'ui-not-found';
-
+@customElement('ui-not-found')
+export class NotFound extends LitElement {
     @property({type: String, reflect: true})
     public asked: string;
 
@@ -31,21 +23,22 @@ class NotFound extends PureElement {
             text-decoration: none;
             cursor: pointer;
         }
-        .text {
-            padding: 2em;
-        }
         `;
     }
 
-	public render(): void | TemplateResult {
+	public render() {
         return html`
-        <div class="text">
+        <div>
             <h1>You are lost !</h1>
             <p>You asked for : ${this.asked}.</p>
-            <a @click=${() => navigate(Constants.defaults.route)}><mwc-icon>home</mwc-icon> Homepage</a>
-            <ui-tree .width=${1366} .height=${768}></ui-tree>
+            <a @click=${() => Elara().router.navigate('home')}><mwc-icon icon="home"></mwc-icon> Homepage</a>
         </div>
         `;
     }
 }
-customElements.define(NotFound.is, NotFound);
+
+declare global {
+	interface HTMLElementTagNameMap {
+		'ui-not-found': NotFound;
+	}
+}

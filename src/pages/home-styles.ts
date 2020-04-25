@@ -15,6 +15,7 @@ export const HomeStyling = css`
 }
 
 .series ul li {
+    list-style: none;
     line-height: 3em;
     margin-right: 3em;
     font-weight: bold;

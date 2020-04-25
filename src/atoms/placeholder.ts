@@ -1,6 +1,5 @@
-import { html, TemplateResult, css, CSSResult, property, customElement } from 'lit-element';
+import { html, TemplateResult, css, CSSResult, property, customElement, LitElement } from 'lit-element';
 
-import PureElement from '../core/strategies/Element';
 import { repeat } from 'lit-html/directives/repeat';
 
 /**
@@ -8,7 +7,7 @@ import { repeat } from 'lit-html/directives/repeat';
  * @extends {PureElement}
  */
 @customElement('ui-placeholder')
-export class Placeholder extends PureElement {
+export class Placeholder extends LitElement {
     public static readonly is: string = 'ui-placeholder';
 
     @property({type: Number, reflect: true})

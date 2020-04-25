@@ -5,11 +5,9 @@ import { css, property, customElement } from 'lit-element';
 import Page from '../core/strategies/Page';
 import Constants from '../constants';
 
-import { Utils, decodeHTML, onImageContainerClicked } from '../core/ui/ui';
-import { fadeWith } from '../core/animations';
-import { wrap } from '../core/errors/errors';
+import { fadeWith, animationsReduced } from '../core/animations';
 import { ArticleMinimal } from './expos';
-import { navigate } from '../core/routing/routing';
+import { decodeHTML, wrap, Elara } from '../core/elara';
 
 @customElement('ui-exposition')
 export class Single extends Page {
@@ -73,9 +71,10 @@ export class Single extends Page {
             this.featured = '';
         }
 
-        if(Utils.animationsReduced()){
+        if(animationsReduced()){
             return;
         }
+
         const fade = fadeWith(300, true);
         this.page.animate(fade.effect, fade.options);
         
@@ -83,7 +82,6 @@ export class Single extends Page {
 
     public static get styles(){
         return [
-            ... super.styles,
             css`
             .single {
                 margin-top: 6em;
@@ -129,14 +127,14 @@ export class Single extends Page {
             <article>
                 <div class="article__header">
                     <h1><mwc-icon @click=${() => {
-                        navigate('expos');
+                        Elara().router.navigate('expos');
                     }}>chevron_left</mwc-icon> ${decodeHTML(this.article.title)}</h1>
                     <p class="place">${this.article.place}</p>
                 </div>
                 <p class="date">${this.article.date_expo}</p>
 
                 ${this.featured ? html`
-                <div class="image-container" @click=${onImageContainerClicked}>
+                <div class="image-container">
                     <iron-image style="width: 100vw; height: 400px;" sizing="contain" src="${this.featured}"></iron-image>
                 </div>
                 ` : html``}
