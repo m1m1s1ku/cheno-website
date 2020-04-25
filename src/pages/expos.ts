@@ -39,9 +39,6 @@ export class Expos extends Page {
 
     public async firstUpdated(){
         this._load();
-        if(!document.title){
-            document.title = 'Expositions' + ' | ' + Constants.title;
-        }
     }
     
     private async _load(){

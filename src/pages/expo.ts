@@ -63,10 +63,7 @@ export class Single extends Page {
         this.loaded = true;
 
         const post = first;
-
-        if(!document.title){
-            document.title = decodeHTML(post.title) + ' | ' + Constants.title;
-        }
+        
         this.article = post;
         if(post.featuredImage && post.featuredImage.sourceUrl){
             this.featured = post.featuredImage.sourceUrl;

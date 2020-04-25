@@ -57,10 +57,6 @@ export class ElaraApp extends Root {
 	public constructor(){
 		super(); 
 
-		if(!document.title){
-			document.title = Constants.title;
-		}
-
 		this._subscriptions = new Subscription();
 
 		this.router = crayon.create();

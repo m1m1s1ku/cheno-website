@@ -52,8 +52,7 @@ export function wrap(underlying: Error): CustomEvent<Error> {
 
 export async function load(route: string, content: HTMLElement) {
     const defaultTitle = 'Cheno';
-    const titleTemplate = '%s | ' + defaultTitle;
-
+    
     const component = route.split('/')[0];
 
     const Component = customElements.get('ui-' + component);
@@ -63,10 +62,8 @@ export async function load(route: string, content: HTMLElement) {
 
     const loaded = Component ? new Component(route) : new NotFound(route);
 
-    if(loaded.head && loaded.head.title){
-        document.title = titleTemplate.replace('%s', loaded.head.title);
-    } else {
-        document.title = defaultTitle;
+    if(!document.title){
+        document.title = defaultTitle
     }
 
     for(const child of Array.from(content.children)){

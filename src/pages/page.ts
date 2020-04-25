@@ -64,10 +64,6 @@ export class PageController extends Page {
 
         const post = first;
 
-        if(!document.title){
-            document.title = post.title + ' | ' + Constants.title;
-        }
-
         this.article = post;
         if(post.featuredImage && post.featuredImage.sourceUrl){
             this.featured = post.featuredImage.sourceUrl;
