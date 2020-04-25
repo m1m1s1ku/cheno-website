@@ -81,28 +81,20 @@ export class ElaraApp extends Root {
 	public connectedCallback(){
 		super.connectedCallback();
 		this._defineColors();
+		window.matchMedia('(prefers-color-scheme: dark)').addListener(
+			e => e.matches && this._defineColors('night')
+		);
+		window.matchMedia('(prefers-color-scheme: light)').addListener(
+			e => e.matches && this._defineColors('day')
+		);
 	}
 
 	public disconnectedCallback(){
 		super.disconnectedCallback();
 	}
 
-	private _defineColors(){
-		this.theme = document.body.classList.contains('night') ? 'night' : 'day';
-
-		if(document.body.classList.contains('night')){
-			document.documentElement.style.setProperty('--mdc-theme-primary', 'var(--elara-font-color)');
-			document.documentElement.style.setProperty('--elara-placeholder-background', 'rgba(165,165,165,.5)');
-			document.documentElement.style.setProperty('--elara-background-color', '#373737');
-			document.documentElement.style.setProperty('--elara-font-color', '#f0f0f0');
-			document.documentElement.style.setProperty('--elara-font-hover', '#9e9e9e');
-		} else {
-			document.documentElement.style.setProperty('--mdc-theme-primary', 'var(--elara-primary)');
-			document.documentElement.style.setProperty('--elara-placeholder-background', 'rgba(67, 84, 128, 0.5)');
-			document.documentElement.style.removeProperty('--elara-background-color');
-			document.documentElement.style.removeProperty('--elara-font-color');
-			document.documentElement.style.removeProperty('--elara-font-hover');
-		}
+	private _defineColors(enforce?: 'night' | 'day'){
+		this.theme = enforce ? enforce : document.body.classList.contains('night') ? 'night' : 'day';
 
 		requestAnimationFrame(() => {
 			this.logoPath.classList.add('write');
@@ -111,7 +103,6 @@ export class ElaraApp extends Root {
 			} else {
 				this.logoPath.querySelector('path').style.stroke = 'black';
 			}
-
 
 			const switchSVG = () => {
 				if(this.theme === 'night'){

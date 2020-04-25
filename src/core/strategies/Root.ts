@@ -46,10 +46,6 @@ export default abstract class Root extends LitElement {
 			document.body.classList.add('day');
 		}
 	}
-
-	public disconnectedCallback(){
-		super.disconnectedCallback();
-	}
 	
 	/**
 	 * Togglee dark|light (lightswitch)
