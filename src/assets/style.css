@@ -442,6 +442,10 @@ elara-image {
     grid-auto-flow: column;
 }
 
+.series .single-container img {
+    max-width: 30vw;
+}
+
 .series ul {
     text-align: right;
     margin: 0;
