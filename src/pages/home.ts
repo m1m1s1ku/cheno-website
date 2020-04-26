@@ -214,8 +214,7 @@ export class Home extends Page {
 
         await this._definePreviewed();
         const animation = fadeWith(300, true);
-        const anime = this._previewed.animate(animation.effect, animation.options);
-        await anime.finished;
+        this._previewed.animate(animation.effect, animation.options);
     }
 
     private async _onPrevSculpture(_e?: Event){
