@@ -321,10 +321,6 @@ h3 {
     }
 }
 
-img {
-    object-fit: contain;
-}
-
 h1,
 h2,
 p,
@@ -485,11 +481,11 @@ mark,
     }
 }
 
-.previewed {
+.previewed img {
     cursor: pointer;
     height: 75vh;
     width: 50vw;
-    margin: 10px;
+    object-fit: contain;
 }
 
 .series,
@@ -520,6 +516,14 @@ mark,
     align-items: center;
     position: fixed;
     right: 0;
+    margin: 1em;
+}
+
+
+elara-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .count {
@@ -535,10 +539,6 @@ mark,
     font-size: 1.2em;
 }
 
-.preview.load img {
-    visibility: hidden;
-}
-
 .pagination {
     margin-left: 10px;
 }
@@ -551,8 +551,8 @@ mark,
 
 .progress {
     position: absolute;
-    bottom: 0;
-    width: 50vw;
+    bottom: 1em;
+    width: 100%;
 }
 .progress mwc-linear {
     width: 50vw;

@@ -192,29 +192,6 @@ export class Home extends Page {
         return this.sculptureIndex-1;
     }
 
-    private _currentListener: (_ev: Event) => void;
-
-    private _previewLoadListener(timeoutHandle: NodeJS.Timeout) {
-        return (ev: Event) => {
-            const previewed = ev.target as HTMLImageElement;
-            if(previewed.complete){
-                const animation = fadeWith(300, true);
-                requestAnimationFrame(() => {
-                    this.preview.classList.remove('load');
-                    this._previewed.animate(animation.effect, animation.options);
-                    this._previewed.removeEventListener('load', this._currentListener);
-                    const spin = this.preview.querySelector('elara-spinner');
-                    if(spin){
-                        this.preview.removeChild(spin);
-                    }
-                    
-                    this._currentListener = null;
-                    clearTimeout(timeoutHandle);
-                });
-            }
-        };
-    }
-
     private async _definePreviewed(){
         if(this._focused){
             this._focused = this.categories[this.selected].sculptures.nodes[this.sculpture];
@@ -223,23 +200,8 @@ export class Home extends Page {
             history.pushState({}, this.categories[this.selected].name, 'home/' + this.categories[this.selected].slug);
         }
 
-        let timeoutHandle = null;
-        if(this._previewed){
-            this._previewed.src = '';
-            timeoutHandle = setTimeout(() => {
-                const spinner = document.createElement('elara-spinner');
-                spinner.text = 'Chargement';
-                this.preview.prepend(spinner);
-            }, 500);
-        }
-
         this.previewing = this.categories[this.selected].sculptures.nodes[this.sculpture].featuredImage.sourceUrl;
         await this.updateComplete;
-        if(this._previewed){
-            this._currentListener = this._previewLoadListener(timeoutHandle);
-            this._previewed.addEventListener('load', this._currentListener);
-            this.preview.classList.add('load');
-        }
     }
 
     private async _move(state: SwitchingState){
@@ -333,7 +295,7 @@ export class Home extends Page {
             </div>
             `}
             <div class="preview">
-                <img id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade="true" @click=${this._onSingle}></img>
+                <elara-image id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade="true" @click=${this._onSingle}></elara-image>
                 <div class="count">
                     <div class="pagination">
                         <span class="current">${this.sculptureIndex}</span> / <span class="total">${this.sculptureMax}</span>
