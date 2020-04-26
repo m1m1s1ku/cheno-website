@@ -383,7 +383,7 @@ export class ContactController extends Page {
 
                 page.drawImage(logoImage, {
                     x: width - logoDims.width - padding,
-                    y: 20,
+                    y: 50,
                     width: logoDims.width,
                     height: logoDims.height,
                 });
@@ -391,7 +391,7 @@ export class ContactController extends Page {
                 if(text){
                     page.drawText(/*doc.getPageCount() - 1 + ' | ' + */text, {
                         x: padding,
-                        y: 28,
+                        y: 50,
                         size: footerTextSize,
                         font: normalFont
                     });
