@@ -1,4 +1,4 @@
-import { LitElement, property, customElement, html, query } from 'lit-element';
+import { LitElement, property, customElement, html, query, PropertyValues } from 'lit-element';
 import { fadeWith } from '../core/animations';
 
 @customElement('elara-image')
@@ -15,26 +15,35 @@ export class ElaraImage extends LitElement {
     @property({type: String, reflect: true})
     public placeholder = 'Loading';
 
-    private _listener: (ev: Event) => void;
+    private _listener: (ev: Event) => void;   
+    private _handle: number;
 
     @query('.elara-image') private _img!: HTMLImageElement;
 
-    createRenderRoot(){
+    protected createRenderRoot(){
         return this;
     }
 
-    public updated(){
-        this._img.style.visibility = 'hidden';
-        let handle = null;
-        if(!this.querySelector('elara-spinner')){
-             handle = setTimeout(() => {
-                const spinner = document.createElement('elara-spinner');
-                spinner.text = this.placeholder;
-                this.prepend(spinner);
-            }, 300) as unknown as number;
-        }
+    protected update(_changedProperties: PropertyValues){
+        super.update(_changedProperties);
+        if(_changedProperties.has('src')){
+            if(this._img){
+                this._img.style.visibility = 'hidden';
+            }
 
-        this._listener = this._previewLoadListener(handle);
+            this._handle = null;
+            if(!this.querySelector('elara-spinner')){
+                this._handle = setTimeout(() => {
+                    const spinner = document.createElement('elara-spinner');
+                    spinner.text = this.placeholder;
+                    this.prepend(spinner);
+                }, 300) as unknown as number;
+            }
+        }
+    }
+
+    public updated(){
+        this._listener = this._previewLoadListener(this._handle);
         this._img.addEventListener('load', this._listener);
     }
     
