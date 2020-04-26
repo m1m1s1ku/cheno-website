@@ -67,49 +67,6 @@ export async function load(route: string, content: HTMLElement) {
     });
 }
 
-export function Router(){
-    return {
-        redirect: (url: string, target = '_blank'): boolean => {
-            return !!window.open(url, target);
-         },
-         navigate: (route: string): boolean => {
-             location.hash = `#!${route}`;
-             return true;
-         },
-         hashChange(event: HashChangeEvent): string | null {
-             const routeWithPrefix = event.newURL.replace(location.origin + location.pathname, '');
- 
-             const routingParams = routeWithPrefix.split('#!').filter(Boolean);
-             let route = null;
-             if(routingParams.length === 0){
-                 route = routingParams.shift();
-             } else {
-                 route = routingParams.pop();
-             }
- 
-             const defaultRoute = 'home';
-         
-              // if same has current, no.
-             if(event.oldURL === event.newURL){
-                 return null;
-             }
-         
-             // If loaded component has routing, let him decide
-             const current = customElements.get('ui-'+route);
-             if(current && current.hasRouting === true){
-                 return route;
-             }
-         
-             // if index asked, go to default or if nothing asked, go to default
-             if(event.newURL === location.origin + location.pathname || !route){
-                 return defaultRoute;
-             }
-         
-             return route;
-          }
-    };
-}
-
 /**
 * Convert a remote url to an image data-url
 * 
