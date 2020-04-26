@@ -213,8 +213,11 @@ export class Home extends Page {
         }
 
         await this._definePreviewed();
+
         const animation = fadeWith(300, true);
-        this._previewed.animate(animation.effect, animation.options);
+        requestAnimationFrame(() => {
+            this._previewed.animate(animation.effect, animation.options);
+        });
     }
 
     private async _onPrevSculpture(_e?: Event){
