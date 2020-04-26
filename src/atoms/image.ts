@@ -25,11 +25,14 @@ export class ElaraImage extends LitElement {
 
     public updated(){
         this._img.style.visibility = 'hidden';
-        const handle = setTimeout(() => {
-            const spinner = document.createElement('elara-spinner');
-            spinner.text = this.placeholder;
-            this.prepend(spinner);
-        }, 300) as unknown as number;
+        let handle = null;
+        if(!this.querySelector('elara-spinner')){
+             handle = setTimeout(() => {
+                const spinner = document.createElement('elara-spinner');
+                spinner.text = this.placeholder;
+                this.prepend(spinner);
+            }, 300) as unknown as number;
+        }
 
         this._listener = this._previewLoadListener(handle);
         this._img.addEventListener('load', this._listener);
@@ -50,7 +53,9 @@ export class ElaraImage extends LitElement {
                     }
                     
                     this._listener = null;
-                    clearTimeout(timeoutHandle);
+                    if(timeoutHandle !== undefined){
+                        clearTimeout(timeoutHandle);
+                    }
                 });
             }
         };
