@@ -296,6 +296,24 @@ h3 {
     margin: 0;
 }
 
+p,
+i,
+a {
+    margin-top: 21px;
+    font-family: "Lora";
+    font-size: 15px;
+    letter-spacing: -0.03px;
+    line-height: 1.58;
+}
+
+.page blockquote p {
+    font-size: 22px;
+}
+
+.page p {
+    font-size: 17px;
+}
+
 .page elara-image {
     display: flex;
     justify-content: flex-end;
@@ -341,16 +359,6 @@ h2 {
 
 h3 {
     font-size: 18px;
-}
-
-p,
-i,
-a {
-    margin-top: 21px;
-    font-family: "Lora";
-    font-size: 15px;
-    letter-spacing: -0.03px;
-    line-height: 1.58;
 }
 
 a {
