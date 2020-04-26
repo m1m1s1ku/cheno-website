@@ -36,6 +36,21 @@ export class ContactController extends Page {
     @property({type: Boolean, reflect: true})
     public generating: boolean;
 
+    public loadComponents(){
+        return Promise.all([
+            import('@material/mwc-textfield'),
+            import('@material/mwc-textarea'),
+            import('@material/mwc-linear-progress'),
+            import('@material/mwc-button'),
+            import('@material/mwc-formfield')
+        ]);
+    }
+
+    public async connectedCallback(){
+        super.connectedCallback();
+        await this.loadComponents();
+    }
+
     private get _contactForm(){
         return html`
     <form class="simple" @input=${(e: KeyboardEvent) => {

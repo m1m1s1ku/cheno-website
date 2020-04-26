@@ -37,8 +37,20 @@ export class Expos extends Page {
     private _year: number;
     private _intersectionObserver: IntersectionObserver;
 
+    public async connectedCallback(){
+        super.connectedCallback();
+        await this.loadComponents();
+    }
+
     public async firstUpdated(){
         this._load();
+    }
+
+    public loadComponents(){
+        return Promise.all([
+            import('@material/mwc-tab-bar'),
+            import('@material/mwc-tab')
+        ]);
     }
     
     private async _load(){
