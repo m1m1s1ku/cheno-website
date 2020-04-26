@@ -191,6 +191,23 @@ export class Home extends Page {
         return this.sculptureIndex-1;
     }
 
+    private _currentListener: (_ev: Event) => void;
+
+    private _previewLoadListener() {
+        return (ev: Event) => {
+            const previewed = ev.target as HTMLImageElement;
+            if(previewed.complete){
+                const animation = fadeWith(300, true);
+                requestAnimationFrame(() => {
+                    this._previewed.animate(animation.effect, animation.options);
+                });
+            }
+
+            this._previewed.removeEventListener('load', this._currentListener);
+            this._currentListener = null;
+        };
+    }
+
     private async _definePreviewed(){
         if(this._focused){
             this._focused = this.categories[this.selected].sculptures.nodes[this.sculpture];
@@ -200,6 +217,8 @@ export class Home extends Page {
         }
 
         this.previewing = this.categories[this.selected].sculptures.nodes[this.sculpture].featuredImage.sourceUrl;
+        this._currentListener = this._previewLoadListener();
+        this._previewed.addEventListener('load', this._currentListener);
     }
 
     private async _move(state: SwitchingState){
@@ -213,11 +232,6 @@ export class Home extends Page {
         }
 
         await this._definePreviewed();
-
-        const animation = fadeWith(300, true);
-        requestAnimationFrame(() => {
-            this._previewed.animate(animation.effect, animation.options);
-        });
     }
 
     private async _onPrevSculpture(_e?: Event){
