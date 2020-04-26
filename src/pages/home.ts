@@ -194,7 +194,7 @@ export class Home extends Page {
 
     private _currentListener: (_ev: Event) => void;
 
-    private _previewLoadListener() {
+    private _previewLoadListener(timeoutHandle: NodeJS.Timeout) {
         return (ev: Event) => {
             const previewed = ev.target as HTMLImageElement;
             if(previewed.complete){
@@ -203,8 +203,13 @@ export class Home extends Page {
                     this.preview.classList.remove('load');
                     this._previewed.animate(animation.effect, animation.options);
                     this._previewed.removeEventListener('load', this._currentListener);
-                    this.preview.removeChild(this.preview.querySelector('elara-spinner'));
+                    const spin = this.preview.querySelector('elara-spinner');
+                    if(spin){
+                        this.preview.removeChild(spin);
+                    }
+                    
                     this._currentListener = null;
+                    clearTimeout(timeoutHandle);
                 });
             }
         };
@@ -218,17 +223,20 @@ export class Home extends Page {
             history.pushState({}, this.categories[this.selected].name, 'home/' + this.categories[this.selected].slug);
         }
 
+        let timeoutHandle = null;
         if(this._previewed){
-            const spinner = document.createElement('elara-spinner');
-            spinner.text = 'Chargement';
-            this.preview.prepend(spinner);
             this._previewed.src = '';
+            timeoutHandle = setTimeout(() => {
+                const spinner = document.createElement('elara-spinner');
+                spinner.text = 'Chargement';
+                this.preview.prepend(spinner);
+            }, 500);
         }
 
         this.previewing = this.categories[this.selected].sculptures.nodes[this.sculpture].featuredImage.sourceUrl;
         await this.updateComplete;
         if(this._previewed){
-            this._currentListener = this._previewLoadListener();
+            this._currentListener = this._previewLoadListener(timeoutHandle);
             this._previewed.addEventListener('load', this._currentListener);
             this.preview.classList.add('load');
         }
