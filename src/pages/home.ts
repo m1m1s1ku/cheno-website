@@ -295,7 +295,7 @@ export class Home extends Page {
             </div>
             `}
             <div class="preview">
-                <elara-image id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade="true" @click=${this._onSingle}></elara-image>
+                <elara-image id="previewed" class="previewed" src=${this.previewing} sizing="contain" fade="true" placeholder="Chargement" @click=${this._onSingle}></elara-image>
                 <div class="count">
                     <div class="pagination">
                         <span class="current">${this.sculptureIndex}</span> / <span class="total">${this.sculptureMax}</span>

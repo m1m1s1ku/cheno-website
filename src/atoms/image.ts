@@ -12,6 +12,9 @@ export class ElaraImage extends LitElement {
     @property({type: String, reflect: true})
     public sizing: 'cover' | 'contain' = 'contain';
 
+    @property({type: String, reflect: true})
+    public placeholder = 'Loading';
+
     private _listener: (ev: Event) => void;
 
     @query('.elara-image') private _img!: HTMLImageElement;
@@ -24,7 +27,7 @@ export class ElaraImage extends LitElement {
         this._img.style.visibility = 'hidden';
         const handle = setTimeout(() => {
             const spinner = document.createElement('elara-spinner');
-            spinner.text = 'Chargement de l\'image';
+            spinner.text = this.placeholder;
             this.prepend(spinner);
         }, 300) as unknown as number;
 
