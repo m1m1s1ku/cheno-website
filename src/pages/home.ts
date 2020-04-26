@@ -252,6 +252,7 @@ export class Home extends Page {
         if(!this._canNext()){ return; }
 
         await this._move(SwitchingState.willNext);
+        this._focusCat();
     }
 
     private async _onSingle(){        
@@ -301,6 +302,7 @@ export class Home extends Page {
                         <span class="current">${this.sculptureIndex}</span> / <span class="total">${this.sculptureMax}</span>
                     </div> 
                     <div class="controls">
+                        <mwc-icon-button @click=${this._onSingle} icon="info"></mwc-icon-button>
                         <mwc-icon-button class="${this.selected === 0 && this.sculptureIndex === 1 ? 'disabled' : ''}" @click=${this._onPrevSculpture} icon="chevron_left"></mwc-icon-button>
                         <mwc-icon-button @click=${this._onNextSculpture} icon="chevron_right"></mwc-icon-button>
                     </div>
