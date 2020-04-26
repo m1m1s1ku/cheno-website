@@ -271,6 +271,27 @@ export class Home extends Page {
         }
     }
 
+    private _fixDirtyImages(content: string){
+        if(!content){
+            return '';
+        }
+
+        const render = document.implementation.createHTMLDocument('rendering');
+        render.body.innerHTML = content;
+        const images = render.querySelectorAll('img');
+        const found = Array.from(images);
+
+        for(const image of found){
+            const src = image.src;
+            const elaraImage = document.createElement('elara-image');
+            elaraImage.setAttribute('placeholder', 'Chargement');
+            elaraImage.setAttribute('src', src);
+            image.replaceWith(elaraImage);
+        }
+
+        return render.body.innerHTML;
+    }
+
     public render(): void | TemplateResult {
         return html`
         <div class="home-container">
@@ -290,7 +311,7 @@ export class Home extends Page {
                     </div>
                     <div>${this._focused.taille_sculpture}</div>
                     <div class="content">
-                        ${unsafeHTML(this._focused.content)}
+                        ${unsafeHTML(this._fixDirtyImages(this._focused.content as unknown as string))}
                     </div>
                 </div>
             </div>
