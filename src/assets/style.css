@@ -538,29 +538,10 @@ mark,
     margin-left: 10px;
 }
 
-.unfold mwc-icon,
-.count mwc-icon {
-    opacity: .5;
-    font-size: 1.5em;
-    cursor: pointer;
-    transition: opacity .3s linear;
-}
-
-@media (min-width: 768px){
-    .unfold mwc-icon,
-    .count mwc-icon {
-        margin: 0 .5em;
-    }
-}
-
-.count mwc-icon.disabled {
+.count mwc-icon-button.disabled {
     opacity: 0 !important;
     cursor: default;
-}
-
-.unfold mwc-icon:hover,
-.count mwc-icon:hover {
-    opacity: 1;
+    pointer-events: none;
 }
 
 .progress {
@@ -568,7 +549,6 @@ mark,
     bottom: 0;
     width: 50vw;
 }
-
 .progress mwc-linear {
     width: 50vw;
 }
