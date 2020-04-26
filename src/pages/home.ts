@@ -201,10 +201,10 @@ export class Home extends Page {
                 requestAnimationFrame(() => {
                     this._previewed.animate(animation.effect, animation.options);
                 });
-            }
 
-            this._previewed.removeEventListener('load', this._currentListener);
-            this._currentListener = null;
+                this._previewed.removeEventListener('load', this._currentListener);
+                this._currentListener = null;
+            }
         };
     }
 
