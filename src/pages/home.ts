@@ -200,12 +200,12 @@ export class Home extends Page {
             if(previewed.complete){
                 const animation = fadeWith(300, true);
                 requestAnimationFrame(() => {
+                    this.preview.classList.remove('load');
                     this._previewed.animate(animation.effect, animation.options);
+                    this._previewed.removeEventListener('load', this._currentListener);
+                    this.preview.removeChild(this.preview.querySelector('elara-spinner'));
+                    this._currentListener = null;
                 });
-
-                this._previewed.removeEventListener('load', this._currentListener);
-                this.preview.classList.remove('load');
-                this._currentListener = null;
             }
         };
     }
@@ -219,6 +219,9 @@ export class Home extends Page {
         }
 
         if(this._previewed){
+            const spinner = document.createElement('elara-spinner');
+            spinner.text = 'Chargement';
+            this.preview.prepend(spinner);
             this._previewed.src = '';
         }
 

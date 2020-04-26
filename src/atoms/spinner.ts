@@ -13,8 +13,8 @@ export class ElaraSpinner extends LitElement {
     public static get styles(){
         return css`
         :host {
-          height: 100%;
-          width: 100%;
+          height: auto;
+          width: auto;
         }
 
         .container {
