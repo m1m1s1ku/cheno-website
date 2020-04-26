@@ -288,7 +288,7 @@ li {
     list-style: initial;
 }
 
-.cols {
+.page .cols {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -299,7 +299,7 @@ li {
     height: 400px;
 }
 
-.image-container {
+.page .image-container {
     padding: 1em;
 }
 
@@ -308,11 +308,11 @@ h3 {
 }
 
 @media (max-width: 600px) {
-    .cols {
+    .page .cols {
         flex-direction: column-reverse;
     }
 
-    .image-container {
+    .page .image-container {
         text-align: center;
     }
 
@@ -407,6 +407,12 @@ mark,
     background: #7DFFB3;
 }
 
+elara-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .first-letter {
     overflow-wrap: break-word;
     font-family: var(--elara-font-primary);
@@ -465,19 +471,19 @@ mark,
 .series ul li h1.big {
     display: inline;
     font-family: var(--elara-font-display);
-    font-size: 1.2em;
+    font-size: 1em;
     position: relative;
     padding: .5em 0;
 }
 
-@media (min-width: 500px) {
+@media (min-width: 768px) {
     .series ul li {
         line-height: 5em;
         margin-right: 5em;
     }
 
     .series ul li h1.big {
-        font-size: 1.5em;
+        font-size: 1.2em;
     }
 }
 
@@ -507,10 +513,6 @@ mark,
     margin-left: 0;
 }
 
-.series .single-container img {
-    max-width: 30vw;
-}
-
 .preview {
     display: flex;
     align-items: center;
@@ -519,14 +521,7 @@ mark,
     margin: 1em;
 }
 
-
-elara-image {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.count {
+.preview .count {
     position: absolute;
     right: 10px;
     bottom: 30px;
@@ -536,26 +531,28 @@ elara-image {
     align-items: center;
     line-height: 1.4em;
     width: 100%;
-    font-size: 1.2em;
 }
 
-.pagination {
+@media (min-width: 320px){
+    .preview .count {
+        font-size: 1.2em;
+    }
+}
+
+.preview .pagination {
     margin-left: 10px;
 }
 
-.count mwc-icon-button.disabled {
+.preview .count mwc-icon-button.disabled {
     opacity: 0 !important;
     cursor: default;
     pointer-events: none;
 }
 
-.progress {
+.preview .progress {
     position: absolute;
     bottom: 1em;
     width: 100%;
-}
-.progress mwc-linear {
-    width: 50vw;
 }
 
 .single-cat {
@@ -569,13 +566,6 @@ elara-image {
     background-size: 100% 0.1em;
     background-position: 25px 88%;
     transition: all 0.25s ease-out;
-}
-
-.controls {
-    user-select: none;
-}
-.controls * {
-    user-select: none;
 }
 
 /* Contact */
@@ -592,7 +582,6 @@ elara-image {
     --mdc-radio-unchecked-color: var(--elara-primary);
     --mdc-theme-primary: var(--elara-primary);
 }
-
 
 mdc-formfield {
     color: white;
