@@ -90,12 +90,9 @@ export class Home extends Page {
         await this._restore();
 
         this.loaded = true;
-
-        window.addEventListener('keydown', this._keyDownListener);
-    }
-
-    public firstUpdated(){
+        await this.updateComplete;
         this._focusCat();
+        window.addEventListener('keydown', this._keyDownListener);
     }
     
     public disconnectedCallback(){
@@ -153,6 +150,9 @@ export class Home extends Page {
 
     private _focusCat(){
         const catItem = this.querySelector('.series ul li.serie-'+this.selected+'');
+        if(!catItem){
+            return;
+        }
         if(!Utils.isInViewport(catItem)){
             const y = catItem.getBoundingClientRect().top + window.pageYOffset - 100;
             window.scrollTo({top: y, behavior: 'smooth'});
@@ -172,15 +172,7 @@ export class Home extends Page {
         
         await this._definePreviewed();
 
-        const catItem = this.querySelector('.series ul li.serie-'+idx+'');
-        if(!catItem){
-            return;
-        }
-        
-        if(!Utils.isInViewport(catItem)){
-            const y = catItem.getBoundingClientRect().top + window.pageYOffset - 100;
-            window.scrollTo({top: y, behavior: 'smooth'});
-        }
+        this._focusCat();
     }
 
     private get _catMax(){
