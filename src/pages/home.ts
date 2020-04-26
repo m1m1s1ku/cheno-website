@@ -5,7 +5,7 @@ import Page from '../core/strategies/Page';
 import { repeat } from 'lit-html/directives/repeat';
 import Constants from '../constants';
 import { WPCategory } from '../interfaces';
-import { pulseWith, fadeWith } from '../core/animations';
+import { fadeWith } from '../core/animations';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import { LinearProgress } from '@material/mwc-linear-progress';
 import { wrap, slugify, Utils, decodeHTML } from '../core/elara';
@@ -56,9 +56,6 @@ export class Home extends Page {
     private _focused: Sculpture;
     @property({type: String, reflect: false})
     public viewMode: 'single' | 'multi' = 'single';
-
-    /* Non-updating values */
-    private _currentAnimation: Animation;
 
     private _keyDownListener: (e: KeyboardEvent) => void;
 
@@ -150,14 +147,16 @@ export class Home extends Page {
         }
     }
 
-    private async _onCatClick(idx: number){
+    private async _onCatClick(idx: number, end = false){
         if(this.gridToggle){
             this.gridToggle.innerText = 'view_carousel';
         }
 
         this.selected = idx;
-        this.sculptureIndex = 1;
-        this.sculptureMax = this.categories[idx].sculptures.nodes.length;
+
+        const max = this.categories[idx].sculptures.nodes.length;
+        this.sculptureIndex = end ? max : 1;
+        this.sculptureMax = max;
         
         await this._definePreviewed();
 
@@ -170,29 +169,6 @@ export class Home extends Page {
             const y = catItem.getBoundingClientRect().top + window.pageYOffset - 100;
             window.scrollTo({top: y, behavior: 'smooth'});
         }
-
-        await this._fadeCurrent();
-    }
-
-    private async _fadeCurrent(){
-        if(!this._previewed){
-            return;
-        }
-
-        if(this._currentAnimation){
-            this._currentAnimation.cancel();
-        }
-
-        const animate = () => {
-            let animation = pulseWith(300);
-            this._currentAnimation = this._previewed.animate(animation.effect, animation.options);
-            if(this._focused){
-                animation = fadeWith(300, true);
-                this.series.animate(animation.effect, animation.options);
-            }
-        };
-
-        animate();
     }
 
     private get _catMax(){
@@ -220,8 +196,6 @@ export class Home extends Page {
         }
 
         this.previewing = this.categories[this.selected].sculptures.nodes[this.sculpture].featuredImage.sourceUrl;
-
-        await this.updateComplete;
     }
 
     private async _move(state: SwitchingState){
@@ -235,7 +209,9 @@ export class Home extends Page {
         }
 
         await this._definePreviewed();
-        await this._fadeCurrent();   
+        const animation = fadeWith(300, true);
+        const anime = this._previewed.animate(animation.effect, animation.options);
+        await anime.finished;
     }
 
     private async _onPrevSculpture(_e?: Event){
@@ -245,7 +221,7 @@ export class Home extends Page {
 
         if(this.sculptureIndex === 1 && this.selected > 0){
             this.selected--;
-            await this._onCatClick(this.selected);
+            await this._onCatClick(this.selected, true);
             return;
         }
 
