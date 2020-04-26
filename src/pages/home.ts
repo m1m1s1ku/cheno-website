@@ -217,8 +217,11 @@ export class Home extends Page {
         }
 
         this.previewing = this.categories[this.selected].sculptures.nodes[this.sculpture].featuredImage.sourceUrl;
-        this._currentListener = this._previewLoadListener();
-        this._previewed.addEventListener('load', this._currentListener);
+        await this.updateComplete;
+        if(this._previewed){
+            this._currentListener = this._previewLoadListener();
+            this._previewed.addEventListener('load', this._currentListener);
+        }
     }
 
     private async _move(state: SwitchingState){
