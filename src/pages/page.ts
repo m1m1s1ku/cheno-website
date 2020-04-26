@@ -87,17 +87,15 @@ export class PageController extends Page {
                 <elara-spinner text="Chargement de la page"></elara-spinner>
             </div>` : html``}
             ${this.article ? html`
-            <div class="cols">
                 <div class="content">
                     <h2>${this.article.title}</h2>
                     ${unsafeHTML(this.article.content)}
                 </div>
                 ${this.featured ? html`
                 <div class="image-container">
-                    <img sizing="contain" src="${this.featured}"></img>
+                    <elara-image sizing="contain" placeholder="Chargement de l'image" src="${this.featured}"></elara-image>
                 </div>
                 ` : html``}
-            </div>
             ` : html``}
         </div>
         `;

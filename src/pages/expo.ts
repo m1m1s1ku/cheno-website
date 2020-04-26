@@ -96,7 +96,7 @@ export class Single extends Page {
 
                 ${this.featured ? html`
                 <div class="image-container">
-                    <img style="width: 100vw; height: 400px;" sizing="contain" src="${this.featured}"></img>
+                    <elara-image sizing="contain" placeholder="Chargement de l'image" src="${this.featured}"></elara-image>
                 </div>
                 ` : html``}
                 <div class="content">

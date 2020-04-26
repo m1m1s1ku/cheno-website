@@ -288,17 +288,6 @@ li {
     list-style: initial;
 }
 
-.page .cols {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.page img {
-    width: 25vw;
-    height: 400px;
-}
-
 .page .image-container {
     padding: 1em;
 }
@@ -307,18 +296,12 @@ h3 {
     margin: 0;
 }
 
-@media (max-width: 600px) {
-    .page .cols {
-        flex-direction: column-reverse;
-    }
-
-    .page .image-container {
-        text-align: center;
-    }
-
-    .page img {
-        width: 250px;
-    }
+.page elara-image {
+    display: flex;
+    justify-content: flex-end;
+}
+.page elara-image img {
+    max-width: 200px;
 }
 
 h1,
@@ -789,6 +772,10 @@ form .field.send>mwc-button {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+.single .image-container elara-image img {
+    max-width: 300px;
 }
 
 .article__header {
