@@ -47,10 +47,7 @@ export class Expos extends Page {
     }
 
     public loadComponents(){
-        return Promise.all([
-            import('@material/mwc-tab-bar'),
-            import('@material/mwc-tab')
-        ]);
+        return import(/* webpackChunkName: "expos-comps" */'./expos-comps');
     }
     
     private async _load(){

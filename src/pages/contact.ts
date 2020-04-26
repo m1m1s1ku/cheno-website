@@ -37,13 +37,7 @@ export class ContactController extends Page {
     public generating: boolean;
 
     public loadComponents(){
-        return Promise.all([
-            import('@material/mwc-textfield'),
-            import('@material/mwc-textarea'),
-            import('@material/mwc-linear-progress'),
-            import('@material/mwc-button'),
-            import('@material/mwc-formfield')
-        ]);
+        return import(/* webpackChunkName: "contact-comps" */'./contact-comps');
     }
 
     public async connectedCallback(){
