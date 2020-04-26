@@ -35,6 +35,7 @@ export class Home extends Page {
     @query('#pause') protected _pause!: HTMLElement;
     @query('#main-progress') protected progress!: LinearProgress;
     @query('#toggle-grid') protected gridToggle!: HTMLElement;
+    @query('.preview') protected preview!: HTMLDivElement;
     @queryAll('ui-placeholder') protected loaders!: NodeListOf<HTMLElement>;
 
     @property({type: Boolean, reflect: true})
@@ -203,6 +204,7 @@ export class Home extends Page {
                 });
 
                 this._previewed.removeEventListener('load', this._currentListener);
+                this.preview.classList.remove('load');
                 this._currentListener = null;
             }
         };
@@ -216,11 +218,16 @@ export class Home extends Page {
             history.pushState({}, this.categories[this.selected].name, 'home/' + this.categories[this.selected].slug);
         }
 
+        if(this._previewed){
+            this._previewed.src = '';
+        }
+
         this.previewing = this.categories[this.selected].sculptures.nodes[this.sculpture].featuredImage.sourceUrl;
         await this.updateComplete;
         if(this._previewed){
             this._currentListener = this._previewLoadListener();
             this._previewed.addEventListener('load', this._currentListener);
+            this.preview.classList.add('load');
         }
     }
 

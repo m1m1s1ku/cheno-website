@@ -535,6 +535,10 @@ mark,
     font-size: 1.2em;
 }
 
+.preview.load img {
+    visibility: hidden;
+}
+
 .pagination {
     margin-left: 10px;
 }
