@@ -538,6 +538,12 @@ elara-image {
     margin-left: 10px;
 }
 
+.controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
 .preview .count mwc-icon-button.disabled {
     opacity: 0 !important;
     cursor: default;
