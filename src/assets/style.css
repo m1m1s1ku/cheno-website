@@ -501,7 +501,13 @@ elara-image {
 
 .series .single-container {
     margin-top: 120px;
-    margin-left: 3em;
+    margin-left: .5em;
+}
+
+@media (min-width: 768px){
+    .series .single-container {
+        margin-left: 3em;
+    }
 }
 
 .series .single-container.loading {
