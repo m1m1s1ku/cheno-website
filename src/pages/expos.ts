@@ -97,17 +97,19 @@ export class Expos extends Page {
         this.exposByYear = new Map([...exposByYear.entries()].sort((a, b) => b[0]-a[0]));
         await this.updateComplete;
 
-        const canUpdate = function(entry: IntersectionObserverEntry){ return entry.intersectionRatio >= 0; };
-
         this._intersectionObserver = new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
             for(const entry of entries){
-                if(!canUpdate(entry)) continue;
-
-                const target = entry.target as HTMLElement;
-                target.classList.remove('hide');
-                this._intersectionObserver.unobserve(target);
+                if(entry.isIntersecting){
+                    const target = entry.target as HTMLElement;
+                    target.classList.remove('hide');
+                    this._intersectionObserver.unobserve(target);
+                } else {
+                    continue;
+                }
             };
         });
+
+        await this.updateComplete;
 
         const cards = Array.from(this.cards);
         for(const card of cards){

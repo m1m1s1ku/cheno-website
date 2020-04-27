@@ -710,7 +710,13 @@ form .field.send>mwc-button {
     cursor: pointer;
     min-height: 350px;
     list-style: none;
+    opacity: 1;
     position: relative;
+    transition: opacity .3s;
+}
+
+.card.hide {
+    opacity: 0;
 }
 
 .card__background {
@@ -778,10 +784,6 @@ form .field.send>mwc-button {
     .card-grid {
         grid-template-columns: repeat(4, 1fr);
     }
-}
-
-.card.hide {
-    opacity: 0;
 }
 
 .periods {
