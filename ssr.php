@@ -44,6 +44,10 @@
             $marker = "<meta name='helmetized' content='done'>";
         }
 
+        if(strpos($title, '404') != false){
+            header("HTTP/1.0 404 Not Found");
+        }
+
         return "<title>$title</title>$marker<meta name='description' content='$description' /><meta property='og:title' content='$title' /><meta property='og:url' content='$url' /><meta property='og:type' content='website' /><meta property='og:image' content='$image' />";
     }
 
