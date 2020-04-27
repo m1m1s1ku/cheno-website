@@ -40,7 +40,7 @@
         }
 
         $marker = '';
-        if(strpos($title, ' | Cheno') != false){
+        if(strpos($title, ' | Cheno') !== false){
             $marker = "<meta name='helmetized' content='done'>";
         }
 
@@ -49,8 +49,8 @@
 
     $response = get();
     $title = $response->title;
-    if(strpos($title, '404') != false){
-        header("HTTP/1.0 404 Not Found");
+    if(strpos($title, '404') !== false){
+        header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
     }
     
     $description = $response->description;
