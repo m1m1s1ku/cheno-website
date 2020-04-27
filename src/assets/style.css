@@ -304,11 +304,8 @@ h3 {
     margin: 0;
 }
 
-p,
-i,
-a {
+p, i, a {
     margin-top: 21px;
-    font-family: "Lora";
     font-size: 15px;
     letter-spacing: -0.03px;
     line-height: 1.58;
