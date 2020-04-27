@@ -209,7 +209,7 @@ header {
 }
 
 .main-menu {
-    min-width: 30%;
+    min-width: 50%;
     position: fixed;
     min-height: 100px;
     right: 0;
@@ -221,9 +221,9 @@ header {
     border-radius: 0 0 4px 4px;
 }
 
-@media (max-width: 700px) {
+@media (min-width: 768px) {
     .main-menu {
-        min-width: 100%;
+        min-width: 30%;
     }
 
     header {
