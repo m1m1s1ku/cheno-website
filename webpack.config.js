@@ -36,11 +36,6 @@ const polyfills = [
     flatten: true
   },
   {
-    from: resolve(`${webcomponentsjs}/custom-elements-es5-adapter.js`),
-    to: join(OUTPUT_PATH, 'vendor'),
-    flatten: true
-  },
-  {
     from: resolve(`${webanimationsjs}/web-animations-next-lite.min.js`),
     to: join(OUTPUT_PATH, 'vendor'),
     flatten: true
