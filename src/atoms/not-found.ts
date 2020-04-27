@@ -22,24 +22,22 @@ export class NotFound extends LitElement {
 
         .body {
             position: absolute;
-            width: 100px;
-            height: 100px;    
-            margin-top: -50px;
-            margin-left: -50px;
+            width: 78px;
+            height: 100px;
             top: 50%;
             left: 50%;
             border-radius: 100%;
             border-width: 0;
             border-left:solid 40px #000;
-            background: #cc0000;
+            background-color: #0149ff;
         }
         .body:after {
           display: block;
           content: '';
           width: 100%;
           height: 2px;
-          background-color: #990000;
           position: absolute;
+          background: var(--elara-primary);
           top: 50%;
         }
         .body > .eyes {
@@ -83,35 +81,13 @@ export class NotFound extends LitElement {
           left:26%;
         }
         
-        .leaf {
-          position: absolute; 
-          margin-top: -100px;
-          margin-left: -100px;
-          top: 50%;
-          left: 50%;
-          border-radius:0 75% 0 70%;
-          background-color:#144ad4;
-          width:200px;
-          height:200px;
-          overflow:hidden;
-            box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
-          display:inline-block;
-          vertical-align:top;
-        }
-        
-        .leaf .leaf-shadow {
-          width:200px;
-          height:410px;
-          background-color:#002FA7;
-          transform: rotate(-45deg) translateX(-1.6em) translateY(-2.4em);
-        }      
-        
         .ladybug {
             position: absolute;
             bottom: 0;
-            right: 200px;
+            right: 100px;
             top: 0;
             pointer-events: none;
+            transform: rotate(45deg);
         }
         `;
     }
@@ -124,9 +100,6 @@ export class NotFound extends LitElement {
             <mwc-button @click=${() => window.location.replace('https://cheno.fr')}><mwc-icon>home</mwc-icon> Homepage</mwc-button>
 
             <div class="ladybug">
-                <div class="leaf">
-                    <div class="leaf-shadow"></div>
-                </div>
                 <div class="body">
                     <div class="eyes left"></div>
                     <div class="eyes right"></div>
