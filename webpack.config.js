@@ -130,7 +130,8 @@ const developmentConfig = WebpackMerge([
       overlay: true,
       port: 3000,
       historyApiFallback: true,
-      host: 'localhost'
+      host: '0.0.0.0',
+      disableHostCheck: true
     }
   }
 ]);
