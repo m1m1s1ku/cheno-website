@@ -31,7 +31,7 @@ export default abstract class Root extends LitElement {
 		this.router.navigate(route);
 	}
 
-	public connectedCallback(){
+	public connectedCallback(): void {
 		super.connectedCallback();
 
 		if(window.matchMedia(this._queries.DARK).matches){
@@ -43,8 +43,8 @@ export default abstract class Root extends LitElement {
 		}
 	}
 
-	public get shown(){
-		return this._content.firstChild;
+	public get shown(): HTMLElement {
+		return this._content.firstChild as HTMLElement;
 	}
 	
 	/**
@@ -53,7 +53,10 @@ export default abstract class Root extends LitElement {
 	 * @returns
 	 * @memberof Root
 	 */
-	public switchColors(){
+	public switchColors(): {
+		day: boolean;
+		night: boolean;
+	}{
 		const day = document.body.classList.contains('day');
 		const night = document.body.classList.contains('night');
 
@@ -82,7 +85,7 @@ export default abstract class Root extends LitElement {
 		}
 	}
 
-	protected async _helmetize(route: string){
+	protected async _helmetize(route: string): Promise<void> {
 		await this._fetchHelmet(route);
 	}
 
@@ -118,7 +121,7 @@ export default abstract class Root extends LitElement {
 		document.head.appendChild(newDesc);
 	}
 
-	public createRenderRoot(){
+	public createRenderRoot(): Root {
         return this;
     }
 }

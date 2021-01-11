@@ -13,18 +13,20 @@ import { wrap, slugify, Utils, decodeHTML } from '../core/elara';
 enum SwitchingState {
     willPrev = 'prev',
     willNext = 'next'
-};
+}
 
 interface Sculpture {
     taille_sculpture?: string;
     featuredImage: {
-        sourceUrl: string;
+        node: {
+            sourceUrl: string;
+        }
     };
     content: {
         rendered: string;
     };
     title: string;
-};
+}
 
 @customElement('ui-home')
 export class Home extends Page {
@@ -60,7 +62,7 @@ export class Home extends Page {
 
     private _keyDownListener: (e: KeyboardEvent) => void;
 
-    public async connectedCallback(){
+    public async connectedCallback(): Promise<void> {
         super.connectedCallback();
         this._keyDownListener = this._onKeyDown.bind(this);
 
@@ -74,7 +76,9 @@ export class Home extends Page {
                         sculptures(where: {orderby: {field: MODIFIED, order: DESC}}) {
                           nodes {
                             featuredImage {
-                              sourceUrl(size: MEDIUM_LARGE)
+                                node {
+                                    sourceUrl(size: MEDIUM_LARGE)
+                                }
                             }
                             taille_sculpture
                             content(format: RENDERED)
@@ -96,13 +100,13 @@ export class Home extends Page {
         window.addEventListener('keydown', this._keyDownListener);
     }
     
-    public disconnectedCallback(){
+    public disconnectedCallback(): void {
         super.disconnectedCallback();
 
         window.removeEventListener('keydown', this._keyDownListener);
     }
 
-    private async _onKeyDown(e: KeyboardEvent) {;
+    private async _onKeyDown(e: KeyboardEvent) {
         switch(e.keyCode){
             // up arrow
             case 38:
@@ -200,7 +204,7 @@ export class Home extends Page {
             history.pushState({}, this.categories[this.selected].name, 'home/' + this.categories[this.selected].slug);
         }
 
-        this.previewing = this.categories[this.selected].sculptures.nodes[this.sculpture].featuredImage.sourceUrl;
+        this.previewing = this.categories[this.selected].sculptures.nodes[this.sculpture].featuredImage.node.sourceUrl;
         await this.updateComplete;
     }
 

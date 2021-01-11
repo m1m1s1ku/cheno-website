@@ -30,24 +30,27 @@ export class Single extends Page {
         this._toLoad = toLoad;
     }
 
-    public firstUpdated(){
+    public firstUpdated(): Promise<void> {
         return this._load();
     }
     
     private async _load(){
         const projectQuery = `
         {
-            expositionBy(slug: "${this._toLoad}") {
-                title
-                content
-                excerpt
-                featuredImage {
-                    sourceUrl
+            exposition(id: "${this._toLoad}", idType: SLUG) {
+              title
+              content
+              excerpt
+              featuredImage {
+                node {
+                  sourceUrl
                 }
-                date_expo
-                place
+              }
+              date_expo
+              place
             }
-        }              
+          }
+                     
         `;
 
         const first = await fetch(Constants.graphql, {
@@ -58,13 +61,13 @@ export class Single extends Page {
             body: JSON.stringify({
                 query: projectQuery
             })
-        }).then(res => res.json()).then(res => res.data.expositionBy).catch(_ => this.dispatchEvent(wrap(_))) as ArticleMinimal;
+        }).then(res => res.json()).then(res => res.data.exposition).catch(_ => this.dispatchEvent(wrap(_))) as ArticleMinimal;
 
         this.loaded = true;
         
         this.article = first;
-        if(first.featuredImage && first.featuredImage.sourceUrl){
-            this.featured = first.featuredImage.sourceUrl;
+        if(first.featuredImage && first.featuredImage.node && first.featuredImage.node.sourceUrl){
+            this.featured = first.featuredImage.node.sourceUrl;
         } else {
             this.featured = '';
         }

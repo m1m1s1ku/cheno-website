@@ -1,4 +1,4 @@
-import { html, property, SVGTemplateResult, query, customElement } from 'lit-element';
+import { html, property, SVGTemplateResult, query, customElement, TemplateResult } from 'lit-element';
 
 import crayon from 'crayon';
 
@@ -29,7 +29,7 @@ export class ElaraApp extends Root {
 	 * @readonly
 	 * @memberof ElaraApp
 	 */
-	public get bootstrap(){		
+	public get bootstrap(): Promise<unknown> {		
 		return Promise.all([
 			this._setup(),
 			import(/* webpackChunkName: "mwc" */'./mwc')
@@ -91,7 +91,7 @@ export class ElaraApp extends Root {
 		};
 	}
 
-	public connectedCallback(){
+	public connectedCallback(): void {
 		super.connectedCallback();
 		this._defineColors();
 		window.matchMedia('(prefers-color-scheme: dark)').addListener(
@@ -102,7 +102,7 @@ export class ElaraApp extends Root {
 		);
 	}
 
-	public disconnectedCallback(){
+	public disconnectedCallback(): void {
 		super.disconnectedCallback();
 	}
 
@@ -176,7 +176,7 @@ export class ElaraApp extends Root {
 		let items = mainMenu.node.menuItems.edges;
 		items = items.map(item => item.node);
 		this._menuItems = items;
-		await this.performUpdate();
+		await this.requestUpdate();
 	}
 
 	public async firstUpdated(): Promise<void> {
@@ -212,7 +212,7 @@ export class ElaraApp extends Root {
 		}}>${item.label}</h3></li>`;
 	}
 	
-	public render() {
+	public render(): TemplateResult {
 		const menu = this._menuItem.bind(this);
 
 		return html`

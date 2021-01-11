@@ -12,9 +12,11 @@ export interface ProjectMinimal {
     content: string;
     excerpt: string;
     featuredImage: {
-        sourceUrl: string;
+        node: {
+            sourceUrl: string;
+        }
     };
-};
+}
 
 @customElement('ui-page')
 export class PageController extends Page {
@@ -39,15 +41,22 @@ export class PageController extends Page {
     
     private async _load(uri: string){
         const pageQuery = `
-        {
-            pageBy(uri: "${uri}") {
-                title
-                featuredImage {
-                    sourceUrl
+        query MyQuery {
+            pages(where: {name: "${uri}"}) {
+              edges {
+                node {
+                  id
+                  title(format: RAW)
+                  featuredImage {
+                    node {
+                      sourceUrl(size: MEDIUM)
+                    }
+                  }
+                  content(format: RENDERED)
                 }
-                content(format: RENDERED)
-                }
-        }              
+              }
+            }
+          }                    
         `;
 
         const first = await fetch(Constants.graphql, {
@@ -58,15 +67,15 @@ export class PageController extends Page {
             body: JSON.stringify({
                 query: pageQuery
             })
-        }).then(res => res.json()).then(res => res.data.pageBy) as ProjectMinimal;
+        }).then(res => res.json()).then(res => res.data.pages.edges.pop().node) as ProjectMinimal;
 
         this.loaded = true;
 
         const post = first;
 
         this.article = post;
-        if(post.featuredImage && post.featuredImage.sourceUrl){
-            this.featured = post.featuredImage.sourceUrl;
+        if(post.featuredImage && post.featuredImage.node && post.featuredImage.node.sourceUrl){
+            this.featured = post.featuredImage.node.sourceUrl;
         } else {
             this.featured = '';
         }
@@ -75,7 +84,7 @@ export class PageController extends Page {
         this._page.animate(fade.effect, fade.options);
     }
 
-    public async firstUpdated(){
+    public async firstUpdated(): Promise<void> {
         await this._load(this._toLoad);
     }
 

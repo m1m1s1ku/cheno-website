@@ -3,7 +3,7 @@ export interface WPTag {
     description?: string;
     name: string;
     slug: string;
-};
+}
 
 export enum WPArticleStatus { 
     publish = 'publish', 
@@ -11,7 +11,7 @@ export enum WPArticleStatus {
     draft = 'draft', 
     pending = 'pending', 
     private = 'private'
-};
+}
 
 export interface WPPost {
     id?: number;
@@ -26,7 +26,7 @@ export interface WPPost {
     featured_media: number; // id of media
     slug: string;
     // developer.wordpress.org/rest-api/reference/posts/#create-a-post
-};
+}
 
 export interface WPSearchPost {
     author: number;
@@ -75,7 +75,9 @@ export interface WPCategory {
     sculptures: {
         nodes: Array<{
             featuredImage: {
-                sourceUrl: string;
+                node: {
+                    sourceUrl: string;
+                }
             };
             taille_sculpture: string;
             content: {
@@ -84,14 +86,14 @@ export interface WPCategory {
             title: string;
         }>;
     };
-};
+}
 
 export interface WPCreateCategory {
     description: string;
     name: string;
     slug: string;
     parent: number;
-};
+}
 
 export interface Metadata {
     isEmbed: boolean;
@@ -106,4 +108,4 @@ export interface Metadata {
     url: string;
     detected: string[];
     error: boolean;
-};
+}

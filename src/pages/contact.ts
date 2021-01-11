@@ -36,11 +36,11 @@ export class ContactController extends Page {
     @property({type: Boolean, reflect: true})
     public generating: boolean;
 
-    public loadComponents(){
+    public loadComponents(): Promise<unknown> {
         return import(/* webpackChunkName: "contact-comps" */'./contact-comps');
     }
 
-    public async connectedCallback(){
+    public async connectedCallback(): Promise<void> {
         super.connectedCallback();
         await this.loadComponents();
     }
@@ -282,8 +282,8 @@ export class ContactController extends Page {
 
                     let isFirstPage = true;
                     for(const sculpture of category.sculptures.nodes){
-                        const extension =  sculpture.featuredImage.sourceUrl.substr(sculpture.featuredImage.sourceUrl.lastIndexOf('.') + 1);
-                        const image = sculpture.featuredImage.sourceUrl;
+                        const extension =  sculpture.featuredImage.node.sourceUrl.substr(sculpture.featuredImage.node.sourceUrl.lastIndexOf('.') + 1);
+                        const image = sculpture.featuredImage.node.sourceUrl;
                         const imageBytes = await fetch(image).then(res => res.arrayBuffer());
                         let sculptureImage = null;
                         if(extension == 'jpg' || extension == 'jpeg'){
@@ -468,7 +468,9 @@ export class ContactController extends Page {
                         sculptures(where: {orderby: {field: MODIFIED, order: DESC}}) {
                             nodes {
                             featuredImage {
-                                sourceUrl(size: MEDIUM_LARGE)
+                                node {
+                                    sourceUrl(size: MEDIUM_LARGE)
+                                }
                             }
                             taille_sculpture
                             content(format: RENDERED)

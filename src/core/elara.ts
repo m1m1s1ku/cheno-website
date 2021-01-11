@@ -1,3 +1,4 @@
+import { ElaraApp } from '../elara-app';
 import { pulseWith } from './animations';
 
 export interface Root extends HTMLElement {
@@ -11,7 +12,7 @@ export interface UpdatableElement extends HTMLElement {
 }
 export interface LoadableElement extends UpdatableElement { loaded: boolean }
 
-export function Elara(){ return document.querySelector('elara-app'); }
+export function Elara(): ElaraApp { return document.querySelector('elara-app'); }
 
 class NetworkError extends Error {
     public underlyingError: Error;
@@ -28,7 +29,7 @@ export function wrap(underlying: Error): CustomEvent<Error> {
     });
 }
 
-export async function load(route: string, content: HTMLElement) {
+export async function load(route: string, content: HTMLElement): Promise<void> {
     const defaultTitle = 'Cheno';
     const component = route.split('/')[0];
 
@@ -106,7 +107,7 @@ export const Utils = {
     isMobile: (): boolean => {
         return window.innerWidth <= 570;
     },
-    isInViewport(elem: Element) {
+    isInViewport(elem: Element): boolean {
         const bounding = elem.getBoundingClientRect();
 
         return (
@@ -126,7 +127,7 @@ export function chunk<T>(arr: T[], size: number): T[][] {
     return R;
 }
 
-export function decodeHTML(html: string){
+export function decodeHTML(html: string): string {
     const txt = document.createElement('textarea');
     txt.innerHTML = html;
     return txt.value;
@@ -185,7 +186,7 @@ export function normalize(str: string): string {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
-export function slugify(str: string, separator: string){
+export function slugify(str: string, separator: string): string {
     str = str.trim();
     str = str.toLowerCase();
 

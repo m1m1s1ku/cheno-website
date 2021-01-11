@@ -13,13 +13,15 @@ export interface ArticleMinimal {
     date_expo: string;
     excerpt: string;
     featuredImage: {
-        sourceUrl: string;
+        node: {
+            sourceUrl: string;
+        }
     };
     id: string;
     place: string;
     slug: string;
     title: string;
-};
+}
 
 @customElement('ui-expos')
 export class Expos extends Page {
@@ -37,16 +39,16 @@ export class Expos extends Page {
     private _year: number;
     private _intersectionObserver: IntersectionObserver;
 
-    public async connectedCallback(){
+    public async connectedCallback(): Promise<void> {
         super.connectedCallback();
         await this.loadComponents();
     }
 
-    public async firstUpdated(){
+    public async firstUpdated(): Promise<void> {
         this._load();
     }
 
-    public loadComponents(){
+    public loadComponents(): Promise<unknown> {
         return import(/* webpackChunkName: "expos-comps" */'./expos-comps');
     }
     
@@ -68,8 +70,10 @@ export class Expos extends Page {
                         place
                         date_expo
                         featuredImage {
-                          sourceUrl(size: MEDIUM_LARGE)
-                          title(format: RAW)
+                          node {
+                              sourceUrl(size: MEDIUM_LARGE)
+                              title(format: RAW)
+                          }
                         }
                       }
                     }
@@ -106,7 +110,7 @@ export class Expos extends Page {
                 } else {
                     continue;
                 }
-            };
+            }
         });
 
         await this.updateComplete;
@@ -147,7 +151,7 @@ export class Expos extends Page {
                     <a id=${article.id} class="card hide" @click=${() => {
                         Elara().router.navigate('exposition/'+article.slug);
                     }}>
-                        <div class="card__background" style="background-image: url(${article.featuredImage?.sourceUrl}); background-color: #333;">
+                        <div class="card__background" style="background-image: url(${article.featuredImage?.node?.sourceUrl}); background-color: #333;">
                             <div class="card__content">
                                 <p class="card__place">${article.place}</p>
                                 <h3 class="card__heading">${decodeHTML(article.title)}</h3>

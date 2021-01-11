@@ -1,10 +1,18 @@
 import { LitElement, property } from 'lit-element';
 
+interface ElaraHelmet {
+    title: string,
+    description: string,
+    type: string,
+    image: string,
+    slug: string
+}
+
 export default class Page extends LitElement {
     @property({type: Boolean, reflect: true, noAccessor: true})
     public loaded: boolean;
     
-    public get head(){
+    public get head(): ElaraHelmet {
         return {
             title: null,
             description: null,
@@ -14,7 +22,7 @@ export default class Page extends LitElement {
         };
     }
 
-    public createRenderRoot(){
+    public createRenderRoot(): Page {
         return this;
     }
 }

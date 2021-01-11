@@ -1,4 +1,4 @@
-import { property, css, CSSResult, customElement, html, LitElement } from 'lit-element';
+import { property, css, CSSResult, customElement, html, LitElement, TemplateResult } from 'lit-element';
 
 @customElement('ui-not-found')
 export class NotFound extends LitElement {
@@ -92,7 +92,7 @@ export class NotFound extends LitElement {
         `;
     }
 
-	public render() {
+	public render(): TemplateResult {
         return html`
         <div>
             <h1>You are lost !</h1>

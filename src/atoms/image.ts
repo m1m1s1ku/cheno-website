@@ -1,4 +1,4 @@
-import { LitElement, property, customElement, html, query, PropertyValues } from 'lit-element';
+import { LitElement, property, customElement, html, query, PropertyValues, TemplateResult } from 'lit-element';
 import { fadeWith } from '../core/animations';
 
 @customElement('elara-image')
@@ -20,11 +20,11 @@ export class ElaraImage extends LitElement {
 
     @query('.elara-image') private _img!: HTMLImageElement;
 
-    protected createRenderRoot(){
+    protected createRenderRoot(): ElaraImage {
         return this;
     }
 
-    protected update(_changedProperties: PropertyValues){
+    protected update(_changedProperties: PropertyValues): void {
         super.update(_changedProperties);
         if(_changedProperties.has('src')){
             if(this._img){
@@ -42,7 +42,7 @@ export class ElaraImage extends LitElement {
         }
     }
 
-    public updated(){
+    public updated(): void {
         this._listener = this._previewLoadListener(this._handle);
         this._img.addEventListener('load', this._listener);
     }
@@ -70,7 +70,7 @@ export class ElaraImage extends LitElement {
         };
     }
 
-	public render() {
+	public render(): TemplateResult {
         return html`<img class="elara-image" .src=${this.src} .alt="${this.alt}" .sizing="${this.sizing}" />`;
     }
 }
