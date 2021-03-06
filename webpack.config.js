@@ -6,9 +6,11 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const { resolve, join } = require('path');
 
-const ENV = process.argv.find(arg => arg.includes('production'))
+const ENV = process.argv.find(arg => arg.includes('--mode=production'))
   ? 'production'
   : 'development';
+
+console.warn('Building for :', ENV);
 const OUTPUT_PATH = ENV === 'production' ? resolve('dist') : resolve('src');
 const INDEX_TEMPLATE = resolve('./src/index.ejs');
 

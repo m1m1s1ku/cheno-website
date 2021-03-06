@@ -69,6 +69,7 @@ export class ElaraApp extends Root {
 		super();
 
 		this.router = crayon.create();
+		this.router.path('index.html', this._routerLoad('home'));
 		this.router.path('/', this._routerLoad('home'));
 		this.router.path('home', this._routerLoad('home'));
 		this.router.path('expos', this._routerLoad('expos'));
