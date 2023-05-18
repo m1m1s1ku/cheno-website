@@ -25,7 +25,7 @@ try {
         const options = {
           files: htmlFile,
           from: '<!-- {{SSRFunctions}} -->',
-          to: readFileSync('ssr.php').toString('UTF-8')
+          to: readFileSync('ssr.php').toString('utf-8')
         };
 
         replace.sync(options);
