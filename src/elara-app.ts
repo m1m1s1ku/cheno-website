@@ -1,4 +1,6 @@
-import { html, property, SVGTemplateResult, query, customElement, TemplateResult } from 'lit-element';
+import { html, SVGTemplateResult, TemplateResult } from 'lit';
+import { property, customElement, query } from 'lit/decorators.js';
+import { repeat } from 'lit/directives/repeat.js';
 
 import crayon from 'crayon';
 
@@ -6,7 +8,6 @@ import Root from './core/strategies/Root';
 
 import Constants from './constants';
 
-import { repeat } from 'lit-html/directives/repeat';
 import { SVGLogo, HamburgerIcon } from './icons';
 
 import './pages/index';

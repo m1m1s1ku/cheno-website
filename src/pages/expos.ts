@@ -1,6 +1,6 @@
-import { html, TemplateResult } from 'lit-html';
-import { repeat } from 'lit-html/directives/repeat';
-import { property, query, queryAll, customElement } from 'lit-element';
+import { html, TemplateResult } from 'lit';
+import { repeat } from 'lit/directives/repeat.js';
+import { property, query, queryAll, customElement } from 'lit/decorators.js';
 
 import Page from '../core/strategies/Page';
 import Constants from '../constants';

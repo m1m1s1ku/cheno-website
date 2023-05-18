@@ -1,12 +1,12 @@
-import { html, TemplateResult } from 'lit-html';
-import { property, query, queryAll, customElement } from 'lit-element';
+import { html, TemplateResult } from 'lit';
+import { property, query, queryAll, customElement } from 'lit/decorators.js';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import { repeat } from 'lit/directives/repeat.js';
 
 import Page from '../core/strategies/Page';
-import { repeat } from 'lit-html/directives/repeat';
 import Constants from '../constants';
 import { WPCategory } from '../interfaces';
 import { fadeWith } from '../core/animations';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import { LinearProgress } from '@material/mwc-linear-progress';
 import { wrap, slugify, Utils, decodeHTML } from '../core/elara';
 

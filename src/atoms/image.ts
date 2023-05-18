@@ -1,4 +1,5 @@
-import { LitElement, property, customElement, html, query, PropertyValues, TemplateResult } from 'lit-element';
+import { LitElement, html, PropertyValues, TemplateResult } from 'lit';
+import { property, customElement, query } from 'lit/decorators.js';
 import { fadeWith } from '../core/animations';
 
 @customElement('elara-image')

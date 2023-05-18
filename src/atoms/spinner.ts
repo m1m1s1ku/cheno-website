@@ -1,6 +1,7 @@
 import {
-    html, customElement, css, property, LitElement, TemplateResult, CSSResult
-} from 'lit-element';
+    html, css, LitElement, TemplateResult, CSSResult
+} from 'lit';
+import { property, customElement } from 'lit/decorators.js';
 
 @customElement('elara-spinner')
 export class ElaraSpinner extends LitElement {

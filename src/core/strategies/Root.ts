@@ -1,4 +1,6 @@
-import { property, LitElement, query } from 'lit-element';
+import { LitElement } from 'lit';
+import { property, query } from 'lit/decorators.js';
+
 import { load } from '../elara';
 import crayon from 'crayon';
 import Constants from '../../constants';

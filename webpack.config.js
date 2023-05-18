@@ -3,6 +3,7 @@ const { merge }= require('webpack-merge');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 const { resolve, join } = require('path');
 
@@ -84,18 +85,6 @@ const commonConfig = merge([
           loader: 'svg-inline-loader'
         },
         {
-          enforce: 'pre',
-          test: /\.tsx?$/,
-          loader: 'eslint-loader',
-          exclude: /node_modules/,
-          options: {
-            fix: true,
-            emitWarning: ENV === 'development',
-            failOnWarning: ENV === 'development',
-            failOnError: false
-          }
-        },
-        {
           test: /\.tsx?$/,
           loader: 'ts-loader',
           exclude: /node_modules/
@@ -120,17 +109,18 @@ const developmentConfig = merge([
       new CopyWebpackPlugin({patterns: polyfills}),
       new HtmlWebpackPlugin({
         template: INDEX_TEMPLATE
-      })
+      }),
+      new ESLintPlugin()
     ],
 
     devServer: {
-      contentBase: OUTPUT_PATH,
+      static: {
+        directory: OUTPUT_PATH,
+      },
       compress: true,
-      overlay: true,
       port: 3000,
       historyApiFallback: true,
       host: '0.0.0.0',
-      disableHostCheck: true
     }
   }
 ]);

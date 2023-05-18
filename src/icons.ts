@@ -1,4 +1,4 @@
-import { svg } from 'lit-html';
+import { svg } from 'lit';
 
 export const SVGLogo = svg`<svg class="logo" id="logo" x="0px" y="0px" viewBox="0 0 1556 723">
     <path fill="transparent" stroke="black" stroke-width="4" d="M508.52,508.89c-26.21,1.87-47.48,17.07-71.62,24.68c3.39,63.68,22.43,117.43-3.4,125.48

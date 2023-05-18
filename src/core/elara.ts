@@ -57,7 +57,7 @@ export async function load(route: string, content: HTMLElement): Promise<void> {
     window.scrollTo(0,0);
 
     const handle = window.requestAnimationFrame(() => {
-        const pageContent = loaded.querySelector('div');
+        const pageContent = (loaded as HTMLElement).querySelector('div');
         if(!pageContent){
             cancelAnimationFrame(handle);
             return;

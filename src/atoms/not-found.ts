@@ -1,4 +1,5 @@
-import { property, css, CSSResult, customElement, html, LitElement, TemplateResult } from 'lit-element';
+import { css, CSSResult, html, LitElement, TemplateResult } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
 
 @customElement('ui-not-found')
 export class NotFound extends LitElement {
