@@ -10,7 +10,7 @@
 * **State:** wip
 * **Production:** [https://cheno.fr](https://cheno.fr/)
 * **GitHub:** [https://github.com/ghostfly/cheno-elara](https://github.com/ghostfly/cheno-elara)
-* **Point People:** [@ghostfly](https://github.com/ghostfly)
+* **Point People:** [@m1m1s1ku](https://github.com/m1m1s1ku)
 
 ## License
 
