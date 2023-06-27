@@ -1,5 +1,8 @@
 # Cheno
 
+![Status](https://status.mimisiku.network/api/badge/1/status)
+![Uptime](https://status.mimisiku.network/api/badge/1/uptime)
+
 [Website](https://cheno.fr)
 
 ## Meta
