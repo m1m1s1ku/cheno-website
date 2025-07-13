@@ -1,152 +1,160 @@
-import { html, SVGTemplateResult, TemplateResult } from 'lit';
-import { property, customElement, query } from 'lit/decorators.js';
-import { repeat } from 'lit/directives/repeat.js';
+import { html, SVGTemplateResult, TemplateResult } from "lit";
+import { property, customElement, query } from "lit/decorators.js";
+import { repeat } from "lit/directives/repeat.js";
 
-import crayon from 'crayon';
+import crayon from "crayon";
 
-import Root from './core/strategies/Root';
+import Root from "./core/strategies/Root";
 
-import Constants from './constants';
+import Constants from "./constants";
 
-import { SVGLogo, HamburgerIcon } from './icons';
+import { SVGLogo, HamburgerIcon } from "./icons";
 
-import './pages/index';
-import './atoms/index';
-import { Home } from './pages/home';
-
-import(/* webpackChunkName: "polyfill" */'./polyfill');
+import "./pages/index";
+import "./atoms/index";
+import { Home } from "./pages/home";
 
 interface WPLink {
-	id: string; label: string; url: string;
-	icon?: SVGTemplateResult;
+  id: string;
+  label: string;
+  url: string;
+  icon?: SVGTemplateResult;
 }
 
-@customElement('elara-app')
+@customElement("elara-app")
 export class ElaraApp extends Root {
-	/**
-	 * Bootstrap is launched by boot.js
-	 * Could contains any kind of promise who will be handled by global promise loader
-	 *
-	 * @readonly
-	 * @memberof ElaraApp
-	 */
-	public get bootstrap(): Promise<unknown> {		
-		return Promise.all([
-			this._setup(),
-			import(/* webpackChunkName: "mwc" */'./mwc')
-		]);
-	}
+  /**
+   * Bootstrap is launched by boot.js
+   * Could contains any kind of promise who will be handled by global promise loader
+   *
+   * @readonly
+   * @memberof ElaraApp
+   */
+  public get bootstrap(): Promise<unknown> {
+    return Promise.all([
+      this._setup(),
+      import(/* webpackChunkName: "mwc" */ "./mwc"),
+    ]);
+  }
 
-	public static readonly is: string = 'elara-app';
+  public static readonly is: string = "elara-app";
 
-	public default = 'home';
+  public default = "home";
 
-	@query('svg.logo') _logoPath!: SVGElement;
-	@query('.menu') _menu!: HTMLDivElement;
-	@query('.main-menu') _menuContainer!: HTMLDivElement;
+  @query("svg.logo") _logoPath!: SVGElement;
+  @query(".menu") _menu!: HTMLDivElement;
+  @query(".main-menu") _menuContainer!: HTMLDivElement;
 
-	@property({type: Array, reflect: false, noAccessor: true})
-	private _menuItems: ReadonlyArray<WPLink> = [];
+  @property({ type: Array, reflect: false, noAccessor: true })
+  private _menuItems: ReadonlyArray<WPLink> = [];
 
-	@property({type: Array, reflect: false, noAccessor: true})
-	public legalLinks: WPLink[] = [];
-	@property({type: Array, reflect: false, noAccessor: true})
-	public socialLinks: WPLink[] = [];
-	@property({type: Boolean, reflect: true, noAccessor: true})
-	public loaded: boolean;
+  @property({ type: Array, reflect: false, noAccessor: true })
+  public legalLinks: WPLink[] = [];
+  @property({ type: Array, reflect: false, noAccessor: true })
+  public socialLinks: WPLink[] = [];
+  @property({ type: Boolean, reflect: true, noAccessor: true })
+  public loaded: boolean;
 
-	@property({type: Array, reflect: false, noAccessor: true})
-	public socialThumbs: {
-		src: string;
-		shortcode: string;
-	}[];
+  @property({ type: Array, reflect: false, noAccessor: true })
+  public socialThumbs: {
+    src: string;
+    shortcode: string;
+  }[];
 
-	@property({type: String, reflect: false, noAccessor: true})
-	public logo: string;
+  @property({ type: String, reflect: false, noAccessor: true })
+  public logo: string;
 
-	public theme: 'night' | 'day' = 'day';
+  public theme: "night" | "day" = "day";
 
-	public constructor(){
-		super();
+  public constructor() {
+    super();
 
-		this.router = crayon.create();
-		this.router.path('index.html', this._routerLoad('home'));
-		this.router.path('/', this._routerLoad('home'));
-		this.router.path('home', this._routerLoad('home'));
-		this.router.path('expos', this._routerLoad('expos'));
-		this.router.path('/page/:page', this._routerLoad('page', 'page'));
-		this.router.path('/exposition/:slug', this._routerLoad('exposition', 'slug'));
-		this.router.path('**', this._routerLoad(null));
-	}
+    this.router = crayon.create();
+    this.router.path("index.html", this._routerLoad("home"));
+    this.router.path("/", this._routerLoad("home"));
+    this.router.path("home", this._routerLoad("home"));
+    this.router.path("expos", this._routerLoad("expos"));
+    this.router.path("/page/:page", this._routerLoad("page", "page"));
+    this.router.path(
+      "/exposition/:slug",
+      this._routerLoad("exposition", "slug")
+    );
+    this.router.path("/contact", this._routerLoad("contact"));
+    this.router.path("**", this._routerLoad(null));
+  }
 
-	private _routerLoad(path: string, param?: string): crayon.handlerFunc {
-		return (ctx, _state, _app) => {
-			if(!path){
-				return this.load(ctx.pathname.replace('/', ''));
-			}
+  private _routerLoad(path: string, param?: string): crayon.handlerFunc {
+    return (ctx, _state, _app) => {
+      if (!path) {
+        return this.load(ctx.pathname.replace("/", ""));
+      }
 
-			if(param){
-				return this.load(path + '/' + ctx.params[param]);
-			}
-			
-			return this.load(path);
-		};
-	}
+      if (param) {
+        return this.load(path + "/" + ctx.params[param]);
+      }
 
-	public connectedCallback(): void {
-		super.connectedCallback();
-		this._defineColors();
-		window.matchMedia('(prefers-color-scheme: dark)').addListener(
-			e => e.matches && this._defineColors('night')
-		);
-		window.matchMedia('(prefers-color-scheme: light)').addListener(
-			e => e.matches && this._defineColors('day')
-		);
-	}
+      return this.load(path);
+    };
+  }
 
-	public disconnectedCallback(): void {
-		super.disconnectedCallback();
-	}
+  public connectedCallback(): void {
+    super.connectedCallback();
+    this._defineColors();
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addListener((e) => e.matches && this._defineColors("night"));
+    window
+      .matchMedia("(prefers-color-scheme: light)")
+      .addListener((e) => e.matches && this._defineColors("day"));
+  }
 
-	private _defineColors(enforce?: 'night' | 'day'){
-		this.theme = enforce ? enforce : document.body.classList.contains('night') ? 'night' : 'day';
+  public disconnectedCallback(): void {
+    super.disconnectedCallback();
+  }
 
-		requestAnimationFrame(() => {
-			this._logoPath.classList.add('write');
-			if(this.theme === 'night'){
-				this._logoPath.querySelector('path').style.stroke = 'white';
-			} else {
-				this._logoPath.querySelector('path').style.stroke = 'black';
-			}
+  private _defineColors(enforce?: "night" | "day") {
+    this.theme = enforce
+      ? enforce
+      : document.body.classList.contains("night")
+      ? "night"
+      : "day";
 
-			const switchSVG = () => {
-				if(this.theme === 'night'){
-					this._logoPath.querySelector('path').style.fill = 'white';
-				} else {
-					this._logoPath.querySelector('path').style.fill = 'black';
-				}
-			};
+    requestAnimationFrame(() => {
+      this._logoPath.classList.add("write");
+      if (this.theme === "night") {
+        this._logoPath.querySelector("path").style.stroke = "white";
+      } else {
+        this._logoPath.querySelector("path").style.stroke = "black";
+      }
 
-			setTimeout(() => {
-				switchSVG();
-			}, 300);
-		});
-	}
+      const switchSVG = () => {
+        if (this.theme === "night") {
+          this._logoPath.querySelector("path").style.fill = "white";
+        } else {
+          this._logoPath.querySelector("path").style.fill = "black";
+        }
+      };
 
-	/**
-	 * Setup bootstrap for website
-	 *
-	 * @private
-	 * @memberof ElaraApp
-	 */
-	private async _setup(){
-		const requestR = await fetch(Constants.graphql, {
-			method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                query: `{
+      setTimeout(() => {
+        switchSVG();
+      }, 300);
+    });
+  }
+
+  /**
+   * Setup bootstrap for website
+   *
+   * @private
+   * @memberof ElaraApp
+   */
+  private async _setup() {
+    const requestR = await fetch(Constants.graphql, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query: `{
 					terrazzo {
 					  logo
 					}
@@ -168,76 +176,92 @@ export class ElaraApp extends Root {
                           }
                         }
                       }
-				  }`
-            })
-		}).then(res => res.json());
+				  }`,
+      }),
+    }).then((res) => res.json());
 
-		const colors = requestR.data.terrazzo;
-		this.logo = colors.logo;
-		const mainMenu = requestR.data.menus.edges.find(menu => menu.node.slug === 'menu');
-		let items = mainMenu.node.menuItems.edges;
-		items = items.map(item => item.node);
-		this._menuItems = items;
-		await this.requestUpdate();
-	}
+    const colors = requestR.data.terrazzo;
+    this.logo = colors.logo;
+    const mainMenu = requestR.data.menus.edges.find(
+      (menu) => menu.node.slug === "menu"
+    );
+    let items = mainMenu.node.menuItems.edges;
+    items = items.map((item) => item.node);
+    this._menuItems = items;
+    await this.requestUpdate();
+  }
 
-	public async firstUpdated(): Promise<void> {
-		await this.router.load();
+  public async firstUpdated(): Promise<void> {
+    await this.router.load();
 
-		this.loaded = true;
-	}
+    this.loaded = true;
+  }
 
-	private _toggleMenu(_event: Event){
-		this._menuContainer.classList.toggle('visible');
-		this._menu.classList.toggle('active');
+  private _toggleMenu(_event: Event) {
+    this._menuContainer.classList.toggle("visible");
+    this._menu.classList.toggle("active");
 
-		if(this._menu.classList.contains('active')){
-			if(this.shown instanceof Home){
-				// this.shown.pause();
-			}
-		}
-	}
+    if (this._menu.classList.contains("active")) {
+      if (this.shown instanceof Home) {
+        // this.shown.pause();
+      }
+    }
+  }
 
-	private _hideMenu(){
-		this._menuContainer.classList.remove('visible');
-		this._menu.classList.remove('active');
-	}
+  private _hideMenu() {
+    this._menuContainer.classList.remove("visible");
+    this._menu.classList.remove("active");
+  }
 
-	private _menuItem(item: WPLink){
-		return html`<li><h3 @click=${() => {
-			if(item.url.indexOf(Constants.base) !== -1){
-				item.url = item.url.replace(Constants.base, '');
-			}
+  private _menuItem(item: WPLink) {
+    return html`<li>
+      <h3
+        @click=${() => {
+          if (item.url.indexOf(Constants.base) !== -1) {
+            item.url = item.url.replace(Constants.base, "");
+          }
 
-			this.router.navigate(item.url);
-			this._hideMenu();
-		}}>${item.label}</h3></li>`;
-	}
-	
-	public render(): TemplateResult {
-		const menu = this._menuItem.bind(this);
+          this.router.navigate(item.url);
+          this._hideMenu();
+        }}
+      >
+        ${item.label}
+      </h3>
+    </li>`;
+  }
 
-		return html`
-			<header>
-				<span @click=${() => this.route !== Constants.defaults.route ? this.router.navigate('home') : null} class="drawing-logo">
-					${SVGLogo}
-				</span>
-				<button aria-label="Menu" class="menu" @click=${this._toggleMenu}>${HamburgerIcon}</button>
-				<div class="main-menu">
-					<nav>
-						<ul>
-						${repeat(this._menuItems, menu)}
-						</ul>
-					</nav>
-				</div>
-			</header>
-			<main id="content" class="content"></main>
-		`;
-	}
+  public render(): TemplateResult {
+    const menu = this._menuItem.bind(this);
+
+    return html`
+      <header>
+        <span
+          @click=${() =>
+            this.route !== Constants.defaults.route
+              ? this.router.navigate("home")
+              : null}
+          class="drawing-logo"
+        >
+          ${SVGLogo}
+        </span>
+        <button aria-label="Menu" class="menu" @click=${this._toggleMenu}>
+          ${HamburgerIcon}
+        </button>
+        <div class="main-menu">
+          <nav>
+            <ul>
+              ${repeat(this._menuItems, menu)}
+            </ul>
+          </nav>
+        </div>
+      </header>
+      <main id="content" class="content"></main>
+    `;
+  }
 }
 
 declare global {
-	interface HTMLElementTagNameMap {
-		'elara-app': ElaraApp;
-	}
+  interface HTMLElementTagNameMap {
+    "elara-app": ElaraApp;
+  }
 }

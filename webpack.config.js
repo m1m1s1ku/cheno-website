@@ -5,7 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 
-const { resolve, join } = require('path');
+const { resolve } = require('path');
 
 const ENV = process.argv.find(arg => arg.includes('--mode=production'))
   ? 'production'
@@ -17,9 +17,6 @@ const INDEX_TEMPLATE = resolve('./src/index.ejs');
 
 const nodeModules = './node_modules/';
 
-const webcomponentsjs = join(nodeModules, '@webcomponents/webcomponentsjs');
-const webanimationsjs = join(nodeModules, 'web-animations-js');
-
 const assets = [
   {
     from: resolve('./src/assets'),
@@ -28,18 +25,6 @@ const assets = [
 ];
 
 const polyfills = [
-  {
-    from: resolve(`${webcomponentsjs}/webcomponents-*.js`),
-    to: join(OUTPUT_PATH, 'vendor')
-  },
-  {
-    from: resolve(`${webcomponentsjs}/bundles/*.js`),
-    to: join(OUTPUT_PATH, 'vendor', 'bundles')
-  },
-  {
-    from: resolve(`${webanimationsjs}/web-animations-next-lite.min.js`),
-    to: join(OUTPUT_PATH, 'vendor')
-  },
   {
     from: resolve('./src/favicon.ico'),
     to: OUTPUT_PATH
