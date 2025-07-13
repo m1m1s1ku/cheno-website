@@ -129,7 +129,7 @@ const productionConfig = merge([
 ]);
 
 module.exports = mode => {
-  if (ENV === 'production') {
+  if (mode.production) {
     return merge(commonConfig, productionConfig, { mode });
   }
 
