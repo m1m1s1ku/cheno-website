@@ -15,12 +15,10 @@ console.warn('Building for :', ENV);
 const OUTPUT_PATH = ENV === 'production' ? resolve('dist') : resolve('src');
 const INDEX_TEMPLATE = resolve('./src/index.ejs');
 
-const nodeModules = './node_modules/';
-
 const assets = [
   {
     from: resolve('./src/assets'),
-    to: resolve('dist/assets/')
+    to: resolve('dist/assets/'),
   }
 ];
 
@@ -131,7 +129,7 @@ const productionConfig = merge([
 ]);
 
 module.exports = mode => {
-  if (mode === 'production') {
+  if (ENV === 'production') {
     return merge(commonConfig, productionConfig, { mode });
   }
 
