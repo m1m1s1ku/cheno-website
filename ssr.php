@@ -48,13 +48,13 @@
     }
 
     $response = get();
+    $title = (property_exists($response, 'title') && isset($response->title)) ? $response->title : 'Cheno';
 
     if(strpos($title, '404') !== false){
         header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
     }
     
 
-    $title = (property_exists($response, 'title') && isset($response->title)) ? $response->title : 'Cheno';
     $description = (property_exists($response, 'description') && isset($response->description)) ? $response->description : "Artiste sculpteur sur Fer | Nice";
     $image = (property_exists($response, 'image') && isset($response->image)) ? $response->image : 'https://base.cheno.fr/wp-content/uploads/2019/12/logo-300x139.png';
     $url = (property_exists($response, 'url') && isset($response->url)) ? $response->url : 'https://www.cheno.fr' . $_SERVER['REQUEST_URI'];
